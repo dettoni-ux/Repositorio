@@ -1,0 +1,48 @@
+name: Publicar en Instagram
+
+# Nada se publica solo: ejecutar este workflow manualmente ES tu aprobación.
+on:
+  workflow_dispatch:
+    inputs:
+      tipo:
+        description: 'Tipo de publicación'
+        required: true
+        default: 'imagen'
+        type: choice
+        options: [imagen, carrusel, reel, historia_imagen, historia_video]
+      media:
+        description: 'URLs públicas separadas por comas, o rutas del repo (ej: publicar/post-1.jpg)'
+        required: true
+        type: string
+      caption:
+        description: 'Texto del post (para textos largos usa caption_archivo)'
+        required: false
+        default: ''
+        type: string
+      caption_archivo:
+        description: 'Ruta a un .txt del repo con el caption (tiene prioridad sobre caption)'
+        required: false
+        default: ''
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Publicar
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          GRAPH_HOST: ${{ secrets.GRAPH_HOST }}
+          TIPO: ${{ inputs.tipo }}
+          MEDIA: ${{ inputs.media }}
+          CAPTION: ${{ inputs.caption }}
+          CAPTION_ARCHIVO: ${{ inputs.caption_archivo }}
+        run: node scripts/publicar-instagram.mjs

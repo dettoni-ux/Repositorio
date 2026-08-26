@@ -1,0 +1,57 @@
+name: Generar video con IA (Seedance)
+
+on:
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: 'Prompt del video (cópialo del Estudio de Contenido, botón «Copiar prompt de video»)'
+        required: true
+        type: string
+      modelo:
+        description: 'Modelo en Replicate'
+        required: false
+        default: 'bytedance/seedance-1-pro'
+        type: string
+      parametros:
+        description: 'JSON extra para el modelo (revisa nombres en la página del modelo)'
+        required: false
+        default: '{"duration": 10, "resolution": "1080p", "aspect_ratio": "9:16"}'
+        type: string
+      guardar_en_repo:
+        description: 'Además de descargar, guardar el mp4 en la carpeta videos/ del repo'
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  generar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Generar video
+        id: gen
+        env:
+          REPLICATE_API_TOKEN: ${{ secrets.REPLICATE_API_TOKEN }}
+          PROMPT: ${{ inputs.prompt }}
+          MODELO: ${{ inputs.modelo }}
+          PARAMETROS: ${{ inputs.parametros }}
+        run: node scripts/generar-video.mjs
+      - name: Subir como artefacto del workflow
+        uses: actions/upload-artifact@v4
+        with:
+          name: video-generado
+          path: ${{ steps.gen.outputs.archivo }}
+      - name: Guardar en el repo
+        if: ${{ inputs.guardar_en_repo }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "${{ steps.gen.outputs.archivo }}"
+          git commit -m "Agregar video generado con IA"
+          git push

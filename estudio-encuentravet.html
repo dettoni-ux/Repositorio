@@ -263,8 +263,10 @@ Encuentra veterinarios verificados cerca tuyo en encuentravet.cl — gratis.
             <div class="lienzo-wrap"><canvas id="lienzo" width="1080" height="1350" aria-label="Vista previa del post"></canvas></div>
             <div class="fila-botones" style="justify-content:center">
               <button class="btn" id="btn-export-png">Descargar PNG</button>
+              <button class="btn" id="btn-export-jpg">Descargar JPG</button>
               <button class="btn sec" id="btn-add-feed">Agregar al feed</button>
             </div>
+            <p class="aviso" style="text-align:center">Para publicar por la API de Instagram usa el JPG (es el único formato de imagen que acepta).</p>
           </div>
         </div>
       </div>
@@ -1531,22 +1533,24 @@ let descargas = null;
   ['v-plantilla','v-tag','v-destacado','v-titulo','v-lineas','v-cta'].forEach(id=>
     $('#'+id).addEventListener('input', pedirRender));
   $('#btn-copiar-caption').addEventListener('click', ()=> copiar($('#v-caption').value));
-  $('#btn-export-png').addEventListener('click', ()=>{
+  function exportarLienzo(mime, nombre, calidad){
     $('#lienzo').toBlob(async blob=>{
       if(!blob){ toast('No se pudo generar la imagen'); return; }
       if(descargas){
-        try{ await descargas.save({ filename:'encuentravet-post.png', data: blob }); toast('Imagen descargada ✓ Copia también la descripción'); return; }
+        try{ await descargas.save({ filename:nombre, data: blob }); toast('Imagen descargada ✓ Copia también la descripción'); return; }
         catch(err){ if(err && err.code==='declined') return; }
       }
       const modal = document.createElement('div');
       modal.className = 'modal-img';
-      const img = document.createElement('img'); img.src = $('#lienzo').toDataURL('image/png');
+      const img = document.createElement('img'); img.src = $('#lienzo').toDataURL(mime, calidad);
       const p = document.createElement('p'); p.textContent = 'Mantén presionada la imagen (o clic derecho) para guardarla. Toca fuera para cerrar.';
       modal.appendChild(img); modal.appendChild(p);
       modal.addEventListener('click', ev=>{ if(ev.target!==img) modal.remove(); });
       document.body.appendChild(modal);
-    }, 'image/png');
-  });
+    }, mime, calidad);
+  }
+  $('#btn-export-png').addEventListener('click', ()=> exportarLienzo('image/png', 'encuentravet-post.png'));
+  $('#btn-export-jpg').addEventListener('click', ()=> exportarLienzo('image/jpeg', 'encuentravet-post.jpg', 0.92));
   $('#btn-add-feed').addEventListener('click', ()=>{
     const c = document.createElement('canvas'); c.width = 432; c.height = 540;
     c.getContext('2d').drawImage($('#lienzo'), 0, 0, 432, 540);
