@@ -1,26 +1,30 @@
+<meta charset="utf-8">
 <title>Estudio EncuentraVet</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
 <style>
   :root{
-    --bg:#F3F7FC; --panel:#FFFFFF; --panel2:#EAF1F9; --ink:#14243D; --ink2:#4C5E7A;
-    --line:#D7E1EE; --azul:#1F63C6; --azul-fuerte:#154A99; --azul-suave:#E3EDFB;
-    --hist:#7A55C9; --hist-bg:#F0EAFB; --reel:#C24E2C; --reel-bg:#FBEDE7;
-    --carr:#1D7F55; --carr-bg:#E6F4EC; --ok:#1D7F55; --shadow:0 1px 2px rgba(20,36,61,.06), 0 8px 24px rgba(20,36,61,.07);
+    --bg:#F7F5FB; --panel:#FFFFFF; --panel2:#EFEAF8; --ink:#221740; --ink2:#5C5178;
+    --line:#DFD8EC; --morado:#6D28D9; --morado-fuerte:#4C1D95; --morado-suave:#EFE8FB;
+    --amarillo:#F2C314; --amarillo-bg:#FBF3D6;
+    --hist:#D6336C; --hist-bg:#FBE7F0; --reel:#C24E2C; --reel-bg:#FBEDE7;
+    --carr:#1D7F55; --carr-bg:#E6F4EC; --ok:#1D7F55; --shadow:0 1px 2px rgba(34,23,64,.06), 0 8px 24px rgba(34,23,64,.08);
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --bg:#0D1626; --panel:#152238; --panel2:#1B2A45; --ink:#E8EFF9; --ink2:#9FB1C9;
-      --line:#263854; --azul:#6FA3EE; --azul-fuerte:#8FB8F2; --azul-suave:#1D3157;
-      --hist:#A98BE8; --hist-bg:#2A2347; --reel:#EE8663; --reel-bg:#3C2318;
+      --bg:#131022; --panel:#1C1731; --panel2:#251D3E; --ink:#EDE8F8; --ink2:#A79FC2;
+      --line:#342B52; --morado:#A98CF5; --morado-fuerte:#C6B4F8; --morado-suave:#2B2158;
+      --amarillo:#F5CE4A; --amarillo-bg:#39310F;
+      --hist:#F077A6; --hist-bg:#432130; --reel:#EE8663; --reel-bg:#3C2318;
       --carr:#55B98A; --carr-bg:#15342A; --ok:#55B98A; --shadow:0 1px 2px rgba(0,0,0,.35), 0 8px 24px rgba(0,0,0,.35);
     }
   }
   :root[data-theme="dark"]{
-    --bg:#0D1626; --panel:#152238; --panel2:#1B2A45; --ink:#E8EFF9; --ink2:#9FB1C9;
-    --line:#263854; --azul:#6FA3EE; --azul-fuerte:#8FB8F2; --azul-suave:#1D3157;
-    --hist:#A98BE8; --hist-bg:#2A2347; --reel:#EE8663; --reel-bg:#3C2318;
+    --bg:#131022; --panel:#1C1731; --panel2:#251D3E; --ink:#EDE8F8; --ink2:#A79FC2;
+    --line:#342B52; --morado:#A98CF5; --morado-fuerte:#C6B4F8; --morado-suave:#2B2158;
+    --amarillo:#F5CE4A; --amarillo-bg:#39310F;
+    --hist:#F077A6; --hist-bg:#432130; --reel:#EE8663; --reel-bg:#3C2318;
     --carr:#55B98A; --carr-bg:#15342A; --ok:#55B98A; --shadow:0 1px 2px rgba(0,0,0,.35), 0 8px 24px rgba(0,0,0,.35);
   }
   *{box-sizing:border-box}
@@ -32,7 +36,7 @@
   h1,h2,h3,h4{font-family:'Bricolage Grotesque','Figtree',system-ui,sans-serif; text-wrap:balance; margin:0}
   .wrap{max-width:1080px; margin:0 auto; padding:0 20px 80px}
   header.top{padding:34px 0 18px; display:flex; flex-wrap:wrap; align-items:flex-end; gap:16px; justify-content:space-between}
-  .marca-head .kicker{font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--azul)}
+  .marca-head .kicker{font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--morado)}
   .marca-head h1{font-size:clamp(28px,4.4vw,40px); font-weight:800; letter-spacing:-.01em}
   .marca-head p{margin:6px 0 0; color:var(--ink2); max-width:56ch}
   nav.tabs{display:flex; gap:6px; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:6px; box-shadow:var(--shadow); position:sticky; top:12px; z-index:20; width:max-content; max-width:100%; overflow-x:auto}
@@ -40,10 +44,10 @@
     appearance:none; border:0; background:transparent; color:var(--ink2); font:600 15px 'Figtree',sans-serif;
     padding:9px 16px; border-radius:9px; cursor:pointer; white-space:nowrap;
   }
-  nav.tabs button[aria-selected="true"]{background:var(--azul); color:#fff}
-  :root[data-theme="dark"] nav.tabs button[aria-selected="true"]{color:#0D1626}
-  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) nav.tabs button[aria-selected="true"]{color:#0D1626} }
-  nav.tabs button:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible{outline:2px solid var(--azul); outline-offset:2px}
+  nav.tabs button[aria-selected="true"]{background:var(--morado); color:#fff}
+  :root[data-theme="dark"] nav.tabs button[aria-selected="true"]{color:#131022}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) nav.tabs button[aria-selected="true"]{color:#131022} }
+  nav.tabs button:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible{outline:2px solid var(--morado); outline-offset:2px}
   main section.pane{display:none; margin-top:26px}
   main section.pane.activa{display:block}
   .panel{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:22px; box-shadow:var(--shadow)}
@@ -64,10 +68,10 @@
   .seg button[aria-pressed="true"]{background:var(--panel); color:var(--ink); box-shadow:0 1px 3px rgba(20,36,61,.15)}
   .btn{
     appearance:none; border:0; border-radius:11px; cursor:pointer; font:700 15px 'Figtree',sans-serif;
-    padding:12px 20px; background:var(--azul); color:#fff;
+    padding:12px 20px; background:var(--morado); color:#fff;
   }
-  :root[data-theme="dark"] .btn{color:#0D1626}
-  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .btn{color:#0D1626} }
+  :root[data-theme="dark"] .btn{color:#131022}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .btn{color:#131022} }
   .btn.sec{background:var(--panel2); color:var(--ink)}
   .btn.mini{padding:7px 13px; font-size:13.5px; border-radius:9px}
   .btn:active{transform:translateY(1px)}
@@ -76,13 +80,13 @@
   .chip.historia{background:var(--hist-bg); color:var(--hist)}
   .chip.reel{background:var(--reel-bg); color:var(--reel)}
   .chip.carrusel{background:var(--carr-bg); color:var(--carr)}
-  .chip.pilar{background:var(--azul-suave); color:var(--azul-fuerte)}
+  .chip.pilar{background:var(--morado-suave); color:var(--morado-fuerte)}
   .resultado{margin-top:22px}
   .resultado .cab{display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:6px}
   .resultado h3{font-size:24px; font-weight:800; letter-spacing:-.01em; margin:2px 0 12px}
   .tarjetas{display:grid; gap:12px}
   .tarjeta{background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:14px 16px}
-  .tarjeta .num{font-size:11.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--azul); margin-bottom:4px}
+  .tarjeta .num{font-size:11.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--morado); margin-bottom:4px}
   .tarjeta .titulo{font-weight:700; font-size:16px}
   .tarjeta p{margin:6px 0 0; font-size:15px}
   .tarjeta .meta{margin-top:8px; font-size:13.5px; color:var(--ink2)}
@@ -105,11 +109,11 @@
   .kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin-top:8px}
   .kpi{background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:12px 14px; font-size:14px}
   .kpi b{display:block; font-size:15px; margin-bottom:2px}
-  .semana{border-left:3px solid var(--azul); padding:2px 0 2px 14px; margin:14px 0}
+  .semana{border-left:3px solid var(--morado); padding:2px 0 2px 14px; margin:14px 0}
   .semana b{font-family:'Bricolage Grotesque',sans-serif; font-size:16px}
   .semana p{margin:3px 0 0; color:var(--ink2); font-size:14.5px}
-  .fecha-esp{display:flex; gap:10px; align-items:baseline; background:var(--azul-suave); border-radius:10px; padding:10px 14px; margin-top:10px; font-size:14.5px}
-  .fecha-esp .d{font-weight:800; color:var(--azul-fuerte); white-space:nowrap}
+  .fecha-esp{display:flex; gap:10px; align-items:baseline; background:var(--morado-suave); border-radius:10px; padding:10px 14px; margin-top:10px; font-size:14.5px}
+  .fecha-esp .d{font-weight:800; color:var(--morado-fuerte); white-space:nowrap}
   .guardado-item{display:flex; gap:14px; align-items:flex-start; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--line)}
   .guardado-item:last-child{border-bottom:0}
   .guardado-item .t{font-weight:700}
@@ -120,6 +124,22 @@
   .pie{margin-top:44px; text-align:center; color:var(--ink2); font-size:13px}
   .estado-guardado{font-size:13px; color:var(--ok); font-weight:600; margin-left:10px; opacity:0; transition:opacity .3s}
   .estado-guardado.ver{opacity:1}
+  /* --- Estudio visual --- */
+  .logo-caja{background:var(--morado); border-radius:12px; padding:16px; display:flex; align-items:center; justify-content:center; min-height:82px}
+  .logo-caja img{max-height:60px; max-width:100%}
+  .logo-caja .sin-logo{color:#fff; font:600 14px 'Figtree',sans-serif; opacity:.85}
+  .thumbs{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+  .thumbs img{width:64px; height:64px; object-fit:cover; border-radius:9px; cursor:pointer; border:3px solid transparent}
+  .thumbs img.sel{border-color:var(--morado)}
+  input[type=file]{display:none}
+  input[type=color]{width:100%; height:42px; border:1px solid var(--line); border-radius:10px; background:var(--bg); padding:4px; cursor:pointer}
+  .lienzo-wrap{display:flex; justify-content:center}
+  .lienzo-wrap canvas{width:100%; max-width:380px; height:auto; border-radius:14px; border:1px solid var(--line); box-shadow:var(--shadow)}
+  .feed-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:5px; margin-top:12px; max-width:520px}
+  .feed-grid img{width:100%; aspect-ratio:4/5; object-fit:cover; border-radius:4px; border:1px solid var(--line)}
+  .modal-img{position:fixed; inset:0; background:rgba(10,6,24,.82); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; z-index:50; padding:20px}
+  .modal-img img{max-width:min(92vw,420px); max-height:70vh; border-radius:12px}
+  .modal-img p{color:#fff; font-size:14px; text-align:center; max-width:40ch}
 </style>
 
 <div class="wrap">
@@ -131,6 +151,7 @@
     </div>
     <nav class="tabs" role="tablist" aria-label="Secciones">
       <button role="tab" aria-selected="true" data-pane="generador">✨ Generador</button>
+      <button role="tab" aria-selected="false" data-pane="visual">🎨 Visual</button>
       <button role="tab" aria-selected="false" data-pane="estrategia">📅 Estrategia mensual</button>
       <button role="tab" aria-selected="false" data-pane="marca">🐾 Marca</button>
       <button role="tab" aria-selected="false" data-pane="guardados">💾 Guardados</button>
@@ -175,6 +196,84 @@
         </div>
       </div>
       <div id="zona-resultado"></div>
+    </section>
+
+    <!-- ============ ESTUDIO VISUAL ============ -->
+    <section class="pane" id="pane-visual" role="tabpanel">
+      <div class="panel">
+        <h2>Identidad y fotos</h2>
+        <p class="sub">Sube el logo (idealmente la versión blanca en PNG con fondo transparente) y tus fotos de mascotas. Todo queda guardado en este navegador y las plantillas los usan automáticamente.</p>
+        <div class="grid2">
+          <div>
+            <label class="campo">Logo de la marca</label>
+            <div class="logo-caja" id="logo-caja"><span class="sin-logo">Sin logo: se usa el nombre de la marca</span></div>
+            <div class="fila-botones">
+              <label class="btn sec mini" for="inp-logo">Subir logo</label>
+              <input type="file" id="inp-logo" accept="image/png,image/jpeg,image/webp,image/svg+xml">
+              <button class="btn sec mini" id="btn-quitar-logo">Quitar</button>
+            </div>
+          </div>
+          <div>
+            <label class="campo">Biblioteca de fotos (haz clic para elegir la activa)</label>
+            <div class="thumbs" id="thumbs-fotos"></div>
+            <div class="fila-botones">
+              <label class="btn sec mini" for="inp-fotos">Subir fotos</label>
+              <input type="file" id="inp-fotos" accept="image/png,image/jpeg,image/webp" multiple>
+              <button class="btn sec mini" id="btn-borrar-foto">Borrar foto activa</button>
+            </div>
+            <p class="aviso">Se comprimen automáticamente. Fuentes gratis recomendadas: Unsplash, Pexels y Pixabay (busca «dog studio», «cat portrait»).</p>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Diseñador de posts</h2>
+        <p class="sub">Plantillas en morado y amarillo al estilo de tu referencia. Edita los textos, elige foto y exporta el PNG listo para publicar (1080 × 1350).</p>
+        <div class="grid2">
+          <div>
+            <label class="campo" for="v-plantilla">Plantilla</label>
+            <select id="v-plantilla">
+              <option value="t1">Número gigante (lila claro)</option>
+              <option value="t2">Foto protagonista (overlay morado)</option>
+              <option value="t3">Tarjeta central (tipo «polémica»)</option>
+              <option value="t4">Checklist morado</option>
+              <option value="t5">Anuncio amarillo</option>
+              <option value="t6">Portada de carrusel (blanca)</option>
+            </select>
+            <label class="campo" for="v-tag">Etiqueta</label>
+            <input type="text" id="v-tag" value="Tip EncuentraVet">
+            <label class="campo" for="v-destacado">Número o palabra destacada</label>
+            <input type="text" id="v-destacado" value="5">
+            <label class="campo" for="v-titulo">Título</label>
+            <textarea id="v-titulo" style="min-height:60px">5 señales de que tu gato necesita un veterinario</textarea>
+            <label class="campo" for="v-lineas">Líneas (para checklist, una por línea)</label>
+            <textarea id="v-lineas">Deja de comer o esconde su comida
+Se esconde más de lo habitual
+Cambios en el arenero</textarea>
+            <label class="campo" for="v-cta">Cierre / llamado a la acción</label>
+            <input type="text" id="v-cta" value="Guarda este post 🐾 encuentravet.cl">
+            <label class="campo" for="v-caption">Descripción del post (caption para Instagram)</label>
+            <textarea id="v-caption" style="min-height:110px">🐾 5 señales de que tu gato necesita un veterinario. Desliza y guarda este post para cuando lo necesites.
+
+Encuentra veterinarios verificados cerca tuyo en encuentravet.cl — gratis.
+
+#EncuentraVet #VeterinarioChile #GatosChile</textarea>
+            <div class="fila-botones"><button class="btn sec mini" id="btn-copiar-caption">Copiar descripción</button></div>
+          </div>
+          <div>
+            <div class="lienzo-wrap"><canvas id="lienzo" width="1080" height="1350" aria-label="Vista previa del post"></canvas></div>
+            <div class="fila-botones" style="justify-content:center">
+              <button class="btn" id="btn-export-png">Descargar PNG</button>
+              <button class="btn sec" id="btn-add-feed">Agregar al feed</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Vista previa del feed</h2>
+        <p class="sub">Así se verá tu perfil: agrega diseños desde el botón «Agregar al feed» y revisa la armonía del conjunto.</p>
+        <div class="feed-grid" id="feed-grid"></div>
+        <div class="fila-botones"><button class="btn sec mini" id="btn-vaciar-feed">Vaciar feed</button></div>
+      </div>
     </section>
 
     <!-- ============ ESTRATEGIA ============ -->
@@ -225,6 +324,12 @@
             <input type="text" id="b-web">
             <label class="campo" for="b-ig">Instagram (usuario)</label>
             <input type="text" id="b-ig">
+            <label class="campo" for="b-slogan">Slogan</label>
+            <input type="text" id="b-slogan">
+            <div class="grid2">
+              <div><label class="campo" for="b-c1">Color principal (morado)</label><input type="color" id="b-c1"></div>
+              <div><label class="campo" for="b-c2">Color acento (amarillo)</label><input type="color" id="b-c2"></div>
+            </div>
             <label class="campo" for="b-bio">Bio de Instagram</label>
             <textarea id="b-bio"></textarea>
             <label class="campo" for="b-propuesta">Propuesta de valor</label>
@@ -276,7 +381,10 @@ const MARCA_ORIGINAL = {
   nombre: 'EncuentraVet',
   web: 'encuentravet.cl',
   ig: '@encuentravet',
-  bio: '🐾 El directorio de veterinarios verificados de Chile 🔵 Insignia azul = título y cédula verificados 📍 Busca por comuna y agenda con disponibilidad real 👇 Encuentra tu veterinario',
+  slogan: 'Veterinarios Certificados. Cerca de ti',
+  c1: '#6D28D9',
+  c2: '#F2C314',
+  bio: '🐾 Veterinarios Certificados. Cerca de ti 🔵 Título y cédula verificados 📍 Busca por comuna y agenda con disponibilidad real 👇 Encuentra tu veterinario',
   propuesta: 'Encuentra al veterinario ideal cerca de ti. Directorio de veterinarios certificados en Chile: busca por comuna o región, compara y agenda con disponibilidad real, sin llamar. Gratis para dueños de mascotas.',
   tono: 'Cercano, claro y confiable. Chileno sin caricatura. Empático con los tutores de mascotas, profesional y directo con los veterinarios. Habla de «tu mascota» y «tu veterinario», evita jerga técnica innecesaria y nunca genera pánico: informa y acompaña.',
   publico: 'Tutores de mascotas en Chile (buscan veterinario confiable cerca, sin perder tiempo llamando) y médicos veterinarios (buscan visibilidad, pacientes nuevos y una agenda ordenada).',
@@ -672,7 +780,8 @@ function genHistoria(pilar, objetivo, temaLibre, forzarIdx){
     titulo: ctaPara(pilar, objetivo),
     visual:'Cierre con logo/nombre de la marca y flecha hacia el sticker de link.',
     sticker: Object.assign({}, STICKERS[4], {uso: conMarca(STICKERS[4].uso)}) });
-  return { formato:'historia', pilar, titulo: topic.t, frames,
+  return { formato:'historia', pilar, titulo: topic.t, frames, puntos: topic.puntos, emoji: topic.e,
+    caption: topic.e+' '+topic.t+'\n\n'+ctaPara(pilar,objetivo)+'\n\n'+hashtagsPara(pilar),
     nota: topic.cierre ? 'Idea de refuerzo: '+conMarca(topic.cierre) : '' };
 }
 
@@ -691,8 +800,17 @@ function genReel(pilar, objetivo, temaLibre, forzarIdx){
   });
   escenas.push({ t: ini+'–'+dur+' s', accion:'Cierre a cámara o texto final con la marca en pantalla.', texto: ctaPara(pilar, objetivo) });
   const caption = hook+'\n\n'+topic.e+' '+topic.t+'. '+(topic.cierre?conMarca(topic.cierre)+' ':'')+'\n\n'+ctaPara(pilar,objetivo)+'\n\n'+hashtagsPara(pilar);
-  return { formato:'reel', pilar, titulo: topic.t, duracion: '~'+dur+' segundos', audio: pick(AUDIOS), escenas, caption,
-    nota:'Sube con subtítulos activados: gran parte de los reels se ve sin sonido.' };
+  const esGato = /gato|felin/i.test(topic.t), esPerro = /perro|cachorro|canin/i.test(topic.t);
+  const sujeto = esGato ? 'a domestic cat' : esPerro ? 'a friendly dog' : 'a friendly dog and a domestic cat';
+  const promptIA = 'Vertical 9:16 video for Instagram Reels, '+dur+' seconds total, photorealistic footage of '+sujeto+
+    ' in a bright modern home and a clean veterinary clinic in Chile. Warm natural light, shallow depth of field, smooth gimbal camera, one cut every ~5 seconds. '+
+    'Purple ('+(marca.c1||'#6D28D9')+') and yellow ('+(marca.c2||'#F2C314')+') accents in props and background details. '+
+    'Scene list (visuals only, NO on-screen text, captions are added later): '+
+    escenas.map((e,i)=>'Scene '+(i+1)+' ['+e.t+']: '+e.accion+' Theme: "'+e.texto.replace(/"/g,"'")+'".').join(' ')+
+    ' No watermarks, no logos, no text overlays, no human faces in close-up. High detail, realistic animal anatomy and movement.';
+  return { formato:'reel', pilar, titulo: topic.t, duracion: '~'+dur+' segundos', audio: pick(AUDIOS), escenas, caption, promptIA,
+    puntos: topic.puntos, emoji: topic.e,
+    nota:'Genera los clips con el prompt de IA (Seedance, Kling, Runway o Pika), edítalos con los textos en pantalla del guion y sube con subtítulos activados.' };
 }
 
 function genCarrusel(pilar, objetivo, temaLibre, forzarIdx){
@@ -708,6 +826,7 @@ function genCarrusel(pilar, objetivo, temaLibre, forzarIdx){
   cards.push({ num:'Card '+(cards.length+1)+' · Cierre', titulo: marca.nombre, cuerpo: ctaPara(pilar,objetivo)+' — '+marca.ig });
   const caption = topic.e+' '+topic.t+'\n\n'+hook+' Desliza para verlo completo. 👉\n\n'+ctaPara(pilar,objetivo)+'\n\n'+hashtagsPara(pilar);
   return { formato:'carrusel', pilar, titulo: topic.t, cards, caption,
+    puntos: topic.puntos, emoji: topic.e,
     nota:'Diseño: una idea por card, texto grande (mínimo 24 pt), colores de marca y número de card visible.' };
 }
 
@@ -732,6 +851,7 @@ function textoPlano(g){
   } else if(g.formato==='reel'){
     L.push('Duración: '+g.duracion+' · Audio: '+g.audio); L.push('');
     g.escenas.forEach(e=>{ L.push('['+e.t+'] '+e.accion); L.push('  Texto en pantalla: '+e.texto); L.push(''); });
+    L.push('PROMPT PARA IA DE VIDEO (Seedance/Kling/Runway/Pika):'); L.push(g.promptIA); L.push('');
     L.push('CAPTION:'); L.push(g.caption); L.push('');
   } else {
     g.cards.forEach(c=>{ L.push(c.num+' — '+c.titulo); L.push('  '+c.cuerpo); L.push(''); });
@@ -756,6 +876,8 @@ function renderResultado(g){
       '<div class="tarjetas">'+g.escenas.map(e=>
       '<div class="tarjeta"><div class="num">'+esc(e.t)+'</div><p>'+esc(e.accion)+'</p>'+
       '<div class="meta"><strong>Texto en pantalla:</strong> '+esc(e.texto)+'</div></div>').join('')+'</div>'+
+      '<div class="bloque-caption"><div class="etq">Prompt para IA de video (Seedance · Kling · Runway · Pika)</div>'+esc(g.promptIA)+
+      '<div class="fila-botones"><button class="btn sec mini" id="btn-copiar-prompt-ia">Copiar prompt de video</button></div></div>'+
       '<div class="bloque-caption"><div class="etq">Caption + hashtags</div>'+esc(g.caption)+'</div>';
   } else {
     cuerpo = '<div class="tarjetas">'+g.cards.map(c=>
@@ -768,9 +890,13 @@ function renderResultado(g){
     '<div class="fila-botones">'+
       '<button class="btn sec" id="btn-regenerar">↻ Otra variante</button>'+
       '<button class="btn sec" id="btn-copiar">Copiar todo</button>'+
+      '<button class="btn sec" id="btn-a-visual">Crear la imagen →</button>'+
       '<button class="btn" id="btn-guardar">Guardar</button>'+
     '</div></div>';
   $('#btn-regenerar').addEventListener('click', generarDesdeControles);
+  $('#btn-a-visual').addEventListener('click', ()=> enviarAVisual(g));
+  const bPrompt = $('#btn-copiar-prompt-ia');
+  if(bPrompt) bPrompt.addEventListener('click', ()=> copiar(g.promptIA));
   $('#btn-copiar').addEventListener('click', ()=> copiar(textoPlano(g)));
   $('#btn-guardar').addEventListener('click', ()=>{
     agregarGuardado({ fecha:new Date().toLocaleDateString('es-CL'), formato:g.formato, pilar:PILARES[g.pilar].nombre, titulo:g.titulo, texto:textoPlano(g) });
@@ -984,7 +1110,7 @@ function guardadosMarkdown(){
 /* ============================================================
    MARCA — UI
    ============================================================ */
-const CAMPOS_MARCA = [['b-nombre','nombre'],['b-web','web'],['b-ig','ig'],['b-bio','bio'],['b-propuesta','propuesta'],['b-tono','tono'],['b-publico','publico'],['b-hashtags','hashtags'],['b-datos','datos']];
+const CAMPOS_MARCA = [['b-nombre','nombre'],['b-web','web'],['b-ig','ig'],['b-slogan','slogan'],['b-c1','c1'],['b-c2','c2'],['b-bio','bio'],['b-propuesta','propuesta'],['b-tono','tono'],['b-publico','publico'],['b-hashtags','hashtags'],['b-datos','datos']];
 function pintarMarca(){
   CAMPOS_MARCA.forEach(([id,k])=>{ $('#'+id).value = marca[k]; });
   $('#lista-datos').innerHTML = datosMarca().map(d=>'<div class="dato-marca">'+esc(d)+'</div>').join('');
@@ -997,6 +1123,306 @@ function marcaCambiada(){
   clearTimeout(tGuardado);
   $('#marca-ok').classList.add('ver');
   tGuardado = setTimeout(()=> $('#marca-ok').classList.remove('ver'), 1600);
+  pedirRender();
+}
+
+/* ============================================================
+   ESTUDIO VISUAL — plantillas canvas 1080×1350
+   ============================================================ */
+const LZ = { logo:'evst_logo', fotos:'evst_fotos', feed:'evst_disenos' };
+function lzGet(k, def){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; }catch(e){ return def; } }
+function lzSet(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); return true; }catch(e){ toast('Memoria del navegador llena: borra fotos o diseños'); return false; } }
+
+let logoData = lzGet(LZ.logo, null);
+let fotosData = lzGet(LZ.fotos, []);
+let feedData = lzGet(LZ.feed, []);
+let fotoSel = 0;
+let logoImg = null;
+const fotoCache = {};
+
+function cargarImg(src){
+  return new Promise((res, rej)=>{ const im = new Image(); im.onload = ()=>res(im); im.onerror = rej; im.src = src; });
+}
+
+/* --- color helpers --- */
+function hex2rgb(h){ h = h.replace('#',''); if(h.length===3) h = h.split('').map(c=>c+c).join(''); return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)]; }
+function rgb2css(r){ return 'rgb('+r.map(Math.round).join(',')+')'; }
+function mezcla(hex, objetivo, f){ const a = hex2rgb(hex); return rgb2css(a.map((c,i)=> c + (objetivo[i]-c)*f)); }
+function tinte(hex, f){ return mezcla(hex, [255,255,255], f); }
+function sombra(hex, f){ return mezcla(hex, [10,6,24], f); }
+function rgba(hex, al){ const a = hex2rgb(hex); return 'rgba('+a.join(',')+','+al+')'; }
+
+/* --- draw helpers --- */
+function rr(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+function drawCover(ctx, img, x, y, w, h){
+  const s = Math.max(w/img.width, h/img.height);
+  const iw = img.width*s, ih = img.height*s;
+  ctx.drawImage(img, x+(w-iw)/2, y+(h-ih)/2, iw, ih);
+}
+function pata(ctx, x, y, s, color, alpha, rot){
+  ctx.save(); ctx.translate(x,y); ctx.rotate(rot||0); ctx.globalAlpha = alpha;
+  ctx.fillStyle = color;
+  ctx.beginPath(); ctx.ellipse(0, s*0.35, s*0.62, s*0.5, 0, 0, Math.PI*2); ctx.fill();
+  [[-s*0.55,-s*0.25],[0,-s*0.5],[s*0.55,-s*0.25]].forEach(p=>{
+    ctx.beginPath(); ctx.arc(p[0], p[1], s*0.26, 0, Math.PI*2); ctx.fill();
+  });
+  ctx.restore(); ctx.globalAlpha = 1;
+}
+function patronPatas(ctx, color, alpha){
+  const pos = [[120,180,-0.4],[940,140,0.5],[180,1180,0.3],[930,1230,-0.3],[540,90,0.1],[80,660,0.6],[1000,700,-0.6]];
+  pos.forEach(p=> pata(ctx, p[0], p[1], 46, color, alpha, p[2]));
+}
+function wrapLineas(ctx, texto, maxW){
+  const palabras = String(texto).split(/\s+/).filter(Boolean);
+  const lineas = []; let actual = '';
+  palabras.forEach(p=>{
+    const prueba = actual ? actual+' '+p : p;
+    if(ctx.measureText(prueba).width <= maxW) actual = prueba;
+    else { if(actual) lineas.push(actual); actual = p; }
+  });
+  if(actual) lineas.push(actual);
+  return lineas;
+}
+function pill(ctx, texto, x, y, opts){
+  const o = Object.assign({px:34, padX:30, padY:18, bg:'#000', color:'#fff', font:'Figtree', peso:700, centrar:false}, opts);
+  ctx.font = o.peso+' '+o.px+"px '"+o.font+"', sans-serif";
+  const w = ctx.measureText(texto).width + o.padX*2;
+  const h = o.px + o.padY*2;
+  const x0 = o.centrar ? x - w/2 : x;
+  ctx.fillStyle = o.bg; rr(ctx, x0, y, w, h, h/2); ctx.fill();
+  ctx.fillStyle = o.color; ctx.textBaseline = 'middle';
+  ctx.fillText(texto, x0 + o.padX, y + h/2 + o.px*0.06);
+  ctx.textBaseline = 'alphabetic';
+  return {w, h};
+}
+function fotoPlaceholder(ctx, x, y, w, h, c1, c2, radio){
+  ctx.save(); rr(ctx, x, y, w, h, radio==null? 24 : radio); ctx.clip();
+  ctx.fillStyle = tinte(c1, 0.82); ctx.fillRect(x,y,w,h);
+  pata(ctx, x+w/2, y+h/2 - h*0.05, Math.min(w,h)*0.24, c1, 0.85, -0.15);
+  pata(ctx, x+w*0.24, y+h*0.78, Math.min(w,h)*0.1, c2, 0.9, 0.4);
+  pata(ctx, x+w*0.78, y+h*0.24, Math.min(w,h)*0.08, c2, 0.9, -0.5);
+  ctx.restore();
+}
+function dibujaFoto(ctx, x, y, w, h, radio, c1, c2){
+  const img = fotoCache[fotoSel];
+  if(img){ ctx.save(); rr(ctx, x, y, w, h, radio); ctx.clip(); drawCover(ctx, img, x, y, w, h); ctx.restore(); }
+  else fotoPlaceholder(ctx, x, y, w, h, c1, c2, radio);
+}
+function fotoCirculo(ctx, cx, cy, r, c1, c2, borde){
+  const img = fotoCache[fotoSel];
+  ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.clip();
+  if(img) drawCover(ctx, img, cx-r, cy-r, r*2, r*2);
+  else { ctx.fillStyle = tinte(c1,0.82); ctx.fillRect(cx-r,cy-r,r*2,r*2); pata(ctx,cx,cy,r*0.5,c1,0.85,-0.15); }
+  ctx.restore();
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2);
+  ctx.lineWidth = 14; ctx.strokeStyle = borde; ctx.stroke();
+}
+function dibujaLogo(ctx, cx, y, alto, modo, c1, c2){
+  /* modo 'claro': sobre fondo oscuro/morado (logo directo o wordmark blanco).
+     modo 'chip': sobre fondo claro — logo blanco dentro de un chip morado.
+     modo 'oscuro': wordmark en morado sobre fondo claro (si no hay logo). */
+  if(logoImg){
+    let w = logoImg.width * (alto / logoImg.height);
+    if(modo === 'chip'){
+      const padX = 34, padY = 20;
+      ctx.fillStyle = c1; rr(ctx, cx - w/2 - padX, y - padY, w + padX*2, alto + padY*2, 22); ctx.fill();
+    }
+    ctx.drawImage(logoImg, cx - w/2, y, w, alto);
+    return alto + (modo==='chip' ? 40 : 0);
+  }
+  const px = alto * 0.62;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.font = "800 "+px+"px 'Bricolage Grotesque', sans-serif";
+  const color = (modo === 'oscuro') ? c1 : '#FFFFFF';
+  if(modo === 'chip'){
+    const w = ctx.measureText(marca.nombre).width + 70;
+    ctx.fillStyle = c1; rr(ctx, cx - w/2, y - 14, w, alto + 28, 20); ctx.fill();
+    ctx.fillStyle = '#FFFFFF';
+  } else ctx.fillStyle = color;
+  ctx.fillText(marca.nombre, cx, y + alto/2);
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  return alto + (modo==='chip' ? 28 : 0);
+}
+
+/* --- plantillas --- */
+const W = 1080, H = 1350;
+const PLANTILLAS = {
+t1(ctx, o){ // Número gigante, fondo lila claro
+  ctx.fillStyle = tinte(o.c1, 0.92); ctx.fillRect(0,0,W,H);
+  patronPatas(ctx, o.c1, 0.05);
+  ctx.fillStyle = rgba(o.c1, 0.16);
+  ctx.font = "800 640px 'Bricolage Grotesque', sans-serif";
+  ctx.textAlign = 'left';
+  ctx.fillText(o.destacado.slice(0,3), 40, 760);
+  pill(ctx, o.tag, 70, 80, {bg:o.c2, color:'#221740', px:34});
+  dibujaLogo(ctx, W-190, 84, 72, 'chip', o.c1, o.c2);
+  fotoCirculo(ctx, 790, 500, 250, o.c1, o.c2, '#FFFFFF');
+  ctx.fillStyle = sombra(o.c1, 0.25);
+  ctx.font = "800 88px 'Bricolage Grotesque', sans-serif";
+  let y = 880;
+  wrapLineas(ctx, o.titulo, 900).slice(0,3).forEach(l=>{ ctx.fillText(l, 70, y); y += 100; });
+  pill(ctx, o.cta, 70, 1170, {bg:o.c1, color:'#FFFFFF', px:36});
+},
+t2(ctx, o){ // Foto protagonista con overlay morado
+  const img = fotoCache[fotoSel];
+  if(img) drawCover(ctx, img, 0, 0, W, H);
+  else fotoPlaceholder(ctx, 0, 0, W, H, o.c1, o.c2, 0);
+  const gr = ctx.createLinearGradient(0, 380, 0, H);
+  gr.addColorStop(0, rgba(o.c1, 0));
+  gr.addColorStop(0.55, rgba(o.c1, 0.55));
+  gr.addColorStop(1, sombra(o.c1, 0.35));
+  ctx.fillStyle = gr; ctx.fillRect(0,0,W,H);
+  dibujaLogo(ctx, 200, 70, 92, 'claro', o.c1, o.c2);
+  pill(ctx, o.tag, 70, 210, {bg:'rgba(255,255,255,.22)', color:'#FFFFFF', px:30});
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = "800 92px 'Bricolage Grotesque', sans-serif";
+  const lineas = wrapLineas(ctx, o.titulo, 940).slice(0,4);
+  let y = H - 150 - (lineas.length-1)*104;
+  lineas.forEach(l=>{ ctx.fillText(l, 70, y); y += 104; });
+  ctx.fillStyle = o.c2; ctx.font = "700 42px 'Figtree', sans-serif";
+  ctx.fillText(o.cta, 70, H - 60);
+},
+t3(ctx, o){ // Tarjeta central estilo «polémica»
+  ctx.fillStyle = tinte(o.c1, 0.9); ctx.fillRect(0,0,W,H);
+  patronPatas(ctx, o.c1, 0.07);
+  dibujaLogo(ctx, W/2, 90, 92, 'chip', o.c1, o.c2);
+  const cw = 860, ch = 700, cx = (W-cw)/2, cy = 330;
+  ctx.save(); ctx.shadowColor = rgba(o.c1,0.35); ctx.shadowBlur = 60; ctx.shadowOffsetY = 24;
+  ctx.fillStyle = '#FFFFFF'; rr(ctx, cx, cy, cw, ch, 34); ctx.fill(); ctx.restore();
+  ctx.textAlign = 'center';
+  ctx.fillStyle = o.c1; ctx.font = "800 34px 'Figtree', sans-serif";
+  ctx.fillText(o.tag.toUpperCase(), W/2, cy+110);
+  ctx.fillStyle = '#221740'; ctx.font = "800 76px 'Bricolage Grotesque', sans-serif";
+  let y = cy + 240;
+  wrapLineas(ctx, o.titulo, cw-160).slice(0,4).forEach(l=>{ ctx.fillText(l, W/2, y); y += 90; });
+  ctx.textAlign = 'left';
+  pill(ctx, o.cta, W/2, cy+ch-130, {bg:o.c2, color:'#221740', px:34, centrar:true});
+  fotoCirculo(ctx, W/2, cy+ch+120, 150, o.c1, o.c2, '#FFFFFF');
+},
+t4(ctx, o){ // Checklist morado
+  ctx.fillStyle = o.c1; ctx.fillRect(0,0,W,H);
+  patronPatas(ctx, '#FFFFFF', 0.06);
+  dibujaLogo(ctx, W/2, 80, 96, 'claro', o.c1, o.c2);
+  ctx.fillStyle = '#FFFFFF'; ctx.font = "800 84px 'Bricolage Grotesque', sans-serif";
+  let y = 330;
+  wrapLineas(ctx, o.titulo, 940).slice(0,3).forEach(l=>{ ctx.fillText(l, 70, y); y += 96; });
+  y += 40;
+  o.lineas.slice(0,4).forEach(linea=>{
+    ctx.fillStyle = 'rgba(255,255,255,.12)'; rr(ctx, 70, y-58, 940, 118, 26); ctx.fill();
+    pata(ctx, 135, y-4, 26, o.c2, 1, 0);
+    ctx.fillStyle = '#FFFFFF'; ctx.font = "600 42px 'Figtree', sans-serif";
+    const ls = wrapLineas(ctx, linea, 760).slice(0,2);
+    if(ls.length === 1) ctx.fillText(ls[0], 200, y+12);
+    else { ctx.fillText(ls[0], 200, y-8); ctx.fillText(ls[1], 200, y+40); }
+    y += 150;
+  });
+  pill(ctx, o.cta, W/2, Math.min(y+16, 1210), {bg:'#FFFFFF', color:o.c1, px:36, centrar:true});
+},
+t5(ctx, o){ // Anuncio amarillo
+  ctx.fillStyle = o.c2; ctx.fillRect(0,0,W,H);
+  patronPatas(ctx, '#FFFFFF', 0.18);
+  dibujaLogo(ctx, W/2, 80, 100, 'chip', o.c1, o.c2);
+  ctx.fillStyle = sombra(o.c1, 0.1);
+  ctx.font = "800 100px 'Bricolage Grotesque', sans-serif";
+  ctx.textAlign = 'center';
+  let y = 340;
+  wrapLineas(ctx, o.titulo, 920).slice(0,3).forEach(l=>{ ctx.fillText(l, W/2, y); y += 112; });
+  ctx.textAlign = 'left';
+  dibujaFoto(ctx, 120, y+30, 840, 1180-y-30+90, 40, o.c1, o.c1);
+  pill(ctx, o.cta, W/2, 1230, {bg:o.c1, color:'#FFFFFF', px:38, centrar:true});
+},
+t6(ctx, o){ // Portada de carrusel blanca
+  ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0,0,W,H);
+  pata(ctx, 990, 120, 70, o.c2, 0.9, 0.4);
+  pata(ctx, 90, 1240, 55, o.c2, 0.9, -0.4);
+  pata(ctx, 1000, 1150, 40, tinte(o.c1,0.5), 0.5, 0.3);
+  pill(ctx, o.tag, 70, 90, {bg:tinte(o.c1,0.88), color:o.c1, px:32});
+  ctx.fillStyle = sombra(o.c1, 0.15);
+  ctx.font = "800 96px 'Bricolage Grotesque', sans-serif";
+  let y = 300;
+  wrapLineas(ctx, o.titulo, 620).slice(0,5).forEach(l=>{ ctx.fillText(l, 70, y); y += 108; });
+  dibujaFoto(ctx, 640, 560, 380, 500, 190, o.c1, o.c2);
+  pill(ctx, 'Desliza →', 70, 1090, {bg:o.c1, color:'#FFFFFF', px:38});
+  dibujaLogo(ctx, 260, 1210, 78, 'chip', o.c1, o.c2);
+  ctx.fillStyle = '#8A80A6'; ctx.font = "600 30px 'Figtree', sans-serif";
+  ctx.fillText(marca.ig+' · '+marca.web, 520, 1262);
+}
+};
+
+let renderPendiente = null;
+function pedirRender(){ clearTimeout(renderPendiente); renderPendiente = setTimeout(renderVisual, 120); }
+
+async function renderVisual(){
+  const canvas = $('#lienzo'); if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  try{
+    await document.fonts.load("800 100px 'Bricolage Grotesque'");
+    await document.fonts.load("700 42px 'Figtree'");
+  }catch(e){}
+  if(logoData && !logoImg){ try{ logoImg = await cargarImg(logoData); }catch(e){ logoImg = null; } }
+  if(fotosData[fotoSel] && !fotoCache[fotoSel]){ try{ fotoCache[fotoSel] = await cargarImg(fotosData[fotoSel]); }catch(e){} }
+  const o = {
+    c1: marca.c1 || '#6D28D9', c2: marca.c2 || '#F2C314',
+    tag: $('#v-tag').value || marca.nombre,
+    titulo: $('#v-titulo').value || marca.propuesta.split('.')[0],
+    destacado: $('#v-destacado').value || '🐾',
+    lineas: $('#v-lineas').value.split('\n').map(s=>s.trim()).filter(Boolean),
+    cta: $('#v-cta').value || marca.web
+  };
+  ctx.clearRect(0,0,W,H);
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  PLANTILLAS[$('#v-plantilla').value](ctx, o);
+}
+
+function renderThumbs(){
+  const cont = $('#thumbs-fotos');
+  if(!fotosData.length){ cont.innerHTML = '<span class="aviso">Sin fotos aún: las plantillas usan una ilustración de marca.</span>'; return; }
+  cont.innerHTML = fotosData.map((f,i)=>'<img src="'+f+'" alt="Foto '+(i+1)+'" data-i="'+i+'" class="'+(i===fotoSel?'sel':'')+'">').join('');
+  $$('#thumbs-fotos img').forEach(im=> im.addEventListener('click', ()=>{ fotoSel = parseInt(im.dataset.i,10); renderThumbs(); pedirRender(); }));
+}
+function renderLogoCaja(){
+  $('#logo-caja').innerHTML = logoData ? '<img src="'+logoData+'" alt="Logo">' : '<span class="sin-logo">Sin logo: se usa el nombre de la marca</span>';
+}
+function renderFeed(){
+  const g = $('#feed-grid');
+  g.innerHTML = feedData.length
+    ? feedData.map(d=>'<img src="'+d+'" alt="Diseño del feed">').join('')
+    : '<span class="aviso" style="grid-column:1/-1">Feed vacío: exporta o agrega diseños para previsualizar el conjunto.</span>';
+}
+
+function reducirImagen(file, maxLado, mime, calidad){
+  return new Promise((res, rej)=>{
+    const fr = new FileReader();
+    fr.onload = ()=>{
+      const im = new Image();
+      im.onload = ()=>{
+        const s = Math.min(1, maxLado / Math.max(im.width, im.height));
+        const c = document.createElement('canvas');
+        c.width = Math.round(im.width*s); c.height = Math.round(im.height*s);
+        c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+        res(c.toDataURL(mime, calidad));
+      };
+      im.onerror = rej; im.src = fr.result;
+    };
+    fr.onerror = rej; fr.readAsDataURL(file);
+  });
+}
+
+function enviarAVisual(g){
+  $('#v-tag').value = PILARES[g.pilar].nombre;
+  $('#v-titulo').value = g.titulo;
+  const num = (g.titulo.match(/\d+/)||[])[0];
+  $('#v-destacado').value = num || g.emoji || '🐾';
+  if(g.puntos) $('#v-lineas').value = g.puntos.slice(0,4).map(p=> p.split(':')[0]).join('\n');
+  $('#v-caption').value = g.caption || '';
+  $('#v-plantilla').value = g.formato==='carrusel' ? 't6' : (num ? 't1' : 't2');
+  activarPane('visual');
+  pedirRender();
+  toast('Contenido cargado en el estudio visual');
 }
 
 /* ============================================================
@@ -1067,7 +1493,76 @@ let descargas = null;
       escribirGuardados([]); renderGuardados(); toast('Guardados vaciados');
     }
   });
+  /* --- Estudio visual --- */
+  $('#inp-logo').addEventListener('change', async e=>{
+    const f = e.target.files[0]; if(!f) return;
+    try{
+      logoData = await reducirImagen(f, 900, 'image/png');
+      logoImg = null; lzSet(LZ.logo, logoData); renderLogoCaja(); pedirRender(); toast('Logo cargado ✓');
+    }catch(err){ toast('No se pudo leer el logo'); }
+    e.target.value = '';
+  });
+  $('#btn-quitar-logo').addEventListener('click', ()=>{
+    logoData = null; logoImg = null; try{ localStorage.removeItem(LZ.logo); }catch(e){}
+    renderLogoCaja(); pedirRender();
+  });
+  $('#inp-fotos').addEventListener('change', async e=>{
+    const files = Array.from(e.target.files).slice(0, 12);
+    for(const f of files){
+      try{
+        const d = await reducirImagen(f, 1200, 'image/jpeg', 0.82);
+        fotosData.push(d);
+      }catch(err){}
+    }
+    if(fotosData.length > 12) fotosData = fotosData.slice(-12);
+    Object.keys(fotoCache).forEach(k=> delete fotoCache[k]);
+    fotoSel = fotosData.length - 1;
+    lzSet(LZ.fotos, fotosData); renderThumbs(); pedirRender();
+    toast(files.length + (files.length===1?' foto agregada':' fotos agregadas'));
+    e.target.value = '';
+  });
+  $('#btn-borrar-foto').addEventListener('click', ()=>{
+    if(!fotosData.length) return;
+    fotosData.splice(fotoSel, 1);
+    Object.keys(fotoCache).forEach(k=> delete fotoCache[k]);
+    fotoSel = Math.max(0, fotoSel-1);
+    lzSet(LZ.fotos, fotosData); renderThumbs(); pedirRender();
+  });
+  ['v-plantilla','v-tag','v-destacado','v-titulo','v-lineas','v-cta'].forEach(id=>
+    $('#'+id).addEventListener('input', pedirRender));
+  $('#btn-copiar-caption').addEventListener('click', ()=> copiar($('#v-caption').value));
+  $('#btn-export-png').addEventListener('click', ()=>{
+    $('#lienzo').toBlob(async blob=>{
+      if(!blob){ toast('No se pudo generar la imagen'); return; }
+      if(descargas){
+        try{ await descargas.save({ filename:'encuentravet-post.png', data: blob }); toast('Imagen descargada ✓ Copia también la descripción'); return; }
+        catch(err){ if(err && err.code==='declined') return; }
+      }
+      const modal = document.createElement('div');
+      modal.className = 'modal-img';
+      const img = document.createElement('img'); img.src = $('#lienzo').toDataURL('image/png');
+      const p = document.createElement('p'); p.textContent = 'Mantén presionada la imagen (o clic derecho) para guardarla. Toca fuera para cerrar.';
+      modal.appendChild(img); modal.appendChild(p);
+      modal.addEventListener('click', ev=>{ if(ev.target!==img) modal.remove(); });
+      document.body.appendChild(modal);
+    }, 'image/png');
+  });
+  $('#btn-add-feed').addEventListener('click', ()=>{
+    const c = document.createElement('canvas'); c.width = 432; c.height = 540;
+    c.getContext('2d').drawImage($('#lienzo'), 0, 0, 432, 540);
+    feedData.unshift(c.toDataURL('image/jpeg', 0.8));
+    if(feedData.length > 12) feedData = feedData.slice(0, 12);
+    if(lzSet(LZ.feed, feedData)){ renderFeed(); toast('Agregado a la vista de feed ✓'); }
+  });
+  $('#btn-vaciar-feed').addEventListener('click', ()=>{
+    if(feedData.length && confirm('¿Vaciar la vista previa del feed?')){ feedData = []; lzSet(LZ.feed, feedData); renderFeed(); }
+  });
+
   pintarMarca();
   renderGuardados();
+  renderLogoCaja();
+  renderThumbs();
+  renderFeed();
+  renderVisual();
 })();
 </script>
