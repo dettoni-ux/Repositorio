@@ -18,9 +18,9 @@
       "cierre": "Menos teléfono, más pacientes"
     },
     "estado": "pendiente",
-    "lote": "lote-2026-08-30-21-06",
-    "imagen": "lote-2026-08-30-21-06-1-tip.png",
-    "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/main/piezas/lote-2026-08-30-21-06-1-tip.png",
+    "lote": "lote-2026-08-30-22-41",
+    "imagen": "lote-2026-08-30-22-41-1-tip.png",
+    "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/main/piezas/lote-2026-08-30-22-41-1-tip.png",
     "nota": null
   },
   {
@@ -42,9 +42,9 @@
       "cierre": "Tu título vale: que nadie dude de ti"
     },
     "estado": "pendiente",
-    "lote": "lote-2026-08-30-21-06",
-    "imagen": "lote-2026-08-30-21-06-2-hito.png",
-    "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/main/piezas/lote-2026-08-30-21-06-2-hito.png",
+    "lote": "lote-2026-08-30-22-41",
+    "imagen": "lote-2026-08-30-22-41-2-hito.png",
+    "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/main/piezas/lote-2026-08-30-22-41-2-hito.png",
     "nota": null
   },
   {
@@ -57,6 +57,7 @@
     "video": {
       "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A fluffy cartoon cat sits in a waiting room chair holding a tiny purse. Scene 1 (0-4s): a suspicious rooster wearing an oversized white coat and a crayon-drawn diploma taped to the wall proudly opens a toy doctor kit; the cat raises one eyebrow. Scene 2 (4-7s): the cat looks at the wall, the crayon diploma slowly peels off and falls. Scene 3 (7-10s): a friendly capybara veterinarian with a glowing blue verification badge on the chest opens the next door and waves warmly; the cat walks over happily. Purple (#5B2E7E) and yellow (#FFD84D) accents in the room decor. No text overlays, no logos, no watermarks, realistic smooth animation.",
       "duracion_s": 10,
+      "narracion": "Cualquiera puede ponerse una bata. Pero el título no se improvisa. En EncuentraVet verificamos a cada veterinario, uno por uno. Búscalo en encuentravet punto cl.",
       "escenas": [
         {
           "tiempo": "0-4 s",
@@ -78,6 +79,7 @@
     "visual": {
       "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A fluffy cartoon cat sits in a waiting room chair holding a tiny purse. Scene 1 (0-4s): a suspicious rooster wearing an oversized white coat and a crayon-drawn diploma taped to the wall proudly opens a toy doctor kit; the cat raises one eyebrow. Scene 2 (4-7s): the cat looks at the wall, the crayon diploma slowly peels off and falls. Scene 3 (7-10s): a friendly capybara veterinarian with a glowing blue verification badge on the chest opens the next door and waves warmly; the cat walks over happily. Purple (#5B2E7E) and yellow (#FFD84D) accents in the room decor. No text overlays, no logos, no watermarks, realistic smooth animation.",
       "duracion_s": 10,
+      "narracion": "Cualquiera puede ponerse una bata. Pero el título no se improvisa. En EncuentraVet verificamos a cada veterinario, uno por uno. Búscalo en encuentravet punto cl.",
       "escenas": [
         {
           "tiempo": "0-4 s",
@@ -98,7 +100,7 @@
       "nota": "Video pendiente de generación: falta el secret REPLICATE_API_TOKEN. El prompt de IA está en la pieza."
     },
     "estado": "pendiente",
-    "lote": "lote-2026-08-30-21-06",
+    "lote": "lote-2026-08-30-22-41",
     "imagen": null,
     "imagen_url": null,
     "nota": "Video pendiente de generación: falta el secret REPLICATE_API_TOKEN. El prompt de IA está en la pieza."

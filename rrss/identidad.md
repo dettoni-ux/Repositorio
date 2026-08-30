@@ -74,6 +74,11 @@ Para tutores: "tu mascota", "el regalón de la casa". Gancho fuerte en la primer
   Describe la acción tomas por toma con segundos.
 - `video.escenas`: el guion en español (tiempo, descripción, texto en pantalla que se agregará
   al editar). El texto en pantalla NO va en el prompt de IA.
+- `video.narracion`: el guion de la VOZ EN OFF en español de Chile, neutro y cálido, que se
+  generará con voz sintética y se montará sobre el video. Debe caber holgadamente en la
+  duración del clip: **20 a 30 palabras como máximo para 10 segundos** (unas 2-3 frases cortas).
+  Sin emoji, sin hashtags, sin leer la URL letra por letra: se dice "encuentravet punto cl".
+  Cierra con el gancho de la marca (la insignia azul se verifica).
 - El caption del video refuerza el mensaje: cualquiera puede ponerse una bata; la insignia azul
   se verifica. CTA según público (para vets: "certifícate y que nadie dude de ti").
 

@@ -46,6 +46,9 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           REPLICATE_API_TOKEN: ${{ secrets.REPLICATE_API_TOKEN }}
           SEEDANCE_MODEL: ${{ vars.SEEDANCE_MODEL }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          ELEVENLABS_VOICE_ID: ${{ vars.ELEVENLABS_VOICE_ID }}
+          ELEVENLABS_MODEL: ${{ vars.ELEVENLABS_MODEL }}
           RAMA: ${{ github.ref_name }}
         run: |
           node generar.mjs \

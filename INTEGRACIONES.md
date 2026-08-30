@@ -49,6 +49,23 @@ Notas: imágenes solo JPEG; videos MP4 en URL pública; los archivos en `publica
 
 ---
 
+## 1.b) Voz en off automática con ElevenLabs
+
+Los reels animados se generan con voz en off sin pasos manuales: Claude escribe la narración
+(20-30 palabras, español de Chile), ElevenLabs la convierte en audio y el sistema la monta
+sobre el video con ffmpeg. Si la narración dura más que el clip, se congela el último cuadro
+para que la frase no se corte; si dura menos, el video conserva su largo completo.
+
+### Secret y variables
+| Nombre | Tipo | Contenido |
+|---|---|---|
+| `ELEVENLABS_API_KEY` | Secret | Clave de elevenlabs.io → Profile → API Keys |
+| `ELEVENLABS_VOICE_ID` | Variable *(opcional)* | ID de la voz elegida; sin esto usa la primera de la cuenta y la informa en el log |
+| `ELEVENLABS_MODEL` | Variable *(opcional)* | Por defecto `eleven_v3` (multilingüe y expresivo) |
+
+Costo de referencia: ~USD 0,10 por cada 1.000 caracteres, es decir **centavos por reel**.
+Sin este secret el video igual se genera, pero mudo, y la narración queda escrita en la pieza.
+
 ## 2) Generar los videos de los reels con Seedance
 
 Seedance (ByteDance) se usa por API a través de varios proveedores: Replicate, fal.ai,

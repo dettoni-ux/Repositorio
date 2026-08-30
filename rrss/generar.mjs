@@ -15,7 +15,7 @@
  * --demo    no toca la BD (cifras de ejemplo, cola local)
  * --sin-api no llama a Claude (piezas fijas de ejemplo; para probar plantillas/render)
  */
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, renameSync, unlinkSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import Anthropic from '@anthropic-ai/sdk';
@@ -24,6 +24,7 @@ import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod';
 import { obtenerDatos, insertarPieza } from './datos.mjs';
 import { abrirNavegador, renderPieza } from './render.mjs';
 import { generarVideo, videoDisponible } from './video.mjs';
+import { generarVoz, mezclarVideoYVoz, vozDisponible } from './voz.mjs';
 
 const AQUI = path.dirname(fileURLToPath(import.meta.url));
 const DIR_PIEZAS = path.join(AQUI, '..', 'piezas');
@@ -61,6 +62,7 @@ const VideoSchema = z.object({
   video: z.object({
     prompt_ia: z.string().max(1600),
     duracion_s: z.number().int().min(5).max(10),
+    narracion: z.string().max(260),
     escenas: z.array(z.object({
       tiempo: z.string().max(20),
       descripcion: z.string().max(220),
@@ -171,6 +173,7 @@ function piezasEjemplo(datos) {
       video: {
         prompt_ia: 'High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A fluffy cartoon cat sits in a waiting room chair holding a tiny purse. Scene 1 (0-4s): a suspicious rooster wearing an oversized white coat and a crayon-drawn diploma taped to the wall proudly opens a toy doctor kit; the cat raises one eyebrow. Scene 2 (4-7s): the cat looks at the wall, the crayon diploma slowly peels off and falls. Scene 3 (7-10s): a friendly capybara veterinarian with a glowing blue verification badge on the chest opens the next door and waves warmly; the cat walks over happily. Purple (#5B2E7E) and yellow (#FFD84D) accents in the room decor. No text overlays, no logos, no watermarks, realistic smooth animation.',
         duracion_s: 10,
+        narracion: 'Cualquiera puede ponerse una bata. Pero el título no se improvisa. En EncuentraVet verificamos a cada veterinario, uno por uno. Búscalo en encuentravet punto cl.',
         escenas: [
           { tiempo: '0-4 s', descripcion: 'El “doctor” gallo con bata gigante y diploma a crayón abre un maletín de juguete', texto_pantalla: '¿Tu “veterinario”… es veterinario?' },
           { tiempo: '4-7 s', descripcion: 'El diploma de crayón se despega de la pared', texto_pantalla: 'Cualquiera puede ponerse una bata' },
@@ -202,12 +205,33 @@ try {
       archivo = `${lote}-${i + 1}-video.mp4`;
       if (videoDisponible()) {
         console.log(`  Pieza ${i + 1} (video): generando con IA (~1-3 min)…`);
+        const mudo = path.join(DIR_PIEZAS, `.mudo-${i + 1}.mp4`);
         try {
-          await generarVideo({ prompt: pieza.video.prompt_ia, duracion: pieza.video.duracion_s, salida: path.join(DIR_PIEZAS, archivo) });
+          await generarVideo({ prompt: pieza.video.prompt_ia, duracion: pieza.video.duracion_s, salida: mudo });
+          if (vozDisponible()) {
+            console.log('  Generando voz en off con ElevenLabs y montándola sobre el video…');
+            const voz = path.join(DIR_PIEZAS, `.voz-${i + 1}.mp3`);
+            try {
+              await generarVoz({ texto: pieza.video.narracion, salida: voz });
+              await mezclarVideoYVoz({ video: mudo, audio: voz, salida: path.join(DIR_PIEZAS, archivo) });
+            } catch (e) {
+              nota = `Video generado sin voz en off (${e.message}).`;
+              console.warn(`  ${nota}`);
+              renameSync(mudo, path.join(DIR_PIEZAS, archivo));
+            } finally {
+              if (existsSync(voz)) unlinkSync(voz);
+            }
+          } else {
+            nota = 'Video sin voz en off: falta el secret ELEVENLABS_API_KEY. La narración está en la pieza.';
+            console.warn(`  ${nota}`);
+            renameSync(mudo, path.join(DIR_PIEZAS, archivo));
+          }
         } catch (e) {
           nota = `Video no generado: ${e.message}. El prompt queda en la pieza para regenerar.`;
           console.warn(`  ${nota}`);
           archivo = null;
+        } finally {
+          if (existsSync(mudo)) unlinkSync(mudo);
         }
       } else {
         nota = 'Video pendiente de generación: falta el secret REPLICATE_API_TOKEN. El prompt de IA está en la pieza.';
