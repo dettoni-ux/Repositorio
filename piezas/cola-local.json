@@ -104,5 +104,101 @@
     "imagen": null,
     "imagen_url": null,
     "nota": "Video pendiente de generación: falta el secret REPLICATE_API_TOKEN. El prompt de IA está en la pieza."
+  },
+  {
+    "fecha_propuesta": "2026-08-31",
+    "hora_propuesta": "09:30",
+    "publico": "veterinarios",
+    "caption": "¿Cuántas veces hoy dejaste el estetoscopio para contestar el teléfono? 📞\n\nEntre un control de vacunas y una consulta, suena el celular: \"¿tiene hora mañana?\". Cortas, anotas en un papel, vuelves al paciente... y a las 6 de la tarde ya no sabes si esa hora quedó tomada o no.\n\nLa agenda online de EncuentraVet muestra tu disponibilidad real. El tutor entra, ve tus bloques libres y reserva solo. Tú te enteras con la hora ya confirmada.\n\nTres cosas que puedes hacer hoy mismo para que tu agenda trabaje por ti 👇\n\nY lo de siempre: 0% comisión. Lo que cobras es tuyo.\n\nCrea tu perfil gratis en encuentravet.cl\n\n#EncuentraVet #VeterinariosVerificados #MédicoVeterinario #VeterinariosChile #AgendaOnline #GestiónClínica #ConsultaVeterinaria",
+    "tipo": "tip",
+    "formato": "post",
+    "visual": {
+      "etiqueta": "AGENDA ONLINE",
+      "titulo": "Menos teléfono, más pacientes",
+      "destacado": "0 llamadas",
+      "lineas": [
+        "Carga solo los bloques que de verdad puedes atender: disponibilidad real, cero sobrecupo.",
+        "Deja un bloque de 20 min entre consultas para urgencias y para respirar.",
+        "Cierra tu agenda con anticipación los días de cirugía: el tutor ni te llama."
+      ],
+      "cierre": "Tu agenda visible 24/7. Tú, tranquilo con el paciente."
+    },
+    "estado": "pendiente",
+    "lote": "lote-2026-08-30-23-25",
+    "imagen": "lote-2026-08-30-23-25-1-tip.png",
+    "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/claude/influence-chile-promo-graphic-zix4zb/piezas/lote-2026-08-30-23-25-1-tip.png",
+    "nota": null
+  },
+  {
+    "fecha_propuesta": "2026-09-01",
+    "hora_propuesta": "10:00",
+    "publico": "veterinarios",
+    "caption": "Partimos con una idea simple: que un tutor pudiera saber, sin dudar, que quien atiende a su mascota es médico veterinario de verdad. 💙\n\nHoy somos 100 veterinarios verificados uno a uno, validados contra el Registro Civil y COLMEVET antes de recibir la insignia azul. Estamos presentes en 32 comunas y este mes se hicieron 180 reservas a través de la plataforma.\n\nNo es un directorio donde cualquiera se inscribe. Es una comunidad donde tu título vale y se ve.\n\nSi tu comuna todavía no aparece en el mapa, puede ser por ti.\n\nCrea tu perfil gratis en encuentravet.cl\n\n#EncuentraVet #VeterinariosVerificados #MédicoVeterinario #VeterinariosChile #InsigniaAzul #ComunidadVeterinaria",
+    "tipo": "hito",
+    "formato": "post",
+    "visual": {
+      "etiqueta": "HITO DE LA COMUNIDAD",
+      "titulo": "100 veterinarios verificados uno a uno",
+      "destacado": "💯",
+      "lineas": [
+        "Validados con Registro Civil y COLMEVET.",
+        "32 comunas con vets verificados.",
+        "180 reservas este mes. 0% comisión."
+      ],
+      "cierre": "Tu título vale. Aquí además se ve."
+    },
+    "estado": "pendiente",
+    "lote": "lote-2026-08-30-23-25",
+    "imagen": "lote-2026-08-30-23-25-2-hito.png",
+    "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/claude/influence-chile-promo-graphic-zix4zb/piezas/lote-2026-08-30-23-25-2-hito.png",
+    "nota": null
+  },
+  {
+    "fecha_propuesta": "2026-09-03",
+    "hora_propuesta": "09:00",
+    "publico": "veterinarios",
+    "caption": "\"Doctor, ¿y cuándo fue la última desparasitación?\" 🤔\n\nY ahí viene el silencio: el carnet quedó en la casa, la foto del examen se perdió en el WhatsApp de la familia y el tratamiento anterior nadie lo recuerda bien. Terminas reconstruyendo la historia clínica a punta de memoria ajena.\n\nLa ficha clínica digital de EncuentraVet guarda vacunas, exámenes e historial de cada paciente en un solo lugar. Cuando ese perrito vuelve en seis meses, la información está ahí, ordenada y disponible.\n\nTres hábitos cortos que te ahorran minutos en cada control 👇\n\nMenos arqueología clínica, más decisiones con respaldo.\n\nCrea tu perfil gratis en encuentravet.cl\n\n#EncuentraVet #VeterinariosVerificados #MédicoVeterinario #VeterinariosChile #FichaClínica #HistorialClínico #GestiónVeterinaria",
+    "tipo": "tip",
+    "formato": "post",
+    "visual": {
+      "etiqueta": "FICHA CLÍNICA DIGITAL",
+      "titulo": "El historial no debería vivir en un carnet perdido",
+      "destacado": "1 lugar",
+      "lineas": [
+        "Registra la vacuna en el momento, no al final del día: se te van los detalles.",
+        "Sube la foto del examen a la ficha del paciente, no al chat: ahí sí la encuentras.",
+        "Anota el motivo de consulta en una línea clara para tu yo del próximo control."
+      ],
+      "cierre": "Vacunas, exámenes e historial en un solo lugar"
+    },
+    "estado": "pendiente",
+    "lote": "lote-2026-08-30-23-25",
+    "imagen": "lote-2026-08-30-23-25-3-tip.png",
+    "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/claude/influence-chile-promo-graphic-zix4zb/piezas/lote-2026-08-30-23-25-3-tip.png",
+    "nota": null
+  },
+  {
+    "fecha_propuesta": "2026-09-05",
+    "hora_propuesta": "19:00",
+    "publico": "tutores",
+    "caption": "Buscar veterinario a las 11 de la noche, cuando el regalón de la casa anda raro, no debería ser una lotería. 🐾\n\nEn EncuentraVet cada veterinario está verificado uno a uno: se valida contra el Registro Civil y COLMEVET antes de recibir la insignia azul. Si ves la insignia, es médico veterinario de verdad.\n\nAsí sacas provecho a la plataforma en tres pasos 👇\n\nAdemás, la ficha de tu mascota es gratis: vacunas, exámenes y recordatorios en un solo lugar, para que no se te pase ninguna fecha.\n\nRegístrate gratis en encuentravet.cl\n\n#EncuentraVet #VeterinariosVerificados #MascotasChile #TutorResponsable #InsigniaAzul #VeterinarioCerca",
+    "tipo": "tip",
+    "formato": "post",
+    "visual": {
+      "etiqueta": "BUSCA POR COMUNA",
+      "titulo": "Cómo elegir bien al vet de tu mascota",
+      "destacado": "Insignia",
+      "lineas": [
+        "Filtra por tu comuna y revisa que el perfil tenga la insignia azul de verificado.",
+        "Reserva la hora online: eliges el bloque disponible y queda confirmado.",
+        "Crea la ficha gratis de tu mascota y ten vacunas y exámenes siempre a mano."
+      ],
+      "cierre": "Si tiene insignia azul, es veterinario de verdad"
+    },
+    "estado": "pendiente",
+    "lote": "lote-2026-08-30-23-25",
+    "imagen": "lote-2026-08-30-23-25-4-tip.png",
+    "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/claude/influence-chile-promo-graphic-zix4zb/piezas/lote-2026-08-30-23-25-4-tip.png",
+    "nota": null
   }
 ]
