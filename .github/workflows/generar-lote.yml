@@ -22,6 +22,11 @@ on:
     # Lunes 13:00 UTC = 09:00 Chile (invierno, UTC-4) / 10:00 (verano, UTC-3)
     - cron: '0 13 * * 1'
 
+# Una sola corrida a la vez: dos en paralelo chocarían al guardar los archivos
+concurrency:
+  group: generar-lote
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
@@ -60,5 +65,12 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add piezas/
-          git diff --cached --quiet || git commit -m "Agregar lote de piezas RRSS pendientes de aprobación"
-          git push
+          git diff --cached --quiet && exit 0
+          git commit -m "Agregar lote de piezas RRSS pendientes de aprobación"
+          for intento in 1 2 3; do
+            git push && exit 0
+            echo "Push rechazado (otra corrida escribió antes); integrando y reintentando…"
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+          done
+          echo "No se pudo guardar el lote tras 3 intentos." >&2
+          exit 1
