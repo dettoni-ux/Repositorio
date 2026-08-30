@@ -1,0 +1,34 @@
+/* Paleta oficial EncuentraVet — calcada de sitio/marca.css (valores confirmados por la sesión local) */
+:root{
+  --morado:#5B2E7E;        /* principal */
+  --morado-2:#6B3593;
+  --morado-osc:#3C1D55;
+  --morado-noche:#2C1140;
+  --lila:#EADCF4;
+  --lila-claro:#F5EFFA;
+  --amarillo:#FFD84D;
+  --amarillo-2:#FFE277;
+  --rosa:#B01E5E;          /* acento */
+  --azul-insignia:#1E9BE0; /* SOLO insignia verificado */
+  --grad-morado:linear-gradient(135deg,#5B2E7E 0%,#3C1D55 100%);
+  --grad-amarillo:linear-gradient(135deg,#FFD84D 0%,#FFE277 100%);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1350px;overflow:hidden}
+body{
+  font-family:'Nunito',system-ui,-apple-system,sans-serif;
+  color:var(--morado-osc);
+  background:var(--lila-claro);
+}
+h1,h2,.titulo,.destacado{font-family:'Poppins','Nunito',system-ui,sans-serif}
+.pill{
+  display:inline-block;font-family:'Poppins',sans-serif;font-weight:600;
+  border-radius:999px;padding:14px 34px;font-size:30px;letter-spacing:.02em;
+}
+.marca-wordmark{
+  font-family:'Poppins',sans-serif;font-weight:800;font-size:44px;color:#fff;
+  display:flex;align-items:center;gap:14px;white-space:nowrap;
+}
+.marca-wordmark .vet{color:var(--amarillo)}
+.marca-wordmark img{height:72px;width:auto;display:block}
+.patita{width:44px;height:44px;flex:none}

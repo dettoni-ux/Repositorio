@@ -1,0 +1,2 @@
+Las imágenes JPG que quieras publicar por la API de Instagram van en esta carpeta.
+Recuerda: este repositorio es público.
