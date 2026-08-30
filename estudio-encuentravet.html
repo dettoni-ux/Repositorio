@@ -2,12 +2,13 @@
 <title>Estudio EncuentraVet</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<script src="https://cdn.jsdelivr.net/npm/mp4-muxer@5.2.2/build/mp4-muxer.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
 <style>
   :root{
     --bg:#FDF8FA; --panel:#FFFFFF; --panel2:#FDEEF3; --ink:#241A1F; --ink2:#7A6870;
     --line:#F2DFE6; --morado:#CE1F63; --morado-fuerte:#8E1145; --morado-suave:#FDE7EF;
-    --amarillo:#0B7A54; --amarillo-bg:#DFF5EB; --verde-borde:#A9E3CB;
+    --amarillo:#0B7A54; --amarillo-bg:#DFF5EB; --negro:#241A1F; --negro-txt:#FFFFFF;
     --hist:#CE1F63; --hist-bg:#FDE7EF; --reel:#0B7A54; --reel-bg:#DCF3E9;
     --carr:#4A5568; --carr-bg:#EDF0F3; --ok:#0B7A54; --shadow:0 1px 2px rgba(36,26,31,.05), 0 8px 24px rgba(206,31,99,.07);
   }
@@ -15,7 +16,7 @@
     :root:not([data-theme="light"]){
       --bg:#161013; --panel:#201820; --panel2:#2B2028; --ink:#F6EAEF; --ink2:#B79FAA;
       --line:#3A2B33; --morado:#FF6FA5; --morado-fuerte:#FF9CC1; --morado-suave:#47182F;
-      --amarillo:#3DD68C; --amarillo-bg:#10352A; --verde-borde:#1E5C46;
+      --amarillo:#3DD68C; --amarillo-bg:#10352A; --negro:#F1E9EE; --negro-txt:#161013;
       --hist:#FF6FA5; --hist-bg:#47182F; --reel:#3DD68C; --reel-bg:#10352A;
       --carr:#A8B8CC; --carr-bg:#2A3340; --ok:#3DD68C; --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.4);
     }
@@ -23,7 +24,7 @@
   :root[data-theme="dark"]{
     --bg:#161013; --panel:#201820; --panel2:#2B2028; --ink:#F6EAEF; --ink2:#B79FAA;
     --line:#3A2B33; --morado:#FF6FA5; --morado-fuerte:#FF9CC1; --morado-suave:#47182F;
-    --amarillo:#3DD68C; --amarillo-bg:#10352A; --verde-borde:#1E5C46;
+    --amarillo:#3DD68C; --amarillo-bg:#10352A; --negro:#F1E9EE; --negro-txt:#161013;
     --hist:#FF6FA5; --hist-bg:#47182F; --reel:#3DD68C; --reel-bg:#10352A;
     --carr:#A8B8CC; --carr-bg:#2A3340; --ok:#3DD68C; --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.4);
   }
@@ -72,7 +73,7 @@
   }
   :root[data-theme="dark"] .btn{color:#161013}
   @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .btn{color:#161013} }
-  .btn.sec{background:var(--amarillo-bg); color:var(--amarillo); border:1.5px solid var(--verde-borde)}
+  .btn.sec{background:var(--negro); color:var(--negro-txt)}
   .btn.mini{padding:7px 13px; font-size:13.5px; border-radius:9px}
   .btn:active{transform:translateY(1px)}
   .fila-botones{display:flex; flex-wrap:wrap; gap:10px; margin-top:16px}
@@ -304,7 +305,7 @@ Encuentra veterinarios verificados cerca tuyo en encuentravet.cl — gratis.
             </div>
             <div class="fila-botones">
               <button class="btn sec" id="btn-reel-previa">▶ Ver previa</button>
-              <button class="btn" id="btn-reel-crear">Crear y descargar reel</button>
+              <button class="btn" id="btn-reel-crear">🎬 Generar reel MP4</button>
             </div>
             <p class="aviso" id="reel-estado">La grabación ocurre en tu navegador: dura lo mismo que el reel y no sube nada a ningún servidor.</p>
           </div>
@@ -1614,6 +1615,54 @@ function animarReel(guion, ctx, alAvanzar){
   });
 }
 
+/* --- Codificación MP4/H.264 con WebCodecs (formato que exige Instagram) --- */
+async function perfilH264(){
+  if(!('VideoEncoder' in window) || !window.Mp4Muxer) return null;
+  // Niveles que admiten 1080×1920; se prueba del más compatible al más alto.
+  for(const codec of ['avc1.42002A','avc1.4D002A','avc1.640028','avc1.42E028']){
+    try{
+      const r = await VideoEncoder.isConfigSupported({ codec, width:RW, height:RH, bitrate:8_000_000, framerate:30 });
+      if(r && r.supported) return codec;
+    }catch(e){}
+  }
+  return null;
+}
+
+/* Codifica cuadro a cuadro (más rápido que grabar en tiempo real) y devuelve un MP4 real. */
+async function generarMp4(guion, ctx, codec, alAvanzar){
+  const FPS = 30;
+  const total = Math.ceil(guion.total * FPS);
+  const muxer = new Mp4Muxer.Muxer({
+    target: new Mp4Muxer.ArrayBufferTarget(),
+    video: { codec:'avc', width:RW, height:RH, frameRate:FPS },
+    fastStart: 'in-memory'
+  });
+  let errorEnc = null;
+  const enc = new VideoEncoder({
+    output: (chunk, meta) => muxer.addVideoChunk(chunk, meta),
+    error: e => { errorEnc = e; }
+  });
+  enc.configure({ codec, width:RW, height:RH, bitrate:8_000_000, framerate:FPS, latencyMode:'quality' });
+
+  for(let i=0; i<total; i++){
+    if(errorEnc) throw errorEnc;
+    dibujarCuadroReel(ctx, guion, i / FPS);
+    const frame = new VideoFrame(ctx.canvas, { timestamp: Math.round(i * 1e6 / FPS), duration: Math.round(1e6/FPS) });
+    enc.encode(frame, { keyFrame: i % (FPS*2) === 0 });
+    frame.close();
+    if(i % 10 === 0){
+      if(alAvanzar) alAvanzar(i/total);
+      await new Promise(r => setTimeout(r, 0));   // deja respirar a la interfaz
+      if(enc.encodeQueueSize > 30) await new Promise(r => setTimeout(r, 30));
+    }
+  }
+  await enc.flush();
+  enc.close();
+  if(errorEnc) throw errorEnc;
+  muxer.finalize();
+  return new Blob([muxer.target.buffer], { type: 'video/mp4' });
+}
+
 function formatoVideoSoportado(){
   // Instagram exige H.264 dentro de MP4: se pide explícitamente primero.
   const opciones = [
@@ -1644,37 +1693,57 @@ async function crearReel(){
   if(reelCorriendo) return;
   const canvas = $('#lienzo-reel'), ctx = canvas.getContext('2d');
   const estado = $('#reel-estado'), barra = $('#reel-barra').firstElementChild;
-  const mimePedido = formatoVideoSoportado();
-  if(!mimePedido){
-    estado.textContent = 'Este navegador no puede grabar video. Prueba en Chrome o Safari de escritorio.';
-    return;
-  }
   reelCorriendo = true;
   estado.textContent = 'Preparando…';
   await prepararFuentesReel();
   const guion = guionReel();
-  const stream = canvas.captureStream(30);
-  const trozos = [];
-  const rec = new MediaRecorder(stream, { mimeType: mimePedido, videoBitsPerSecond: 8_000_000 });
-  const fmt = analizarFormato(rec.mimeType || mimePedido);
-  rec.ondataavailable = e => { if(e.data.size) trozos.push(e.data); };
-  const listo = new Promise(res => { rec.onstop = res; });
 
-  estado.textContent = 'Grabando el reel… (' + guion.total.toFixed(0) + ' s, no cierres la pestaña)';
-  rec.start();
-  await animarReel(guion, ctx, p => { barra.style.width = (p*100).toFixed(0)+'%'; });
-  rec.stop();
-  await listo;
-  stream.getTracks().forEach(t => t.stop());
+  let blob = null, aviso = '';
+  const codec = await perfilH264();
 
-  const blob = new Blob(trozos, { type: rec.mimeType || mimePedido });
-  const nombre = 'encuentravet-reel.' + fmt.ext;
+  if(codec){
+    // Camino preferido: MP4 con H.264, listo para Instagram.
+    estado.textContent = 'Generando el MP4…';
+    try{
+      blob = await generarMp4(guion, ctx, codec, p => { barra.style.width = (p*100).toFixed(0)+'%'; });
+    }catch(e){
+      console.warn('WebCodecs falló, se usa el grabador del navegador:', e);
+      blob = null;
+    }
+  }
+
+  if(!blob){
+    // Respaldo: grabar en tiempo real con el grabador del navegador.
+    const mimePedido = formatoVideoSoportado();
+    if(!mimePedido){
+      estado.textContent = 'Este navegador no puede generar video. Prueba en Chrome, Edge o Safari de escritorio.';
+      reelCorriendo = false; barra.style.width = '0%';
+      return;
+    }
+    const stream = canvas.captureStream(30);
+    const trozos = [];
+    const rec = new MediaRecorder(stream, { mimeType: mimePedido, videoBitsPerSecond: 8_000_000 });
+    rec.ondataavailable = e => { if(e.data.size) trozos.push(e.data); };
+    const listo = new Promise(res => { rec.onstop = res; });
+    estado.textContent = 'Grabando el reel… (' + guion.total.toFixed(0) + ' s, no cierres la pestaña)';
+    rec.start();
+    await animarReel(guion, ctx, p => { barra.style.width = (p*100).toFixed(0)+'%'; });
+    rec.stop();
+    await listo;
+    stream.getTracks().forEach(t => t.stop());
+    const fmt = analizarFormato(rec.mimeType || mimePedido);
+    blob = new Blob(trozos, { type: rec.mimeType || mimePedido });
+    if(!fmt.apto){
+      aviso = ' Ojo: este navegador no pudo usar H.264, así que Instagram podría rechazarlo. Prueba en Chrome o Edge de escritorio.';
+    }
+    if(fmt.ext !== 'mp4') aviso = ' El archivo salió en WebM;' + aviso;
+  }
+
+  const nombre = 'encuentravet-reel.mp4';
   const peso = (blob.size/1048576).toFixed(1) + ' MB';
-  estado.textContent = fmt.apto
-    ? 'Reel listo (' + peso + ', MP4 H.264): se puede subir a Instagram tal cual.'
-    : 'Reel listo (' + peso + '), pero este navegador grabó en ' +
-      (fmt.h264 ? 'un formato no compatible' : (fmt.ext === 'webm' ? 'WebM' : 'VP9')) +
-      ' e Instagram solo acepta MP4 con H.264. Ábrelo en Chrome o Safari de escritorio, o conviértelo antes de subirlo.';
+  estado.textContent = (aviso
+    ? 'Reel listo (' + peso + ').' + aviso
+    : 'Reel listo (' + peso + ', MP4 H.264): súbelo a Instagram tal cual.');
   reelCorriendo = false;
   barra.style.width = '0%';
 
