@@ -1,0 +1,131 @@
+<!-- Sección «Redes sociales» del /panel — copiar al generador de páginas del sitio.
+     Usa las variables de marca.css y consume /api/rrss-piezas. -->
+<section class="rrss-cola">
+  <header class="rrss-cab">
+    <h2>Redes sociales · cola de aprobación</h2>
+    <div class="rrss-filtros">
+      <button class="rrss-f activo" data-estado="pendiente">Pendientes</button>
+      <button class="rrss-f" data-estado="aprobada">Aprobadas</button>
+      <button class="rrss-f" data-estado="publicada">Publicadas</button>
+      <button class="rrss-f" data-estado="rechazada">Rechazadas</button>
+    </div>
+  </header>
+  <p class="rrss-nota">Nada se publica sin tu aprobación. Al aprobar, la pieza se publica sola en su fecha programada.</p>
+  <div id="rrss-lista" class="rrss-lista"><p class="rrss-cargando">Cargando…</p></div>
+</section>
+
+<style>
+  .rrss-cola{max-width:900px}
+  .rrss-cab{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+  .rrss-cab h2{font-family:'Poppins',sans-serif;font-weight:700;color:var(--morado,#5B2E7E)}
+  .rrss-filtros{display:flex;gap:6px;flex-wrap:wrap}
+  .rrss-f{border:1px solid var(--lila,#EADCF4);background:#fff;color:var(--morado,#5B2E7E);
+    border-radius:999px;padding:7px 15px;font:600 14px 'Nunito',sans-serif;cursor:pointer}
+  .rrss-f.activo{background:var(--morado,#5B2E7E);color:#fff;border-color:transparent}
+  .rrss-nota{color:#6b6274;font-size:14px;margin:10px 0 18px}
+  .rrss-lista{display:flex;flex-direction:column;gap:18px}
+  .rrss-pieza{display:grid;grid-template-columns:180px 1fr;gap:18px;background:#fff;
+    border:1px solid var(--lila,#EADCF4);border-radius:16px;padding:16px}
+  @media(max-width:640px){.rrss-pieza{grid-template-columns:1fr}}
+  .rrss-pieza img,.rrss-pieza video{width:100%;border-radius:10px;background:var(--lila-claro,#F5EFFA)}
+  .rrss-meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
+  .rrss-chip{font:700 11px 'Nunito',sans-serif;text-transform:uppercase;letter-spacing:.08em;
+    padding:4px 10px;border-radius:999px;background:var(--lila,#EADCF4);color:var(--morado-osc,#3C1D55)}
+  .rrss-chip.vets{background:#FFF3C4;color:#7a5b00}
+  .rrss-cap{width:100%;min-height:120px;border:1px solid var(--lila,#EADCF4);border-radius:10px;
+    padding:10px 12px;font:400 14px/1.5 'Nunito',sans-serif;resize:vertical}
+  .rrss-fecha{border:1px solid var(--lila,#EADCF4);border-radius:8px;padding:7px 10px;font-family:'Nunito',sans-serif}
+  .rrss-acciones{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+  .rrss-btn{border:0;border-radius:9px;padding:9px 16px;font:700 14px 'Nunito',sans-serif;cursor:pointer}
+  .rrss-btn.ok{background:var(--morado,#5B2E7E);color:#fff}
+  .rrss-btn.sec{background:var(--lila,#EADCF4);color:var(--morado-osc,#3C1D55)}
+  .rrss-btn.no{background:#fff;color:#B01E5E;border:1px solid #F3CBDC}
+  .rrss-error{color:#B01E5E;font-size:13px;margin-top:6px}
+  .rrss-vacio,.rrss-cargando{color:#6b6274;text-align:center;padding:32px}
+</style>
+
+<script>
+(function(){
+  var lista = document.getElementById('rrss-lista');
+  var estado = 'pendiente';
+
+  function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function fechaInput(iso){ return iso ? new Date(iso).toISOString().slice(0,16) : ''; }
+
+  async function cargar(){
+    lista.innerHTML = '<p class="rrss-cargando">Cargando…</p>';
+    try{
+      var r = await fetch('/api/rrss-piezas?estado='+encodeURIComponent(estado));
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      var d = await r.json();
+      pintar(d.piezas || []);
+    }catch(e){
+      lista.innerHTML = '<p class="rrss-error">No se pudo cargar la cola ('+esc(e.message)+').</p>';
+    }
+  }
+
+  function pintar(piezas){
+    if(!piezas.length){ lista.innerHTML = '<p class="rrss-vacio">No hay piezas en este estado.</p>'; return; }
+    lista.innerHTML = piezas.map(function(p){
+      var esVideo = p.formato === 'reel';
+      var medio = p.imagen_url
+        ? (esVideo ? '<video src="'+esc(p.imagen_url)+'" controls playsinline></video>'
+                   : '<img src="'+esc(p.imagen_url)+'" alt="Vista previa de la pieza">')
+        : '<p class="rrss-error">Sin archivo generado todavía.</p>';
+      var pendiente = p.estado === 'pendiente';
+      return '<article class="rrss-pieza" data-id="'+p.id+'">'+
+        '<div>'+medio+'</div>'+
+        '<div>'+
+          '<div class="rrss-meta">'+
+            '<span class="rrss-chip">'+esc(p.tipo)+'</span>'+
+            '<span class="rrss-chip'+(p.publico==='veterinarios'?' vets':'')+'">'+esc(p.publico||'')+'</span>'+
+            '<span class="rrss-chip">'+esc(p.estado)+'</span>'+
+          '</div>'+
+          '<textarea class="rrss-cap" '+(pendiente?'':'readonly')+'>'+esc(p.caption)+'</textarea>'+
+          (p.error_publicacion ? '<p class="rrss-error">Error al publicar: '+esc(p.error_publicacion)+'</p>' : '')+
+          '<div class="rrss-acciones">'+
+            '<input type="datetime-local" class="rrss-fecha" value="'+fechaInput(p.fecha_programada)+'" '+(pendiente?'':'disabled')+'>'+
+            (pendiente
+              ? '<button class="rrss-btn ok" data-a="aprobar">Aprobar</button>'+
+                '<button class="rrss-btn sec" data-a="editar">Guardar texto</button>'+
+                '<button class="rrss-btn sec" data-a="reprogramar">Cambiar fecha</button>'+
+                '<button class="rrss-btn no" data-a="rechazar">Rechazar</button>'
+              : '')+
+          '</div>'+
+        '</div>'+
+      '</article>';
+    }).join('');
+  }
+
+  async function accionar(art, accion){
+    var id = art.dataset.id;
+    var cuerpo = { id: Number(id), accion: accion };
+    if(accion === 'editar') cuerpo.caption = art.querySelector('.rrss-cap').value;
+    if(accion === 'reprogramar') cuerpo.fecha = new Date(art.querySelector('.rrss-fecha').value).toISOString();
+    if(accion === 'rechazar'){
+      var nota = prompt('¿Por qué la rechazas? (esta nota mejora el próximo lote)');
+      if(nota === null) return;
+      cuerpo.nota = nota;
+    }
+    try{
+      var r = await fetch('/api/rrss-piezas', {
+        method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(cuerpo)
+      });
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      cargar();
+    }catch(e){ alert('No se pudo completar la acción: '+e.message); }
+  }
+
+  lista.addEventListener('click', function(ev){
+    var b = ev.target.closest('[data-a]'); if(!b) return;
+    accionar(b.closest('.rrss-pieza'), b.dataset.a);
+  });
+  document.querySelectorAll('.rrss-f').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.rrss-f').forEach(function(x){ x.classList.remove('activo'); });
+      b.classList.add('activo'); estado = b.dataset.estado; cargar();
+    });
+  });
+  cargar();
+})();
+</script>

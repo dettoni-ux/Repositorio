@@ -7,7 +7,7 @@
   :root{
     --bg:#FDF8FA; --panel:#FFFFFF; --panel2:#FDEEF3; --ink:#241A1F; --ink2:#7A6870;
     --line:#F2DFE6; --morado:#CE1F63; --morado-fuerte:#8E1145; --morado-suave:#FDE7EF;
-    --amarillo:#0E9F6E; --amarillo-bg:#DFF5EB;
+    --amarillo:#0B7A54; --amarillo-bg:#DFF5EB; --verde-borde:#A9E3CB;
     --hist:#CE1F63; --hist-bg:#FDE7EF; --reel:#0B7A54; --reel-bg:#DCF3E9;
     --carr:#4A5568; --carr-bg:#EDF0F3; --ok:#0B7A54; --shadow:0 1px 2px rgba(36,26,31,.05), 0 8px 24px rgba(206,31,99,.07);
   }
@@ -15,7 +15,7 @@
     :root:not([data-theme="light"]){
       --bg:#161013; --panel:#201820; --panel2:#2B2028; --ink:#F6EAEF; --ink2:#B79FAA;
       --line:#3A2B33; --morado:#FF6FA5; --morado-fuerte:#FF9CC1; --morado-suave:#47182F;
-      --amarillo:#3DD68C; --amarillo-bg:#10352A;
+      --amarillo:#3DD68C; --amarillo-bg:#10352A; --verde-borde:#1E5C46;
       --hist:#FF6FA5; --hist-bg:#47182F; --reel:#3DD68C; --reel-bg:#10352A;
       --carr:#A8B8CC; --carr-bg:#2A3340; --ok:#3DD68C; --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.4);
     }
@@ -23,7 +23,7 @@
   :root[data-theme="dark"]{
     --bg:#161013; --panel:#201820; --panel2:#2B2028; --ink:#F6EAEF; --ink2:#B79FAA;
     --line:#3A2B33; --morado:#FF6FA5; --morado-fuerte:#FF9CC1; --morado-suave:#47182F;
-    --amarillo:#3DD68C; --amarillo-bg:#10352A;
+    --amarillo:#3DD68C; --amarillo-bg:#10352A; --verde-borde:#1E5C46;
     --hist:#FF6FA5; --hist-bg:#47182F; --reel:#3DD68C; --reel-bg:#10352A;
     --carr:#A8B8CC; --carr-bg:#2A3340; --ok:#3DD68C; --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.4);
   }
@@ -72,7 +72,7 @@
   }
   :root[data-theme="dark"] .btn{color:#161013}
   @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .btn{color:#161013} }
-  .btn.sec{background:var(--panel2); color:var(--ink)}
+  .btn.sec{background:var(--amarillo-bg); color:var(--amarillo); border:1.5px solid var(--verde-borde)}
   .btn.mini{padding:7px 13px; font-size:13.5px; border-radius:9px}
   .btn:active{transform:translateY(1px)}
   .fila-botones{display:flex; flex-wrap:wrap; gap:10px; margin-top:16px}
@@ -137,6 +137,11 @@
   .lienzo-wrap canvas{width:100%; max-width:380px; height:auto; border-radius:14px; border:1px solid var(--line); box-shadow:var(--shadow)}
   .feed-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:5px; margin-top:12px; max-width:520px}
   .feed-grid img{width:100%; aspect-ratio:4/5; object-fit:cover; border-radius:4px; border:1px solid var(--line)}
+  .reel-zona{display:grid; grid-template-columns:260px 1fr; gap:22px; align-items:start}
+  @media (max-width:720px){ .reel-zona{grid-template-columns:1fr} }
+  .reel-zona canvas{width:100%; max-width:260px; height:auto; border-radius:14px; border:1px solid var(--line); background:#000}
+  .barra{height:8px; background:var(--panel2); border-radius:99px; overflow:hidden; margin-top:12px}
+  .barra i{display:block; height:100%; width:0; background:var(--morado); transition:width .2s}
   .modal-img{position:fixed; inset:0; background:rgba(22,16,19,.86); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; z-index:50; padding:20px}
   .modal-img img{max-width:min(92vw,420px); max-height:70vh; border-radius:12px}
   .modal-img p{color:#fff; font-size:14px; text-align:center; max-width:40ch}
@@ -267,6 +272,41 @@ Encuentra veterinarios verificados cerca tuyo en encuentravet.cl — gratis.
               <button class="btn sec" id="btn-add-feed">Agregar al feed</button>
             </div>
             <p class="aviso" style="text-align:center">Para publicar por la API de Instagram usa el JPG (es el único formato de imagen que acepta).</p>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Crear reel</h2>
+        <p class="sub">Convierte los textos de arriba en un reel vertical animado (1080 × 1920) y descárgalo listo para subir. Usa la foto que tengas seleccionada.</p>
+        <div class="reel-zona">
+          <div>
+            <canvas id="lienzo-reel" width="1080" height="1920" aria-label="Vista previa del reel"></canvas>
+            <div class="barra" id="reel-barra"><i></i></div>
+          </div>
+          <div>
+            <div class="controles">
+              <div>
+                <label class="campo" for="reel-seg">Segundos por línea</label>
+                <select id="reel-seg">
+                  <option value="2">2 s (ágil)</option>
+                  <option value="2.5" selected>2,5 s (equilibrado)</option>
+                  <option value="3">3 s (pausado)</option>
+                </select>
+              </div>
+              <div>
+                <label class="campo" for="reel-fondo">Fondo</label>
+                <select id="reel-fondo">
+                  <option value="degradado">Degradado de marca</option>
+                  <option value="foto">Foto con velo de marca</option>
+                  <option value="claro">Claro con acentos</option>
+                </select>
+              </div>
+            </div>
+            <div class="fila-botones">
+              <button class="btn sec" id="btn-reel-previa">▶ Ver previa</button>
+              <button class="btn" id="btn-reel-crear">Crear y descargar reel</button>
+            </div>
+            <p class="aviso" id="reel-estado">La grabación ocurre en tu navegador: dura lo mismo que el reel y no sube nada a ningún servidor.</p>
           </div>
         </div>
       </div>
@@ -1427,6 +1467,250 @@ function enviarAVisual(g){
   toast('Contenido cargado en el estudio visual');
 }
 
+
+/* ============================================================
+   REEL — animación en canvas 1080×1920 y grabación en el navegador
+   ============================================================ */
+const RW = 1080, RH = 1920;
+
+function suavizar(t){ return t<0 ? 0 : t>1 ? 1 : 1-Math.pow(1-t, 3); }
+
+function guionReel(){
+  const o = {
+    c1: marca.c1 || '#5B2E7E', c2: marca.c2 || '#FFD84D',
+    etiqueta: $('#v-tag').value || marca.nombre,
+    titulo: $('#v-titulo').value || marca.propuesta.split('.')[0],
+    lineas: $('#v-lineas').value.split('\n').map(s=>s.trim()).filter(Boolean).slice(0,4),
+    cierre: $('#v-cta').value || marca.web,
+    fondo: $('#reel-fondo').value,
+    seg: parseFloat($('#reel-seg').value) || 2.5
+  };
+  const escenas = [{ tipo:'titulo', dur: Math.max(2.6, o.seg) }];
+  o.lineas.forEach((l,i)=> escenas.push({ tipo:'linea', texto:l, idx:i, dur:o.seg }));
+  escenas.push({ tipo:'cierre', dur: 3 });
+  let t = 0;
+  escenas.forEach(e=>{ e.desde = t; t += e.dur; });
+  return { o, escenas, total: t };
+}
+
+function fondoReel(ctx, o, t){
+  if(o.fondo === 'claro'){
+    ctx.fillStyle = tinte(o.c1, 0.93); ctx.fillRect(0,0,RW,RH);
+    patronPatasReel(ctx, o.c1, 0.06, t);
+    return { texto:sombra(o.c1,0.25), suave:'rgba(255,255,255,.85)', chipBg:o.c2, chipTxt:'#221740' };
+  }
+  const img = fotoCache[fotoSel];
+  if(o.fondo === 'foto' && img){
+    const z = 1 + t*0.012;                       // acercamiento lento
+    const w = RW*z, h = RH*z;
+    ctx.save(); ctx.beginPath(); ctx.rect(0,0,RW,RH); ctx.clip();
+    drawCover(ctx, img, (RW-w)/2, (RH-h)/2, w, h);
+    ctx.restore();
+    const g = ctx.createLinearGradient(0,0,0,RH);
+    g.addColorStop(0, rgba(o.c1,.75)); g.addColorStop(.5, rgba(o.c1,.55)); g.addColorStop(1, sombra(o.c1,.4));
+    ctx.fillStyle = g; ctx.fillRect(0,0,RW,RH);
+  } else {
+    const g = ctx.createLinearGradient(0,0,RW,RH);
+    g.addColorStop(0, sombra(o.c1,.28)); g.addColorStop(.55, o.c1); g.addColorStop(1, sombra(o.c1,.1));
+    ctx.fillStyle = g; ctx.fillRect(0,0,RW,RH);
+    patronPatasReel(ctx, '#FFFFFF', 0.05, t);
+  }
+  return { texto:'#FFFFFF', suave:'rgba(255,255,255,.75)', chipBg:o.c2, chipTxt:'#221740' };
+}
+
+function patronPatasReel(ctx, color, alpha, t){
+  const pos = [[130,240,-.4],[950,180,.5],[90,1000,.3],[980,1180,-.3],[540,1750,.15],[160,1620,.6]];
+  pos.forEach((p,i)=> pata(ctx, p[0], p[1] + Math.sin(t*0.7 + i)*10, 54, color, alpha, p[2]));
+}
+
+function textoCentrado(ctx, texto, y, maxW, px, peso, color, familia){
+  ctx.font = peso+' '+px+"px '"+(familia||'Bricolage Grotesque')+"', sans-serif";
+  ctx.fillStyle = color; ctx.textAlign = 'center';
+  const ls = wrapLineas(ctx, texto, maxW);
+  ls.forEach((l,i)=> ctx.fillText(l, RW/2, y + i*px*1.16));
+  ctx.textAlign = 'left';
+  return ls.length * px * 1.16;
+}
+
+function dibujarCuadroReel(ctx, guion, t){
+  const { o, escenas } = guion;
+  ctx.clearRect(0,0,RW,RH);
+  const pal = fondoReel(ctx, o, t);
+  const esc = escenas.find(e=> t >= e.desde && t < e.desde + e.dur) || escenas[escenas.length-1];
+  const local = (t - esc.desde) / esc.dur;
+  const entra = suavizar(local / 0.28);
+
+  // Marca arriba, siempre
+  ctx.globalAlpha = 1;
+  dibujaLogo(ctx, RW/2, 150, 92, o.fondo === 'claro' ? 'chip' : 'claro', o.c1, o.c2);
+
+  if(esc.tipo === 'titulo'){
+    ctx.globalAlpha = entra;
+    const dy = (1-entra) * 40;
+    pill(ctx, o.etiqueta, RW/2, 560 + dy, {bg:pal.chipBg, color:pal.chipTxt, px:42, centrar:true});
+    textoCentrado(ctx, o.titulo, 840 + dy, 880, 96, '800', pal.texto);
+  } else if(esc.tipo === 'linea'){
+    // Título reducido arriba
+    ctx.globalAlpha = 0.5;
+    textoCentrado(ctx, o.titulo, 400, 860, 52, '700', pal.texto);
+    ctx.globalAlpha = 1;
+    const n = o.lineas.length;
+    const alto = 210, hueco = 26;
+    const yIni = RH/2 - ((n*alto + (n-1)*hueco) / 2) + 60;
+    o.lineas.forEach((l,i)=>{
+      const visible = i < esc.idx ? 1 : i === esc.idx ? entra : 0;
+      if(visible <= 0) return;
+      const y = yIni + i*(alto+hueco);
+      const dx = (1-visible) * 60;
+      ctx.globalAlpha = visible;
+      ctx.fillStyle = o.fondo === 'claro' ? '#FFFFFF' : 'rgba(255,255,255,.14)';
+      rr(ctx, 80 + dx, y, RW-160, alto, 30); ctx.fill();
+      if(i === esc.idx){ ctx.strokeStyle = o.c2; ctx.lineWidth = 5; ctx.stroke(); }
+      pata(ctx, 165 + dx, y + alto/2, 30, o.c2, 1, 0);
+      ctx.font = "700 46px 'Figtree', sans-serif";
+      ctx.fillStyle = o.fondo === 'claro' ? sombra(o.c1,.2) : '#FFFFFF';
+      const ls = wrapLineas(ctx, l, RW-400).slice(0,3);
+      const y0 = y + alto/2 - (ls.length-1)*28;
+      ls.forEach((tx,j)=> ctx.fillText(tx, 250 + dx, y0 + j*56 + 16));
+    });
+    ctx.globalAlpha = 1;
+  } else {
+    ctx.globalAlpha = entra;
+    const dy = (1-entra) * 30;
+    textoCentrado(ctx, o.cierre, RH/2 - 120 + dy, 880, 78, '800', pal.texto);
+    pill(ctx, marca.web, RW/2, RH/2 + 120 + dy, {bg:pal.chipBg, color:pal.chipTxt, px:46, centrar:true});
+    ctx.globalAlpha = Math.min(1, entra);
+    ctx.font = "600 38px 'Figtree', sans-serif"; ctx.fillStyle = pal.suave; ctx.textAlign = 'center';
+    ctx.fillText(marca.ig, RW/2, RH/2 + 300 + dy); ctx.textAlign = 'left';
+  }
+  ctx.globalAlpha = 1;
+
+  // Barra de progreso del reel
+  ctx.fillStyle = 'rgba(255,255,255,.25)'; rr(ctx, 80, RH-120, RW-160, 10, 5); ctx.fill();
+  ctx.fillStyle = o.c2; rr(ctx, 80, RH-120, (RW-160) * (t/guion.total), 10, 5); ctx.fill();
+}
+
+async function prepararFuentesReel(){
+  try{
+    await document.fonts.load("800 96px 'Bricolage Grotesque'");
+    await document.fonts.load("700 46px 'Figtree'");
+    await document.fonts.ready;
+  }catch(e){}
+  if(logoData && !logoImg){ try{ logoImg = await cargarImg(logoData); }catch(e){} }
+  if(fotosData[fotoSel] && !fotoCache[fotoSel]){ try{ fotoCache[fotoSel] = await cargarImg(fotosData[fotoSel]); }catch(e){} }
+}
+
+let reelCorriendo = false;
+function animarReel(guion, ctx, alAvanzar){
+  return new Promise(res=>{
+    const t0 = performance.now();
+    (function paso(){
+      const t = (performance.now() - t0) / 1000;
+      dibujarCuadroReel(ctx, guion, Math.min(t, guion.total));
+      if(alAvanzar) alAvanzar(Math.min(1, t / guion.total));
+      if(t < guion.total) requestAnimationFrame(paso);
+      else res();
+    })();
+  });
+}
+
+function formatoVideoSoportado(){
+  // Instagram exige H.264 dentro de MP4: se pide explícitamente primero.
+  const opciones = [
+    'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
+    'video/mp4;codecs=avc1.4d002a',
+    'video/mp4;codecs=avc1.42E01E',
+    'video/mp4;codecs=h264',
+    'video/mp4',
+    'video/webm;codecs=vp9',
+    'video/webm'
+  ];
+  for(const mime of opciones){
+    if(window.MediaRecorder && MediaRecorder.isTypeSupported(mime)) return mime;
+  }
+  return null;
+}
+
+/* Lee el tipo REAL que negoció el grabador: un «video/mp4» puede traer VP9 dentro,
+   y en ese caso Instagram lo rechaza. */
+function analizarFormato(mimeReal){
+  const m = (mimeReal || '').toLowerCase();
+  const ext = m.includes('webm') ? 'webm' : 'mp4';
+  const h264 = /avc1|h264|avc3/.test(m);
+  return { ext, h264, apto: ext === 'mp4' && h264 };
+}
+
+async function crearReel(){
+  if(reelCorriendo) return;
+  const canvas = $('#lienzo-reel'), ctx = canvas.getContext('2d');
+  const estado = $('#reel-estado'), barra = $('#reel-barra').firstElementChild;
+  const mimePedido = formatoVideoSoportado();
+  if(!mimePedido){
+    estado.textContent = 'Este navegador no puede grabar video. Prueba en Chrome o Safari de escritorio.';
+    return;
+  }
+  reelCorriendo = true;
+  estado.textContent = 'Preparando…';
+  await prepararFuentesReel();
+  const guion = guionReel();
+  const stream = canvas.captureStream(30);
+  const trozos = [];
+  const rec = new MediaRecorder(stream, { mimeType: mimePedido, videoBitsPerSecond: 8_000_000 });
+  const fmt = analizarFormato(rec.mimeType || mimePedido);
+  rec.ondataavailable = e => { if(e.data.size) trozos.push(e.data); };
+  const listo = new Promise(res => { rec.onstop = res; });
+
+  estado.textContent = 'Grabando el reel… (' + guion.total.toFixed(0) + ' s, no cierres la pestaña)';
+  rec.start();
+  await animarReel(guion, ctx, p => { barra.style.width = (p*100).toFixed(0)+'%'; });
+  rec.stop();
+  await listo;
+  stream.getTracks().forEach(t => t.stop());
+
+  const blob = new Blob(trozos, { type: rec.mimeType || mimePedido });
+  const nombre = 'encuentravet-reel.' + fmt.ext;
+  const peso = (blob.size/1048576).toFixed(1) + ' MB';
+  estado.textContent = fmt.apto
+    ? 'Reel listo (' + peso + ', MP4 H.264): se puede subir a Instagram tal cual.'
+    : 'Reel listo (' + peso + '), pero este navegador grabó en ' +
+      (fmt.h264 ? 'un formato no compatible' : (fmt.ext === 'webm' ? 'WebM' : 'VP9')) +
+      ' e Instagram solo acepta MP4 con H.264. Ábrelo en Chrome o Safari de escritorio, o conviértelo antes de subirlo.';
+  reelCorriendo = false;
+  barra.style.width = '0%';
+
+  if(descargas){
+    try{ await descargas.save({ filename: nombre, data: blob }); toast('Reel descargado ✓'); return; }
+    catch(err){ if(err && err.code === 'declined') return; }
+  }
+  const url = URL.createObjectURL(blob);
+  const modal = document.createElement('div');
+  modal.className = 'modal-img';
+  const v = document.createElement('video');
+  v.src = url; v.controls = true; v.playsInline = true; v.style.maxHeight = '70vh'; v.style.borderRadius = '12px';
+  const p = document.createElement('p');
+  p.textContent = 'Reel listo. Mantén presionado el video (o clic derecho) para guardarlo. Toca fuera para cerrar.';
+  modal.appendChild(v); modal.appendChild(p);
+  modal.addEventListener('click', ev => { if(ev.target !== v){ URL.revokeObjectURL(url); modal.remove(); } });
+  document.body.appendChild(modal);
+}
+
+async function previaReel(){
+  if(reelCorriendo) return;
+  reelCorriendo = true;
+  const ctx = $('#lienzo-reel').getContext('2d');
+  const barra = $('#reel-barra').firstElementChild;
+  await prepararFuentesReel();
+  await animarReel(guionReel(), ctx, p => { barra.style.width = (p*100).toFixed(0)+'%'; });
+  barra.style.width = '0%';
+  reelCorriendo = false;
+}
+
+async function pintarPrimerCuadroReel(){
+  const c = $('#lienzo-reel'); if(!c) return;
+  await prepararFuentesReel();
+  dibujarCuadroReel(c.getContext('2d'), guionReel(), 0.4);
+}
+
 /* ============================================================
    INFRAESTRUCTURA UI
    ============================================================ */
@@ -1533,6 +1817,9 @@ let descargas = null;
   ['v-plantilla','v-tag','v-destacado','v-titulo','v-lineas','v-cta'].forEach(id=>
     $('#'+id).addEventListener('input', pedirRender));
   $('#btn-copiar-caption').addEventListener('click', ()=> copiar($('#v-caption').value));
+  $('#btn-reel-crear').addEventListener('click', crearReel);
+  $('#btn-reel-previa').addEventListener('click', previaReel);
+  ['reel-seg','reel-fondo'].forEach(id=> $('#'+id).addEventListener('change', pintarPrimerCuadroReel));
   function exportarLienzo(mime, nombre, calidad){
     $('#lienzo').toBlob(async blob=>{
       if(!blob){ toast('No se pudo generar la imagen'); return; }
@@ -1568,5 +1855,6 @@ let descargas = null;
   renderThumbs();
   renderFeed();
   renderVisual();
+  pintarPrimerCuadroReel();
 })();
 </script>
