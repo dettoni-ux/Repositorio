@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       tipos:
-        description: 'Tipos de pieza (separados por comas)'
+        description: 'Tipos de pieza (separados por comas): tip, hito, video'
         required: false
-        default: 'tip,hito'
+        default: 'tip,hito,video'
         type: string
       cantidad:
         description: 'Cuántas piezas generar'
@@ -44,11 +44,13 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          REPLICATE_API_TOKEN: ${{ secrets.REPLICATE_API_TOKEN }}
+          SEEDANCE_MODEL: ${{ vars.SEEDANCE_MODEL }}
           RAMA: ${{ github.ref_name }}
         run: |
           node generar.mjs \
-            --tipos "${{ inputs.tipos || 'tip,hito' }}" \
-            --cantidad "${{ inputs.cantidad || '4' }}" \
+            --tipos "${{ inputs.tipos || 'tip,hito,video' }}" \
+            --cantidad "${{ inputs.cantidad || '5' }}" \
             ${{ inputs.demo && '--demo' || '' }}
       - name: Guardar piezas en el repo
         run: |
