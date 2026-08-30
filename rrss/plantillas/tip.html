@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Nunito:wght@400;700;800&display=swap">
+<link rel="stylesheet" href="base.css">
+<style>
+  .cabecera{
+    background:var(--grad-morado);
+    padding:44px 64px;display:flex;align-items:center;justify-content:space-between;
+  }
+  .cabecera .pill{background:var(--grad-amarillo);color:var(--morado-noche)}
+  .cuerpo{padding:56px 64px 0}
+  .titulo{
+    font-weight:800;font-size:68px;line-height:1.14;color:var(--morado-osc);
+    max-height:238px;overflow:hidden;text-wrap:balance;
+  }
+  .lineas{margin-top:48px;display:flex;flex-direction:column;gap:26px}
+  .linea{
+    background:#fff;border-radius:24px;padding:30px 36px;
+    display:flex;align-items:center;gap:26px;
+    box-shadow:0 6px 24px rgba(44,17,64,.08);
+    font-size:35px;font-weight:700;line-height:1.3;color:var(--morado-noche);
+    max-height:150px;overflow:hidden;
+  }
+  .pie{
+    position:absolute;left:0;right:0;bottom:0;background:var(--grad-morado);
+    padding:36px 64px;display:flex;align-items:center;justify-content:space-between;gap:30px;
+  }
+  .cierre{color:#fff;font-size:34px;font-weight:800;max-height:88px;overflow:hidden}
+  .web{color:var(--amarillo);font-family:'Poppins',sans-serif;font-weight:800;font-size:34px;white-space:nowrap}
+</style>
+</head>
+<body>
+  <div class="cabecera">
+    <span class="pill">{{etiqueta}}</span>
+    <!--LOGO-->
+  </div>
+  <div class="cuerpo">
+    <h1 class="titulo" data-ajuste="titulo">{{titulo}}</h1>
+    <div class="lineas" data-ajuste="lineas"><!--LINEAS--></div>
+  </div>
+  <div class="pie">
+    <span class="cierre" data-ajuste="cierre">{{cierre}}</span>
+    <span class="web">encuentravet.cl</span>
+  </div>
+</body>
+</html>

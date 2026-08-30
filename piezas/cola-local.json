@@ -1,0 +1,46 @@
+[
+  {
+    "tipo": "tip",
+    "formato": "post",
+    "fecha_propuesta": "2026-09-02",
+    "hora_propuesta": "11:30",
+    "caption": "¿Sabías que la mayoría de las urgencias de fin de semana se pueden evitar con un control a tiempo? 🐾\n\nGuarda estas señales y compártelas con otro tutor.\n\nRegístrate gratis en encuentravet.cl\n\n#EncuentraVet #MascotasChile #TutorResponsable #VeterinariosVerificados #SaludAnimal",
+    "visual": {
+      "etiqueta": "Tip EncuentraVet",
+      "titulo": "3 señales de que tu gato necesita un vet (y no son obvias)",
+      "destacado": "3",
+      "lineas": [
+        "Duerme más de lo normal y evita su lugar favorito",
+        "Dejó de acicalarse o se limpia en exceso",
+        "Cambios en el arenero: siempre son una señal"
+      ],
+      "cierre": "Ante la duda, tu vet verificado responde"
+    },
+    "estado": "pendiente",
+    "lote": "lote-2026-08-30-20-17",
+    "imagen": "lote-2026-08-30-20-17-1-tip.png",
+    "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/main/piezas/lote-2026-08-30-20-17-1-tip.png"
+  },
+  {
+    "tipo": "hito",
+    "formato": "post",
+    "fecha_propuesta": "2026-09-04",
+    "hora_propuesta": "18:30",
+    "caption": "Esto no lo logramos nosotros: lo lograron ustedes 💜\n\nYa somos 100+ veterinarios verificados en 32 comunas de Chile, todos validados uno a uno con Registro Civil y COLMEVET.\n\nRegístrate gratis en encuentravet.cl\n\n#EncuentraVet #MascotasChile #TutorResponsable #VeterinariosVerificados",
+    "visual": {
+      "etiqueta": "Hito de la comunidad",
+      "titulo": "veterinarios verificados uno a uno, y contando",
+      "destacado": "100+",
+      "lineas": [
+        "32 comunas de Chile",
+        "Verificación Registro Civil + COLMEVET",
+        "0% comisión, siempre"
+      ],
+      "cierre": "Gracias por confiar en la insignia azul"
+    },
+    "estado": "pendiente",
+    "lote": "lote-2026-08-30-20-17",
+    "imagen": "lote-2026-08-30-20-17-2-hito.png",
+    "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/main/piezas/lote-2026-08-30-20-17-2-hito.png"
+  }
+]

@@ -6,8 +6,8 @@
 <style>
   :root{
     --bg:#F7F5FB; --panel:#FFFFFF; --panel2:#EFEAF8; --ink:#221740; --ink2:#5C5178;
-    --line:#DFD8EC; --morado:#6D28D9; --morado-fuerte:#4C1D95; --morado-suave:#EFE8FB;
-    --amarillo:#F2C314; --amarillo-bg:#FBF3D6;
+    --line:#DFD8EC; --morado:#5B2E7E; --morado-fuerte:#3C1D55; --morado-suave:#EFE8FB;
+    --amarillo:#FFD84D; --amarillo-bg:#FBF3D6;
     --hist:#D6336C; --hist-bg:#FBE7F0; --reel:#C24E2C; --reel-bg:#FBEDE7;
     --carr:#1D7F55; --carr-bg:#E6F4EC; --ok:#1D7F55; --shadow:0 1px 2px rgba(34,23,64,.06), 0 8px 24px rgba(34,23,64,.08);
   }
@@ -384,8 +384,8 @@ const MARCA_ORIGINAL = {
   web: 'encuentravet.cl',
   ig: '@encuentravet',
   slogan: 'Veterinarios Certificados. Cerca de ti',
-  c1: '#6D28D9',
-  c2: '#F2C314',
+  c1: '#5B2E7E',
+  c2: '#FFD84D',
   bio: '🐾 Veterinarios Certificados. Cerca de ti 🔵 Título y cédula verificados 📍 Busca por comuna y agenda con disponibilidad real 👇 Encuentra tu veterinario',
   propuesta: 'Encuentra al veterinario ideal cerca de ti. Directorio de veterinarios certificados en Chile: busca por comuna o región, compara y agenda con disponibilidad real, sin llamar. Gratis para dueños de mascotas.',
   tono: 'Cercano, claro y confiable. Chileno sin caricatura. Empático con los tutores de mascotas, profesional y directo con los veterinarios. Habla de «tu mascota» y «tu veterinario», evita jerga técnica innecesaria y nunca genera pánico: informa y acompaña.',
@@ -806,7 +806,7 @@ function genReel(pilar, objetivo, temaLibre, forzarIdx){
   const sujeto = esGato ? 'a domestic cat' : esPerro ? 'a friendly dog' : 'a friendly dog and a domestic cat';
   const promptIA = 'Vertical 9:16 video for Instagram Reels, '+dur+' seconds total, photorealistic footage of '+sujeto+
     ' in a bright modern home and a clean veterinary clinic in Chile. Warm natural light, shallow depth of field, smooth gimbal camera, one cut every ~5 seconds. '+
-    'Purple ('+(marca.c1||'#6D28D9')+') and yellow ('+(marca.c2||'#F2C314')+') accents in props and background details. '+
+    'Purple ('+(marca.c1||'#5B2E7E')+') and yellow ('+(marca.c2||'#FFD84D')+') accents in props and background details. '+
     'Scene list (visuals only, NO on-screen text, captions are added later): '+
     escenas.map((e,i)=>'Scene '+(i+1)+' ['+e.t+']: '+e.accion+' Theme: "'+e.texto.replace(/"/g,"'")+'".').join(' ')+
     ' No watermarks, no logos, no text overlays, no human faces in close-up. High detail, realistic animal anatomy and movement.';
@@ -1368,7 +1368,7 @@ async function renderVisual(){
   if(logoData && !logoImg){ try{ logoImg = await cargarImg(logoData); }catch(e){ logoImg = null; } }
   if(fotosData[fotoSel] && !fotoCache[fotoSel]){ try{ fotoCache[fotoSel] = await cargarImg(fotosData[fotoSel]); }catch(e){} }
   const o = {
-    c1: marca.c1 || '#6D28D9', c2: marca.c2 || '#F2C314',
+    c1: marca.c1 || '#5B2E7E', c2: marca.c2 || '#FFD84D',
     tag: $('#v-tag').value || marca.nombre,
     titulo: $('#v-titulo').value || marca.propuesta.split('.')[0],
     destacado: $('#v-destacado').value || '🐾',
