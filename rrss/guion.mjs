@@ -26,7 +26,17 @@ export function leerGuion() {
   const tramos = (cfg.tramos || []).filter(t => Number.isFinite(t.desde) && Number.isFinite(t.hasta) && t.hasta > t.desde);
   if (!tramos.length) return null;
   tramos.sort((a, b) => a.desde - b.desde);
-  const guion = { ...cfg, tramos, total: tramos[tramos.length - 1].hasta };
+  // El estilo se elige con una palabra. Lo importante no es cuál, sino que
+  // TODAS las escenas usen el mismo: mezclarlos es lo que se ve mal.
+  const elegido = cfg.estilos?.[cfg.estilo_activo] || {};
+  const guion = {
+    ...cfg,
+    estilo: cfg.estilo || elegido.estilo,
+    cola: cfg.cola || elegido.cola,
+    tramos,
+    total: tramos[tramos.length - 1].hasta
+  };
+  if (cfg.estilo_activo) console.log(`Estilo del corto: «${cfg.estilo_activo}» (igual en todas las escenas).`);
   revisarTiempos(guion);
   return guion;
 }

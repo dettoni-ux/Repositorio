@@ -1,8 +1,17 @@
 {
-  "_comentario": "Guion del cortometraje. Manda por sobre lo que escriba el generador. Cada tramo genera su propio audio y se coloca EXACTO en su segundo de inicio. 'voz' debe caber en su ventana a 2,1 palabras por segundo: el generador avisa antes de gastar créditos si se pasa. 'pantalla' se quema como subtítulo y debe decir lo MISMO que la voz, no otra cosa. 'prompt' es lo que se le pide a la IA de video; se le antepone 'estilo' y se le agrega 'cola'. 'anclar': false cuando la escena introduce un personaje nuevo, porque partir del cuadro anterior impide que entre en cuadro. 'sfx' se genera con ElevenLabs. El tramo con 'cierre' lo dibujamos nosotros, sin costo.",
+  "_comentario": "Guion del cortometraje. Manda por sobre lo que escriba el generador. Cada tramo genera su propio audio y se coloca EXACTO en su segundo de inicio. 'voz' debe caber en su ventana a 2,1 palabras por segundo: el generador avisa antes de gastar créditos si se pasa. 'pantalla' se quema como subtítulo y debe decir lo MISMO que la voz, no otra cosa. 'prompt' es lo que se le pide a la IA de video; se le antepone 'estilo' y se le agrega 'cola'. 'anclar': false cuando la escena introduce un personaje nuevo, porque partir del cuadro anterior impide que entre en cuadro. 'sfx' se genera con ElevenLabs. El tramo con 'cierre' lo dibujamos nosotros, sin costo. 'estilo_activo' elige entre los estilos de 'estilos': cambia esa palabra y cambia el look de todo el corto. Lo que NO puede pasar es que unas escenas salgan de un estilo y otras de otro.",
   "usar": true,
-  "estilo": "3D animated cartoon short in the style of a modern family animated feature film. Stylized cartoon characters with oversized expressive eyes, soft rounded shapes, smooth stylized skin shading, vibrant saturated colors, warm cinematic key light, shallow depth of field. Vertical 9:16 framing.",
-  "cola": "Strictly a stylized 3D cartoon: not photorealistic, not live action, not a real photograph, no real human skin texture. No text overlays, no logos, no watermarks, no on-screen writing, no subtitles.",
+  "estilo_activo": "animado",
+  "estilos": {
+    "animado": {
+      "estilo": "3D animated cartoon short in the style of a modern family animated feature film. Stylized cartoon characters with oversized expressive eyes, soft rounded shapes, smooth stylized skin shading, vibrant saturated colors, warm cinematic key light, shallow depth of field. Vertical 9:16 framing.",
+      "cola": "Strictly a stylized 3D cartoon: not photorealistic, not live action, not a real photograph, no real human skin texture. No text overlays, no logos, no watermarks, no on-screen writing, no subtitles."
+    },
+    "realista": {
+      "estilo": "Cinematic live-action commercial footage, shot on a full-frame camera with a 50mm lens, natural soft daylight, shallow depth of field, warm and inviting color grade, realistic materials and skin. Vertical 9:16 framing.",
+      "cola": "Photorealistic and consistent across every shot: same lighting, same color grade, same lens. No text overlays, no logos, no watermarks, no on-screen writing, no subtitles."
+    }
+  },
   "reparto": {
     "mascota": "a small stylized cartoon puppy with scruffy tan-and-white fur, floppy ears, big round brown eyes and a purple collar with a yellow tag",
     "sala": "a cartoon veterinary waiting room with a deep purple accent wall, bright yellow plastic chairs, a light wood bench and a leafy potted plant",
