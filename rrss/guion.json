@@ -15,7 +15,7 @@
   "reparto": {
     "mascota": "a small stylized cartoon puppy with scruffy tan-and-white fur, floppy ears, big round brown eyes and a purple collar with a yellow tag",
     "sala": "a cartoon veterinary waiting room with a deep purple accent wall, bright yellow plastic chairs, a light wood bench and a leafy potted plant",
-    "impostor": "a cartoon man in his forties with a round face, thick black moustache and messy dark hair, wearing a white lab coat several sizes too big whose sleeves swallow his hands",
+    "impostor": "a cartoon man in his forties with a round face, thick black moustache and messy dark hair, drowning in a white lab coat that is absurdly, comically oversized: the shoulders droop far past his own, the sleeves hang well past his hands so only his fingertips peek out, and the hem reaches below his knees like a dress",
     "veterinaria": "a cartoon woman veterinarian in her thirties with warm brown skin and dark hair in a bun, wearing a well-fitted white coat with a glowing blue verification badge on her chest"
   },
   "tramos": [
@@ -32,7 +32,7 @@
       "hasta": 13,
       "voz": "Bata gigante. Estetoscopio de plástico. Un diploma dibujado a crayón. Nadie lo verificó.",
       "pantalla": "Bata gigante.\nDiploma dibujado a crayón.",
-      "prompt": "Medium shot, camera steady. In {sala}, {impostor} stands proudly facing the camera, his whole face clearly visible, grinning with absurd confidence while holding up a child's crayon drawing as if it were a diploma, a plastic toy stethoscope around his neck. {mascota} sits on the bench beside him and tilts its head, unconvinced. Exactly two characters in frame, no other people, no duplicate characters, no one in the background.",
+      "prompt": "Medium shot, camera steady. In {sala}, {impostor} stands proudly facing the camera, his whole face clearly visible, grinning with absurd confidence. The comically huge coat is obvious at a glance: he has to shake a sleeve back to hold up a child's crayon drawing as if it were a diploma, and a plastic toy stethoscope hangs around his neck. {mascota} sits on the bench beside him and tilts its head, unconvinced. Exactly two characters in frame, no other people, no duplicate characters, no one in the background.",
       "anclar": true,
       "sfx": "funny comedic record scratch, short cartoon stinger"
     },
