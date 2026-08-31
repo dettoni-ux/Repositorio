@@ -628,5 +628,123 @@
     "imagen": null,
     "imagen_url": null,
     "nota": "Video no generado: Generación en estado failed: The input was invalid. Please try again with different inputs. (E006) (uIJ6l3ruRD) — Warning: Reference images cannot be used with first frame or last frame images. Ignoring first frame and last frame images. | Using seed: 1832308376 | helpers.exceptions.prediction.ModelError: The input was invalid. Please try again with different inputs. (E006) (uIJ6l3ruRD). El prompt queda en la pieza para regenerar."
+  },
+  {
+    "fecha_propuesta": "2026-09-02",
+    "hora_propuesta": "09:00",
+    "publico": "veterinarios",
+    "caption": "Un delantal blanco cuesta menos que un almuerzo. Tu título costó años. 🎓\n\nEn este corto, un impostor con delantal tres tallas más grande y un diploma dibujado a crayón intenta atender a un paciente en la sala de espera. Es ficción, y da risa… hasta que uno piensa en cuántas veces un tutor no tiene forma de distinguir a un profesional real de una cuenta cualquiera de internet.\n\nAhí es donde tu insignia azul hace el trabajo callado: en EncuentraVet cada perfil se valida uno a uno contra el Registro Civil y COLMEVET antes de recibirla. No es un adorno, es la prueba pública de que quien atiende sí estudió.\n\nHoy somos 100 veterinarios verificados en 32 comunas, con 180 reservas este mes. Y en tu perfil verificado además tienes agenda online con disponibilidad real, ficha clínica digital de cada paciente, recordatorios automáticos a los tutores y 0% comisión: lo que cobras es tuyo, siempre.\n\nCertifícate y que nadie dude de ti. Cualquiera puede ponerse una bata; la insignia azul se verifica. 💙\n\nCrea tu perfil gratis en encuentravet.cl\n\n#EncuentraVet #VeterinariosVerificados #MédicoVeterinario #VeterinariosChile #InsigniaAzul #FalsosVeterinarios #ColmevetChile",
+    "tipo": "video",
+    "formato": "reel",
+    "video": {
+      "actos": [
+        {
+          "escena": "espera",
+          "dur": 6,
+          "texto": "Sala de espera. El paciente confía en quien cruce esa puerta."
+        },
+        {
+          "escena": "impostor",
+          "dur": 8,
+          "texto": "Delantal gigante, estetoscopio de juguete y diploma a crayón."
+        },
+        {
+          "escena": "verificada",
+          "dur": 8,
+          "texto": "Insignia azul: Registro Civil y COLMEVET ya lo comprobaron."
+        }
+      ],
+      "cierre": "La insignia azul se verifica",
+      "escenas_ia": [
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A caramel-brown short-haired mixed-breed dog with a white chest patch, floppy ears, big amber eyes and a red collar with a small silver tag sits calmly on a yellow (#FFD84D) waiting-room chair, tail wagging slowly, looking hopefully at a closed consultation door. The waiting room has deep purple (#5B2E7E) walls, a yellow reception counter, a small potted plant and soft daylight from a side window. Gentle camera push-in on the dog's hopeful face. No text overlays, no logos, no watermarks.",
+          "duracion_s": 8
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A stocky man in his forties with medium-brown skin, short curly black hair and a thin moustache bursts through the consultation door wearing a white coat three sizes too big with sleeves dragging past his hands, an oversized plastic toy stethoscope in bright colors around his neck, holding up a diploma clumsily drawn in crayon with a lopsided smile of exaggerated confidence. A caramel-brown short-haired mixed-breed dog with a white chest patch, floppy ears, big amber eyes and a red collar with a small silver tag sits on a yellow (#FFD84D) waiting-room chair and tilts its head, raising one eyebrow in comic suspicion. The waiting room has deep purple (#5B2E7E) walls, a yellow reception counter, a small potted plant and soft daylight from a side window. Comedic timing, humor is gentle, no danger to the animal. No text overlays, no logos, no watermarks.",
+          "duracion_s": 9
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A woman in her mid-thirties with light-brown skin, straight dark hair tied in a low bun and round glasses walks in wearing a well-fitted white clinical coat with a glowing blue circular verification badge on her chest, kneeling with a calm warm smile and open hands. A caramel-brown short-haired mixed-breed dog with a white chest patch, floppy ears, big amber eyes and a red collar with a small silver tag hops off the yellow (#FFD84D) waiting-room chair and trots happily toward her, tail wagging fast. In the background, a stocky man in his forties with medium-brown skin, short curly black hair and a thin moustache, wearing a white coat three sizes too big with sleeves dragging past his hands and an oversized plastic toy stethoscope, quietly shuffles out of frame hiding his crayon-drawn diploma behind his back. The waiting room has deep purple (#5B2E7E) walls, a yellow reception counter, a small potted plant and soft daylight from a side window. No text overlays, no logos, no watermarks.",
+          "duracion_s": 9
+        }
+      ],
+      "narracion": "Cualquiera compra un delantal blanco. Nadie puede comprar un título validado contra el Registro Civil y COLMEVET. Esa es la diferencia que tu paciente no puede ver, y que tu insignia azul deja clara antes de que suene el timbre. En encuentravet punto cl, la insignia azul se verifica.",
+      "escenas": [
+        {
+          "tiempo": "0:00-0:08",
+          "descripcion": "Sala de espera morada y amarilla. Un perro café claro con collar rojo espera sentado en una silla, mirando la puerta de la consulta con confianza.",
+          "texto_pantalla": "Él no puede pedir tu título"
+        },
+        {
+          "tiempo": "0:08-0:17",
+          "descripcion": "Entra un hombre con delantal blanco enorme, estetoscopio de plástico y un diploma dibujado a crayón. El perro ladea la cabeza con sospecha cómica.",
+          "texto_pantalla": "Delantal gigante, diploma a crayón"
+        },
+        {
+          "tiempo": "0:17-0:26",
+          "descripcion": "Llega la veterinaria con delantal entallado e insignia azul en el pecho. El perro corre feliz hacia ella. El impostor sale del cuadro escondiendo el diploma.",
+          "texto_pantalla": "Verificada: Registro Civil + COLMEVET"
+        }
+      ]
+    },
+    "visual": {
+      "actos": [
+        {
+          "escena": "espera",
+          "dur": 6,
+          "texto": "Sala de espera. El paciente confía en quien cruce esa puerta."
+        },
+        {
+          "escena": "impostor",
+          "dur": 8,
+          "texto": "Delantal gigante, estetoscopio de juguete y diploma a crayón."
+        },
+        {
+          "escena": "verificada",
+          "dur": 8,
+          "texto": "Insignia azul: Registro Civil y COLMEVET ya lo comprobaron."
+        }
+      ],
+      "cierre": "La insignia azul se verifica",
+      "escenas_ia": [
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A caramel-brown short-haired mixed-breed dog with a white chest patch, floppy ears, big amber eyes and a red collar with a small silver tag sits calmly on a yellow (#FFD84D) waiting-room chair, tail wagging slowly, looking hopefully at a closed consultation door. The waiting room has deep purple (#5B2E7E) walls, a yellow reception counter, a small potted plant and soft daylight from a side window. Gentle camera push-in on the dog's hopeful face. No text overlays, no logos, no watermarks.",
+          "duracion_s": 8
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A stocky man in his forties with medium-brown skin, short curly black hair and a thin moustache bursts through the consultation door wearing a white coat three sizes too big with sleeves dragging past his hands, an oversized plastic toy stethoscope in bright colors around his neck, holding up a diploma clumsily drawn in crayon with a lopsided smile of exaggerated confidence. A caramel-brown short-haired mixed-breed dog with a white chest patch, floppy ears, big amber eyes and a red collar with a small silver tag sits on a yellow (#FFD84D) waiting-room chair and tilts its head, raising one eyebrow in comic suspicion. The waiting room has deep purple (#5B2E7E) walls, a yellow reception counter, a small potted plant and soft daylight from a side window. Comedic timing, humor is gentle, no danger to the animal. No text overlays, no logos, no watermarks.",
+          "duracion_s": 9
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A woman in her mid-thirties with light-brown skin, straight dark hair tied in a low bun and round glasses walks in wearing a well-fitted white clinical coat with a glowing blue circular verification badge on her chest, kneeling with a calm warm smile and open hands. A caramel-brown short-haired mixed-breed dog with a white chest patch, floppy ears, big amber eyes and a red collar with a small silver tag hops off the yellow (#FFD84D) waiting-room chair and trots happily toward her, tail wagging fast. In the background, a stocky man in his forties with medium-brown skin, short curly black hair and a thin moustache, wearing a white coat three sizes too big with sleeves dragging past his hands and an oversized plastic toy stethoscope, quietly shuffles out of frame hiding his crayon-drawn diploma behind his back. The waiting room has deep purple (#5B2E7E) walls, a yellow reception counter, a small potted plant and soft daylight from a side window. No text overlays, no logos, no watermarks.",
+          "duracion_s": 9
+        }
+      ],
+      "narracion": "Cualquiera compra un delantal blanco. Nadie puede comprar un título validado contra el Registro Civil y COLMEVET. Esa es la diferencia que tu paciente no puede ver, y que tu insignia azul deja clara antes de que suene el timbre. En encuentravet punto cl, la insignia azul se verifica.",
+      "escenas": [
+        {
+          "tiempo": "0:00-0:08",
+          "descripcion": "Sala de espera morada y amarilla. Un perro café claro con collar rojo espera sentado en una silla, mirando la puerta de la consulta con confianza.",
+          "texto_pantalla": "Él no puede pedir tu título"
+        },
+        {
+          "tiempo": "0:08-0:17",
+          "descripcion": "Entra un hombre con delantal blanco enorme, estetoscopio de plástico y un diploma dibujado a crayón. El perro ladea la cabeza con sospecha cómica.",
+          "texto_pantalla": "Delantal gigante, diploma a crayón"
+        },
+        {
+          "tiempo": "0:17-0:26",
+          "descripcion": "Llega la veterinaria con delantal entallado e insignia azul en el pecho. El perro corre feliz hacia ella. El impostor sale del cuadro escondiendo el diploma.",
+          "texto_pantalla": "Verificada: Registro Civil + COLMEVET"
+        }
+      ],
+      "nota": "Video no generado: Generación en estado failed: The input was invalid. Please try again with different inputs. (E006) (uIJ6l3ruRD) — Using seed: 669758485 | helpers.exceptions.prediction.ModelError: The input was invalid. Please try again with different inputs. (E006) (uIJ6l3ruRD). El prompt queda en la pieza para regenerar."
+    },
+    "estado": "pendiente",
+    "lote": "lote-2026-08-31-03-15",
+    "imagen": null,
+    "imagen_url": null,
+    "nota": "Video no generado: Generación en estado failed: The input was invalid. Please try again with different inputs. (E006) (uIJ6l3ruRD) — Using seed: 669758485 | helpers.exceptions.prediction.ModelError: The input was invalid. Please try again with different inputs. (E006) (uIJ6l3ruRD). El prompt queda en la pieza para regenerar."
   }
 ]
