@@ -1,53 +1,5 @@
 [
   {
-    "tipo": "tip",
-    "formato": "post",
-    "publico": "veterinarios",
-    "fecha_propuesta": "2026-09-02",
-    "hora_propuesta": "09:30",
-    "caption": "Colega: ¿cuántas horas de consulta perdiste esta semana contestando WhatsApp para agendar? 📵\n\nCon la agenda online de EncuentraVet los tutores reservan solos sobre tu disponibilidad real.\n\nCrea tu perfil gratis en encuentravet.cl\n\n#EncuentraVet #VeterinariosVerificados #MédicoVeterinario #VeterinariosChile",
-    "visual": {
-      "etiqueta": "Para veterinarios",
-      "titulo": "Tu agenda llena, tu teléfono en silencio",
-      "destacado": "0%",
-      "lineas": [
-        "Los tutores reservan solos sobre tu disponibilidad real",
-        "Recordatorios automáticos: menos horas perdidas",
-        "0% comisión: lo que cobras es tuyo"
-      ],
-      "cierre": "Menos teléfono, más pacientes"
-    },
-    "estado": "pendiente",
-    "lote": "lote-2026-08-31-00-09",
-    "imagen": "lote-2026-08-31-00-09-1-tip.png",
-    "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/main/piezas/lote-2026-08-31-00-09-1-tip.png",
-    "nota": null
-  },
-  {
-    "tipo": "hito",
-    "formato": "post",
-    "publico": "veterinarios",
-    "fecha_propuesta": "2026-09-04",
-    "hora_propuesta": "18:30",
-    "caption": "Ya somos 100+ colegas con la insignia azul 💙\n\nVerificados uno a uno con Registro Civil y COLMEVET, atendiendo con agenda online en 32 comunas.\n\nCrea tu perfil gratis en encuentravet.cl\n\n#EncuentraVet #VeterinariosVerificados #VeterinariosChile",
-    "visual": {
-      "etiqueta": "Hito de la comunidad",
-      "titulo": "colegas verificados con la insignia azul",
-      "destacado": "100+",
-      "lineas": [
-        "32 comunas de Chile",
-        "Verificación Registro Civil + COLMEVET",
-        "0% comisión, siempre"
-      ],
-      "cierre": "Tu título vale: que nadie dude de ti"
-    },
-    "estado": "pendiente",
-    "lote": "lote-2026-08-31-00-09",
-    "imagen": "lote-2026-08-31-00-09-2-hito.png",
-    "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/main/piezas/lote-2026-08-31-00-09-2-hito.png",
-    "nota": null
-  },
-  {
     "tipo": "video",
     "formato": "reel",
     "publico": "tutores",
@@ -55,6 +7,24 @@
     "hora_propuesta": "12:00",
     "caption": "Cualquiera puede ponerse una bata. 🥼\n\nLa insignia azul de EncuentraVet no se compra: se verifica con Registro Civil y COLMEVET, uno a uno.\n\nRegístrate gratis en encuentravet.cl\n\n#EncuentraVet #VeterinariosVerificados #MascotasChile #TutorResponsable",
     "video": {
+      "actos": [
+        {
+          "escena": "espera",
+          "dur": 6,
+          "texto": "Tu mascota no puede preguntar por el título."
+        },
+        {
+          "escena": "impostor",
+          "dur": 8,
+          "texto": "Cualquiera puede ponerse una bata blanca."
+        },
+        {
+          "escena": "verificada",
+          "dur": 7,
+          "texto": "La insignia azul se verifica: Registro Civil y COLMEVET."
+        }
+      ],
+      "cierre": "Busca la insignia azul",
       "escenas_ia": [
         {
           "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A fluffy grey cartoon cat with round amber eyes and a small red collar sits patiently on a waiting room chair, holding a tiny purse. The waiting room has purple (#5B2E7E) walls and yellow (#FFD84D) chairs. No text overlays, no logos, no watermarks.",
@@ -89,6 +59,24 @@
       ]
     },
     "visual": {
+      "actos": [
+        {
+          "escena": "espera",
+          "dur": 6,
+          "texto": "Tu mascota no puede preguntar por el título."
+        },
+        {
+          "escena": "impostor",
+          "dur": 8,
+          "texto": "Cualquiera puede ponerse una bata blanca."
+        },
+        {
+          "escena": "verificada",
+          "dur": 7,
+          "texto": "La insignia azul se verifica: Registro Civil y COLMEVET."
+        }
+      ],
+      "cierre": "Busca la insignia azul",
       "escenas_ia": [
         {
           "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A fluffy grey cartoon cat with round amber eyes and a small red collar sits patiently on a waiting room chair, holding a tiny purse. The waiting room has purple (#5B2E7E) walls and yellow (#FFD84D) chairs. No text overlays, no logos, no watermarks.",
@@ -121,12 +109,12 @@
           "texto_pantalla": "La insignia azul se verifica: Registro Civil + COLMEVET"
         }
       ],
-      "nota": "Video pendiente de generación: falta el secret REPLICATE_API_TOKEN. El prompt de IA está en la pieza."
+      "nota": "Video sin voz en off: falta el secret ELEVENLABS_API_KEY. La narración está en la pieza."
     },
     "estado": "pendiente",
-    "lote": "lote-2026-08-31-00-09",
-    "imagen": null,
-    "imagen_url": null,
-    "nota": "Video pendiente de generación: falta el secret REPLICATE_API_TOKEN. El prompt de IA está en la pieza."
+    "lote": "lote-2026-08-31-00-49",
+    "imagen": "lote-2026-08-31-00-49-1-video.mp4",
+    "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/main/piezas/lote-2026-08-31-00-49-1-video.mp4",
+    "nota": "Video sin voz en off: falta el secret ELEVENLABS_API_KEY. La narración está en la pieza."
   }
 ]
