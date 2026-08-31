@@ -158,15 +158,18 @@ export async function generarVozPorTramos({ tramos, total, salida }) {
     }
 
     const entradas = [];
-    const cadenas = [];
+    const cadVoz = [], cadEfx = [];
     for (let k = 0; k < piezas.length; k++) {
       const p = piezas[k];
       const d = await duracion(p.archivo);
       entradas.push('-i', p.archivo);
       const pasos = [];
       if (p.efecto) {
-        // El efecto acompaña; si se pasa, se corta y se desvanece.
-        pasos.push('volume=0.28', `atrim=0:${p.ventana.toFixed(2)}`, 'afade=t=out:st=' + Math.max(0, p.ventana - 0.4).toFixed(2) + ':d=0.4');
+        // Cada efecto llega con su propio volumen; se nivelan todos al mismo
+        // antes de mezclar, si no unos se pierden y otros gritan.
+        pasos.push('loudnorm=I=-20:TP=-3:LRA=11',
+          `atrim=0:${p.ventana.toFixed(2)}`,
+          'afade=t=out:st=' + Math.max(0.1, p.ventana - 0.5).toFixed(2) + ':d=0.5');
       } else if (d != null && d > p.ventana + 0.05) {
         const factor = Math.min(d / p.ventana, APURO_MAX);
         pasos.push(filtroTempo(factor));
@@ -176,12 +179,30 @@ export async function generarVozPorTramos({ tramos, total, salida }) {
           + (sobra > 0.15 ? ` y aun así sobra ${sobra.toFixed(1)} s: conviene acortar esa frase.` : '.'));
       }
       pasos.push('aresample=48000', `adelay=${Math.round(p.desde * 1000)}:all=1`);
-      cadenas.push(`[${k}:a]${pasos.join(',')}[t${k}]`);
+      (p.efecto ? cadEfx : cadVoz).push(`[${k}:a]${pasos.join(',')}[t${k}]`);
     }
-    const mezcla = `${cadenas.join(';')};${piezas.map((_, k) => `[t${k}]`).join('')}`
-      + `amix=inputs=${piezas.length}:normalize=0:dropout_transition=0[voz]`;
+
+    const idx = c => c.match(/\[t(\d+)\]$/)[1];
+    const unir = (cads, etq) => cads.length === 1
+      ? `${cads[0].replace(/\[t\d+\]$/, `[${etq}]`)}`
+      : `${cads.join(';')};${cads.map(c => `[t${idx(c)}]`).join('')}amix=inputs=${cads.length}:normalize=0:dropout_transition=0[${etq}]`;
+
+    let mezcla, salidaFinal;
+    if (cadEfx.length) {
+      // Como en un comercial: los efectos suenan de verdad, pero se agachan
+      // solos cuando entra la voz. Eso es el «ducking».
+      mezcla = `${unir(cadVoz, 'vz')};[vz]asplit=2[vzMix][vzLado];`
+        + `${unir(cadEfx, 'ef')};`
+        + `[ef][vzLado]sidechaincompress=threshold=0.02:ratio=12:attack=8:release=320:makeup=1[efDuck];`
+        + `[vzMix][efDuck]amix=inputs=2:normalize=0:dropout_transition=0,${NIVEL_FINAL}[out]`;
+      salidaFinal = '[out]';
+      console.log(`  ${cadEfx.length} efectos de sonido mezclados bajo la voz (se agachan cuando ella habla).`);
+    } else {
+      mezcla = `${unir(cadVoz, 'vz')};[vz]${NIVEL_FINAL}[out]`;
+      salidaFinal = '[out]';
+    }
     await ejecutar(ffmpegBin(), ['-y', ...entradas, '-filter_complex', mezcla,
-      '-map', '[voz]', '-t', String(total), '-c:a', 'libmp3lame', '-q:a', '2', salida]);
+      '-map', salidaFinal, '-t', String(total), '-c:a', 'libmp3lame', '-q:a', '2', salida]);
     return salida;
   } finally {
     piezas.forEach(p => { try { unlinkSync(p.archivo); } catch (e) {} });
@@ -223,6 +244,10 @@ async function duracion(archivo) {
 
 /* Hasta aquí se puede acelerar el habla sin que se note ni suene apurada. */
 const APURO_MAX = 1.18;
+
+/* Nivel de salida parejo, en el rango que usan los comerciales: sin esto el
+   video suena más bajo que todo lo demás del feed y hay que subir el volumen. */
+const NIVEL_FINAL = 'loudnorm=I=-16:TP=-1.5:LRA=11';
 
 /** Cadena de filtros atempo: cada uno admite como máximo 2x. */
 function filtroTempo(factor) {
