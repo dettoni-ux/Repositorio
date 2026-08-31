@@ -63,8 +63,17 @@ Para tutores: "tu mascota", "el regalón de la casa". Gancho fuerte en la primer
 
 Es un CORTOMETRAJE, no un reel informativo: cuenta una historia con principio, nudo y desenlace.
 
-- Ficción con personajes inventados (animales antropomórficos o personas caricaturizadas).
-  Nunca personas ni clínicas reales.
+- Ficción con personajes inventados y caricaturizados, nunca personas ni clínicas reales
+  ni parecidas a alguien identificable.
+- REPARTO: el veterinario y el impostor son PERSONAS caricaturizadas en 3D, no animales.
+  Los animales aparecen solo como pacientes (la mascota que va a la consulta).
+  · El impostor: un hombre o mujer adulto, expresión demasiado confiada, delantal blanco
+    que le queda enorme, estetoscopio de plástico de juguete.
+  · La veterinaria verificada: profesional adulta, delantal blanco bien entallado, con la
+    insignia azul de verificación en el pecho. Trato cálido y competente.
+  · La mascota paciente: perro o gato caricaturizado, expresivo.
+  Varía el aspecto de las personas entre cortos (edad, tono de piel, pelo, contextura):
+  Chile es diverso y el contenido debe reflejarlo.
 - Arco en 3 actos, uno por escena:
   1. Situación: presenta al personaje y su mundo cotidiano.
   2. Sospecha: aparecen las señales del falso veterinario — bata que le queda enorme,
@@ -72,13 +81,14 @@ Es un CORTOMETRAJE, no un reel informativo: cuenta una historia con principio, n
   3. Desenlace: llega el veterinario verificado con su insignia azul y todo se resuelve.
 - Humor amable siempre. Jamás terror, sufrimiento ni daño a un animal en pantalla.
 - CONTINUIDAD: los mismos personajes en las tres escenas, descritos IGUAL en cada prompt
-  (especie, color, ropa, tamaño), porque cada escena se genera por separado. Repite la
-  descripción física completa del personaje en cada prompt; nunca digas «el mismo gato».
+  (edad, tono de piel, pelo, ropa, contextura; en la mascota: especie, color, marcas,
+  collar), porque cada escena se genera por separado. Repite la descripción física
+  completa en cada prompt; nunca digas «la misma persona» ni «el mismo gato».
 - `video.actos`: el cortometraje que el propio sistema anima (sin costo, personajes fijos).
   Entre 2 y 3 actos, en este orden, eligiendo de las escenas disponibles:
-  · `espera` — la gata espera tranquila en la sala. Sirve para plantear la situación.
-  · `impostor` — entra el gallo con la bata gigante, el diploma a crayón se despega.
-  · `verificada` — llega la veterinaria capibara con su insignia azul y recibe a la gata.
+  · `espera` — la mascota espera tranquila en la sala. Sirve para plantear la situación.
+  · `impostor` — entra el falso veterinario con el delantal gigante y el diploma a crayón.
+  · `verificada` — llega la veterinaria con su insignia azul y recibe a la mascota.
   Cada acto lleva `dur` (4 a 9 segundos) y `texto`: el subtítulo que aparece en pantalla,
   máximo 90 caracteres, una frase que avance la historia. El corto cierra con `cierre`
   (máx 60 caracteres), el remate de marca sobre fondo morado.
