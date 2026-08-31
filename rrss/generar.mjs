@@ -95,7 +95,30 @@ const LoteSchema = z.object({ piezas: z.array(PiezaSchema).min(1).max(8) });
 const cliente = SIN_API ? null : new Anthropic();
 const IDENTIDAD = readFileSync(path.join(AQUI, 'identidad.md'), 'utf8');
 
-async function llamarClaude(mensaje) {
+/**
+ * Los topes de largo de las listas no los garantiza la decodificación, así que
+ * una escena de más botaba el lote entero. Se recortan antes de validar: sobrar
+ * ideas no es un error, es material que no cabe.
+ */
+const TOPES = { actos: 3, escenas_ia: 3, escenas: 4 };
+function podar(lote) {
+  if (Array.isArray(lote?.piezas)) {
+    if (lote.piezas.length > 8) lote.piezas = lote.piezas.slice(0, 8);
+    for (const pieza of lote.piezas) {
+      for (const [campo, tope] of Object.entries(TOPES)) {
+        const lista = pieza?.video?.[campo];
+        if (Array.isArray(lista) && lista.length > tope) {
+          console.log(`  Se recortan ${lista.length} → ${tope} en «${campo}» (el guion trajo de más).`);
+          pieza.video[campo] = lista.slice(0, tope);
+        }
+      }
+    }
+  }
+  return lote;
+}
+
+async function llamarClaude(mensaje, correccion) {
+  const contenido = correccion ? `${mensaje}\n\nCORRIGE ESTO DEL INTENTO ANTERIOR:\n${correccion}` : mensaje;
   const respuesta = await cliente.beta.messages.create({
     model: 'claude-opus-5',
     max_tokens: 16000,
@@ -103,7 +126,7 @@ async function llamarClaude(mensaje) {
     fallbacks: [{ model: 'claude-opus-4-8' }],
     system: IDENTIDAD,
     output_config: { format: zodOutputFormat(LoteSchema) },
-    messages: [{ role: 'user', content: mensaje }]
+    messages: [{ role: 'user', content: contenido }]
   });
   if (respuesta.stop_reason === 'refusal') {
     throw new Error(`La API rechazó la solicitud: ${respuesta.stop_details?.explanation || 'sin detalle'}`);
@@ -113,7 +136,16 @@ async function llamarClaude(mensaje) {
   }
   const texto = respuesta.content.find(b => b.type === 'text')?.text;
   if (!texto) throw new Error('La respuesta no trajo contenido de texto.');
-  return LoteSchema.parse(JSON.parse(texto));
+
+  const crudo = podar(JSON.parse(texto));
+  const r = LoteSchema.safeParse(crudo);
+  if (r.success) return r.data;
+
+  // Un solo reintento diciendo exactamente qué campo quedó fuera de norma.
+  const detalle = r.error.issues.map(i => `- ${i.path.join('.')}: ${i.message}`).join('\n');
+  if (correccion) throw new Error(`El lote no cumple el formato tras reintentar:\n${detalle}`);
+  console.log(`  El lote no cumplió el formato; se reintenta indicando el problema:\n${detalle}`);
+  return llamarClaude(mensaje, detalle);
 }
 
 function bloqueDatos(datos) {
