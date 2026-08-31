@@ -12,6 +12,8 @@ import { writeFileSync, mkdirSync } from 'node:fs';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import path from 'node:path';
+import { readFileSync, existsSync as hay } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import ffmpegStatic from 'ffmpeg-static';
 
 const ejecutar = promisify(execFile);
@@ -47,8 +49,23 @@ export async function listarVoces(clave) {
   })).sort((a, b) => b.puntaje - a.puntaje);
 }
 
+/** Voz elegida en voz.json (lo que se selecciona en la página del estudio). */
+function vozConfigurada() {
+  try {
+    const ruta = path.join(path.dirname(fileURLToPath(import.meta.url)), 'voz.json');
+    if (!hay(ruta)) return null;
+    const cfg = JSON.parse(readFileSync(ruta, 'utf8'));
+    if (!cfg.elegida) return null;
+    const v = (cfg.disponibles || []).find(d => d.id === cfg.elegida);
+    console.log(`  Voz configurada: ${v ? `«${v.nombre}» (${v.acento})` : cfg.elegida}.`);
+    return cfg.elegida;
+  } catch (e) { return null; }
+}
+
 async function elegirVoz(clave) {
   if (process.env.ELEVENLABS_VOICE_ID) return process.env.ELEVENLABS_VOICE_ID.trim();
+  const dePreferencia = vozConfigurada();
+  if (dePreferencia) return dePreferencia;
   const voces = await listarVoces(clave);
   if (!voces.length) throw new Error('La cuenta de ElevenLabs no tiene voces disponibles.');
   const v = voces[0];

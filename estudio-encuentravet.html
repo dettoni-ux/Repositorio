@@ -143,6 +143,17 @@
   .reel-zona canvas{width:100%; max-width:260px; height:auto; border-radius:14px; border:1px solid var(--line); background:#000}
   .barra{height:8px; background:var(--panel2); border-radius:99px; overflow:hidden; margin-top:12px}
   .barra i{display:block; height:100%; width:0; background:var(--morado); transition:width .2s}
+  .voz-lista{display:flex; flex-direction:column; gap:8px; margin-top:10px}
+  .voz-op{display:flex; align-items:center; gap:12px; padding:12px 14px; border:1.5px solid var(--line);
+    border-radius:12px; cursor:pointer; background:var(--panel); text-align:left; width:100%; font:inherit; color:inherit}
+  .voz-op:hover{border-color:var(--morado)}
+  .voz-op[aria-checked="true"]{border-color:var(--morado); background:var(--morado-suave)}
+  .voz-op .punto{width:18px; height:18px; border-radius:50%; border:2px solid var(--line); flex:none}
+  .voz-op[aria-checked="true"] .punto{border-color:var(--morado); background:var(--morado); box-shadow:inset 0 0 0 3px var(--panel)}
+  .voz-op .n{font-weight:700}
+  .voz-op .d{font-size:13px; color:var(--ink2)}
+  .voz-op .ban{margin-left:auto; font-size:11.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase;
+    padding:3px 9px; border-radius:99px; background:var(--amarillo-bg); color:var(--amarillo)}
   .modal-img{position:fixed; inset:0; background:rgba(22,16,19,.86); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; z-index:50; padding:20px}
   .modal-img img{max-width:min(92vw,420px); max-height:70vh; border-radius:12px}
   .modal-img p{color:#fff; font-size:14px; text-align:center; max-width:40ch}
@@ -387,6 +398,11 @@ Encuentra veterinarios verificados cerca tuyo en encuentravet.cl — gratis.
             <textarea id="b-hashtags"></textarea>
           </div>
         </div>
+        <label class="campo">Voz de las narraciones</label>
+        <p class="aviso" style="margin:0 0 4px">Con esta voz se narran los cortometrajes. Son las voces guardadas en tu cuenta de ElevenLabs.</p>
+        <div class="voz-lista" id="voz-lista" role="radiogroup" aria-label="Voz de las narraciones"></div>
+        <p class="aviso" id="voz-elegida"></p>
+
         <label class="campo" for="b-datos">Datos clave de la marca (uno por línea — el generador los usa como argumentos)</label>
         <textarea id="b-datos" style="min-height:150px"></textarea>
         <div id="lista-datos" style="margin-top:14px"></div>
@@ -425,6 +441,7 @@ const MARCA_ORIGINAL = {
   web: 'encuentravet.cl',
   ig: '@encuentravet',
   slogan: 'Veterinarios Certificados. Cerca de ti',
+  voz: 'ClNifCEVq1smkl4M3aTk',
   c1: '#5B2E7E',
   c2: '#FFD84D',
   bio: '🐾 Veterinarios Certificados. Cerca de ti 🔵 Título y cédula verificados 📍 Busca por comuna y agenda con disponibilidad real 👇 Encuentra tu veterinario',
@@ -754,6 +771,18 @@ const HASHTAGS_PILAR = {
   b2b:       '#MedicoVeterinario #VeterinariosChile #EmprendimientoVeterinario',
   tendencia: '#HumorDeMascotas #PetsOfInstagram #PerrosYGatos'
 };
+
+/* ============================================================
+   VOCES — las guardadas en la cuenta de ElevenLabs de la marca
+   ============================================================ */
+const VOCES = [
+  { id:'ClNifCEVq1smkl4M3aTk', nombre:'Cristian Cornejo', acento:'Chileno', perfil:'Seguro, redes sociales, mediana edad', destaca:true },
+  { id:'s8WAhMSU6uxtDpE0pBPw', nombre:'Eigam Chile',      acento:'Chileno', perfil:'Casual, narrativo, joven', destaca:true },
+  { id:'nmvA11Y688M5reLqDsVm', nombre:'Samuel Rosales',   acento:'Mexicano', perfil:'Cálido y conversacional' },
+  { id:'P6PQtQGB3yM21Aj1vGJ2', nombre:'Luis',             acento:'Argentino', perfil:'Expresivo, narrativo' },
+  { id:'EXAVITQu4vr4xnSDxMaL', nombre:'Sarah',            acento:'Neutro (inglés)', perfil:'Femenina, profesional' }
+];
+const VOZ_POR_DEFECTO = 'ClNifCEVq1smkl4M3aTk';
 
 /* ============================================================
    UTILIDADES
@@ -1421,6 +1450,24 @@ async function renderVisual(){
   PLANTILLAS[$('#v-plantilla').value](ctx, o);
 }
 
+function renderVoces(){
+  const cont = $('#voz-lista'); if(!cont) return;
+  const actual = marca.voz || VOZ_POR_DEFECTO;
+  cont.innerHTML = VOCES.map(v=>
+    '<button type="button" class="voz-op" role="radio" data-voz="'+v.id+'" aria-checked="'+(v.id===actual)+'">'+
+      '<span class="punto"></span>'+
+      '<span><span class="n">'+esc(v.nombre)+'</span><br><span class="d">'+esc(v.acento)+' · '+esc(v.perfil)+'</span></span>'+
+      (v.destaca?'<span class="ban">Chilena</span>':'')+
+    '</button>').join('');
+  $$('#voz-lista [data-voz]').forEach(b=> b.addEventListener('click', ()=>{
+    marca.voz = b.dataset.voz; guardarMarca(); renderVoces(); toast('Voz seleccionada ✓');
+  }));
+  const v = VOCES.find(x=>x.id===actual);
+  $('#voz-elegida').textContent = v
+    ? 'Se narrará con «'+v.nombre+'» ('+v.acento+'). Avísame el nombre y la dejo activa en el generador.'
+    : '';
+}
+
 function renderThumbs(){
   const cont = $('#thumbs-fotos');
   if(!fotosData.length){ cont.innerHTML = '<span class="aviso">Sin fotos aún: las plantillas usan una ilustración de marca.</span>'; return; }
@@ -1921,6 +1968,7 @@ let descargas = null;
   pintarMarca();
   renderGuardados();
   renderLogoCaja();
+  renderVoces();
   renderThumbs();
   renderFeed();
   renderVisual();
