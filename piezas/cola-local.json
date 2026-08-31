@@ -372,5 +372,133 @@
     "imagen": "lote-2026-08-31-02-13-1-video.mp4",
     "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/claude/sweet-turing-nwcnd0/piezas/lote-2026-08-31-02-13-1-video.mp4",
     "nota": "Video generado sin voz en off (fetch failed)."
+  },
+  {
+    "fecha_propuesta": "2026-09-02",
+    "hora_propuesta": "09:00",
+    "publico": "veterinarios",
+    "caption": "Cualquiera se pone una bata. Nadie se pone tu título 🩺\n\nEste corto es ficción, pero el miedo es real: alguien con un delantal enorme, un estetoscopio de juguete y un \"diploma\" pintado a crayón atendiendo mascotas como si nada. El tutor no tiene cómo saberlo. Tú sí, porque estudiaste años para esto.\n\nEn EncuentraVet cada veterinario se valida uno a uno contra el Registro Civil y COLMEVET antes de recibir la insignia azul. No es un adorno de perfil: es la prueba pública de que quien atiende es médico veterinario de verdad.\n\nY además, tu perfil trabaja por ti:\n• Agenda online con tu disponibilidad real, el tutor reserva solo\n• Ficha clínica digital de cada paciente en un solo lugar\n• Recordatorios automáticos a los tutores\n• 0% comisión: lo que cobras es tuyo, siempre\n\nHoy somos 100 veterinarios verificados en 32 comunas. Certifícate y que nadie dude de ti.\n\nCrea tu perfil gratis en encuentravet.cl\n\n#EncuentraVet #VeterinariosVerificados #MédicoVeterinario #VeterinariosChile #InsigniaAzul #COLMEVET #FalsosVeterinarios",
+    "tipo": "video",
+    "formato": "reel",
+    "video": {
+      "actos": [
+        {
+          "escena": "espera",
+          "dur": 5,
+          "texto": "Un perrito chico espera tranquilo su turno en la sala."
+        },
+        {
+          "escena": "impostor",
+          "dur": 7,
+          "texto": "Entra el delantal gigante, el estetoscopio de juguete y el diploma a crayón."
+        },
+        {
+          "escena": "verificada",
+          "dur": 8,
+          "texto": "Llega la veterinaria con su insignia azul: Registro Civil y COLMEVET."
+        }
+      ],
+      "cierre": "La insignia azul se verifica. encuentravet.cl",
+      "escenas_ia": [
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A veterinary clinic waiting room with deep purple (#5B2E7E) accent wall, three bright yellow (#FFD84D) plastic chairs, light wooden reception desk and a leafy potted plant. A small scruffy grey-and-white terrier mix dog with a floppy left ear, brown round eyes and a purple collar with a round yellow tag sits calmly on the middle yellow chair, tail wagging slowly, looking at the closed consulting room door. Gentle camera push-in. No text overlays, no logos, no watermarks.",
+          "duracion_s": 6
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. Same veterinary clinic waiting room with deep purple (#5B2E7E) accent wall, three bright yellow (#FFD84D) plastic chairs, light wooden reception desk and a leafy potted plant. A thin man about thirty-five years old, pale skin, messy ginger hair, thick eyebrows, wearing an absurdly oversized white lab coat whose sleeves hang past his hands, walks in with an overconfident grin, holding a toy plastic stethoscope and a childish diploma scribbled with crayon. A small scruffy grey-and-white terrier mix dog with a floppy left ear, brown round eyes and a purple collar with a round yellow tag tilts its head on the middle yellow chair, ears down, suspicious. Comedic timing, humorous, no danger. No text overlays, no logos, no watermarks.",
+          "duracion_s": 8
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. Same veterinary clinic waiting room with deep purple (#5B2E7E) accent wall, three bright yellow (#FFD84D) plastic chairs, light wooden reception desk and a leafy potted plant. A confident woman veterinarian about forty years old, medium-brown skin, dark curly hair in a low bun, sturdy build, wearing a well-fitted white coat with a glowing blue verified check badge on her chest, kneels down smiling warmly and opens her arms. A small scruffy grey-and-white terrier mix dog with a floppy left ear, brown round eyes and a purple collar with a round yellow tag jumps happily toward her, tail wagging fast. In the background, a thin man about thirty-five years old, pale skin, messy ginger hair, thick eyebrows, wearing an absurdly oversized white lab coat with sleeves past his hands, tiptoes away holding his toy plastic stethoscope and crayon diploma. Heartwarming, humorous. No text overlays, no logos, no watermarks.",
+          "duracion_s": 9
+        }
+      ],
+      "narracion": "En la sala de espera, un perrito chico espera su turno tranquilo. Entra alguien con delantal gigante, estetoscopio de plástico y un diploma pintado a crayón. Nadie le pidió nada, nadie lo verificó. Entonces llega la veterinaria: delantal entallado, insignia azul en el pecho, validada en el Registro Civil y en COLMEVET. Cualquiera se pone una bata. La insignia azul se verifica. En encuentravet punto cl.",
+      "escenas": [
+        {
+          "tiempo": "0:00-0:06",
+          "descripcion": "Sala de espera con muro morado y sillas amarillas. El perrito grisáceo de collar morado espera sentado, mirando la puerta de la consulta.",
+          "texto_pantalla": "Todo tranquilo en la sala de espera"
+        },
+        {
+          "tiempo": "0:06-0:14",
+          "descripcion": "Entra el impostor: delantal blanco enorme con mangas que le tapan las manos, estetoscopio de plástico y diploma a crayón. El perrito ladea la cabeza, desconfiado.",
+          "texto_pantalla": "Delantal gigante, diploma a crayón"
+        },
+        {
+          "tiempo": "0:14-0:23",
+          "descripcion": "Llega la veterinaria verificada, delantal entallado con insignia azul en el pecho. Se agacha y el perrito corre feliz hacia ella. El impostor se retira en puntillas.",
+          "texto_pantalla": "Registro Civil + COLMEVET = insignia azul"
+        },
+        {
+          "tiempo": "0:23-0:28",
+          "descripcion": "Cierre sobre fondo morado con la insignia azul y el remate de marca.",
+          "texto_pantalla": "La insignia azul se verifica · encuentravet.cl"
+        }
+      ]
+    },
+    "visual": {
+      "actos": [
+        {
+          "escena": "espera",
+          "dur": 5,
+          "texto": "Un perrito chico espera tranquilo su turno en la sala."
+        },
+        {
+          "escena": "impostor",
+          "dur": 7,
+          "texto": "Entra el delantal gigante, el estetoscopio de juguete y el diploma a crayón."
+        },
+        {
+          "escena": "verificada",
+          "dur": 8,
+          "texto": "Llega la veterinaria con su insignia azul: Registro Civil y COLMEVET."
+        }
+      ],
+      "cierre": "La insignia azul se verifica. encuentravet.cl",
+      "escenas_ia": [
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A veterinary clinic waiting room with deep purple (#5B2E7E) accent wall, three bright yellow (#FFD84D) plastic chairs, light wooden reception desk and a leafy potted plant. A small scruffy grey-and-white terrier mix dog with a floppy left ear, brown round eyes and a purple collar with a round yellow tag sits calmly on the middle yellow chair, tail wagging slowly, looking at the closed consulting room door. Gentle camera push-in. No text overlays, no logos, no watermarks.",
+          "duracion_s": 6
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. Same veterinary clinic waiting room with deep purple (#5B2E7E) accent wall, three bright yellow (#FFD84D) plastic chairs, light wooden reception desk and a leafy potted plant. A thin man about thirty-five years old, pale skin, messy ginger hair, thick eyebrows, wearing an absurdly oversized white lab coat whose sleeves hang past his hands, walks in with an overconfident grin, holding a toy plastic stethoscope and a childish diploma scribbled with crayon. A small scruffy grey-and-white terrier mix dog with a floppy left ear, brown round eyes and a purple collar with a round yellow tag tilts its head on the middle yellow chair, ears down, suspicious. Comedic timing, humorous, no danger. No text overlays, no logos, no watermarks.",
+          "duracion_s": 8
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. Same veterinary clinic waiting room with deep purple (#5B2E7E) accent wall, three bright yellow (#FFD84D) plastic chairs, light wooden reception desk and a leafy potted plant. A confident woman veterinarian about forty years old, medium-brown skin, dark curly hair in a low bun, sturdy build, wearing a well-fitted white coat with a glowing blue verified check badge on her chest, kneels down smiling warmly and opens her arms. A small scruffy grey-and-white terrier mix dog with a floppy left ear, brown round eyes and a purple collar with a round yellow tag jumps happily toward her, tail wagging fast. In the background, a thin man about thirty-five years old, pale skin, messy ginger hair, thick eyebrows, wearing an absurdly oversized white lab coat with sleeves past his hands, tiptoes away holding his toy plastic stethoscope and crayon diploma. Heartwarming, humorous. No text overlays, no logos, no watermarks.",
+          "duracion_s": 9
+        }
+      ],
+      "narracion": "En la sala de espera, un perrito chico espera su turno tranquilo. Entra alguien con delantal gigante, estetoscopio de plástico y un diploma pintado a crayón. Nadie le pidió nada, nadie lo verificó. Entonces llega la veterinaria: delantal entallado, insignia azul en el pecho, validada en el Registro Civil y en COLMEVET. Cualquiera se pone una bata. La insignia azul se verifica. En encuentravet punto cl.",
+      "escenas": [
+        {
+          "tiempo": "0:00-0:06",
+          "descripcion": "Sala de espera con muro morado y sillas amarillas. El perrito grisáceo de collar morado espera sentado, mirando la puerta de la consulta.",
+          "texto_pantalla": "Todo tranquilo en la sala de espera"
+        },
+        {
+          "tiempo": "0:06-0:14",
+          "descripcion": "Entra el impostor: delantal blanco enorme con mangas que le tapan las manos, estetoscopio de plástico y diploma a crayón. El perrito ladea la cabeza, desconfiado.",
+          "texto_pantalla": "Delantal gigante, diploma a crayón"
+        },
+        {
+          "tiempo": "0:14-0:23",
+          "descripcion": "Llega la veterinaria verificada, delantal entallado con insignia azul en el pecho. Se agacha y el perrito corre feliz hacia ella. El impostor se retira en puntillas.",
+          "texto_pantalla": "Registro Civil + COLMEVET = insignia azul"
+        },
+        {
+          "tiempo": "0:23-0:28",
+          "descripcion": "Cierre sobre fondo morado con la insignia azul y el remate de marca.",
+          "texto_pantalla": "La insignia azul se verifica · encuentravet.cl"
+        }
+      ],
+      "nota": null
+    },
+    "estado": "pendiente",
+    "lote": "lote-2026-08-31-02-46",
+    "imagen": "lote-2026-08-31-02-46-1-video.mp4",
+    "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/claude/sweet-turing-nwcnd0/piezas/lote-2026-08-31-02-46-1-video.mp4",
+    "nota": null
   }
 ]
