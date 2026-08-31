@@ -1,33 +1,39 @@
 {
-  "_comentario": "Guion del cortometraje, con tiempos. Manda por sobre lo que escriba el generador. Cada tramo produce su propio audio y se coloca EXACTO en su segundo de inicio, así la voz calza con la imagen. 'pantalla' se quema como subtítulo durante ese mismo tramo (usa \\n para cortar línea). 'escena' describe qué se ve: los tramos con escena van a la IA de video; el último, sin escena, es el cierre de marca que dibujamos nosotros (no cuesta créditos). Pon 'usar': false para volver al guion automático.",
+  "_comentario": "Guion del cortometraje. Manda por sobre lo que escriba el generador. Cada tramo produce su propio audio y se coloca EXACTO en su segundo de inicio. 'pantalla' se quema como subtítulo (usa \\n para cortar línea). 'prompt' es lo que se le pide a la IA de video; se le antepone 'estilo' para que todas las escenas se vean iguales. 'sfx' describe el efecto de sonido en inglés, que se genera con ElevenLabs. El tramo con 'cierre' no pasa por la IA: lo dibujamos nosotros. Pon 'usar': false para volver al guion automático.",
   "usar": true,
+  "estilo": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16.",
+  "cola": "No text overlays, no logos, no watermarks, no on-screen writing.",
   "tramos": [
     {
       "desde": 0,
-      "hasta": 6,
+      "hasta": 5,
       "voz": "Todo tranquilo en la sala de espera... hasta que aparece alguien que dice ser veterinario.",
-      "pantalla": "Todo tranquilo en la sala de espera",
-      "escena": "waiting room, the pet waits calmly"
+      "pantalla": "Todo tranquilo en la sala de espera...",
+      "prompt": "Cute small brown and white dog sitting calmly on a wooden bench in a bright veterinary waiting room, warm sunlight. Purple accent wall and yellow chairs. The dog wears a purple collar. Single subject, no people in frame.",
+      "sfx": "calm quiet veterinary waiting room ambience, soft distant murmur"
     },
     {
-      "desde": 6,
-      "hasta": 14,
+      "desde": 5,
+      "hasta": 13,
       "voz": "Delantal gigante, estetoscopio de plástico y un diploma hecho a crayón. ¿El problema? Nadie sabe quién es... porque nadie lo verificó.",
-      "pantalla": "Delantal gigante.\nDiploma a crayón. 😅",
-      "escena": "the impostor walks in with the oversized coat, toy stethoscope and crayon diploma"
+      "pantalla": "Bata gigante.\nDiploma dibujado a crayón.",
+      "prompt": "Friendly suspicious fake vet wearing an oversized white lab coat, holding a funny child drawing made with crayons as a diploma. Same bright veterinary waiting room with purple accent wall. Single character in frame, no extra background people, no duplicate characters.",
+      "sfx": "funny comedic record scratch, short cartoon stinger"
     },
     {
-      "desde": 14,
-      "hasta": 23,
+      "desde": 13,
+      "hasta": 22,
       "voz": "Por eso existe EncuentraVet: verificamos la identidad y los antecedentes profesionales de los veterinarios registrados, para que puedas reconocer a los profesionales validados.",
-      "pantalla": "Identidad + antecedentes profesionales\n= Insignia azul",
-      "escena": "the verified veterinarian arrives with the blue badge and greets the pet"
+      "pantalla": "¿Confiarías a tu mascota?",
+      "prompt": "The same small brown and white dog with a purple collar happily walking towards ONE single verified veterinarian kneeling with open arms: a woman in her thirties with dark hair in a bun, wearing a well-fitted white coat with a small blue verification badge. She is clearly a different person from the man in the previous scene. Clean background without duplicate characters, only two subjects in frame.",
+      "sfx": "happy single dog bark, warm and short"
     },
     {
-      "desde": 23,
-      "hasta": 28,
+      "desde": 22,
+      "hasta": 27,
       "voz": "Porque cualquiera puede ponerse una bata. Pero una insignia azul se verifica. En encuentravet punto cl.",
       "pantalla": "Cualquiera se pone una bata.\nLa insignia azul se verifica.\nencuentravet.cl",
+      "sfx": "bright positive notification chime, verification confirmed",
       "cierre": true
     }
   ]

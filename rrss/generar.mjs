@@ -26,7 +26,8 @@ import { z } from 'zod';
 import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod';
 import { obtenerDatos, insertarPieza } from './datos.mjs';
 import { abrirNavegador, renderPieza } from './render.mjs';
-import { generarCortometraje, videoDisponible, cierreDeMarca, unirClips, quemarSubtitulos } from './video.mjs';
+import { generarCortometraje, videoDisponible, unirClips, quemarSubtitulos } from './video.mjs';
+import { tarjetaDeCierre } from './cierre.mjs';
 import { animarCorto } from './animar.mjs';
 import { generarVoz, generarVozPorTramos, mezclarVideoYVoz, vozDisponible } from './voz.mjs';
 import { leerGuion, escenasSegunGuion, tramoDeCierre, subtitulosAss } from './guion.mjs';
@@ -284,13 +285,13 @@ async function montarSegunGuion(mudo, n) {
     let actual = mudo;
     if (cierre) {
       const tarjeta = path.join(DIR_PIEZAS, `.cierre-${n}.mp4`);
-      await cierreDeMarca({ duracion: cierre.hasta - cierre.desde, salida: tarjeta });
+      await tarjetaDeCierre({ duracion: cierre.hasta - cierre.desde, salida: tarjeta });
       temporales.push(tarjeta);
       const unido = path.join(DIR_PIEZAS, `.unido-${n}.mp4`);
       await unirClips({ clips: [actual, tarjeta], salida: unido });
       temporales.push(unido);
       actual = unido;
-      console.log(`    cierre de marca de ${(cierre.hasta - cierre.desde).toFixed(0)} s agregado (sin costo)`);
+      console.log(`    cierre con la insignia azul y la marca, ${(cierre.hasta - cierre.desde).toFixed(0)} s (sin costo)`);
     }
     const ass = path.join(DIR_PIEZAS, `.subs-${n}.ass`);
     writeFileSync(ass, subtitulosAss(GUION));

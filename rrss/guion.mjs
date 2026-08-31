@@ -31,14 +31,19 @@ export function leerGuion() {
 
 /**
  * Escenas para la IA de video, con la duración EXACTA que pide el guion.
- * Toma los prompts que escribió el generador (que son los que describen a los
- * personajes) y les impone los tiempos del guion, no al revés.
+ * Si el tramo trae su propio «prompt», ese manda: el guion lo escribió una
+ * persona y sabe qué quiere ver. Se le antepone el estilo y se le agrega la
+ * cola común para que todas las escenas se vean del mismo mundo.
  */
 export function escenasSegunGuion(guion, escenasIA) {
   const conEscena = guion.tramos.filter(t => !t.cierre);
   return conEscena.map((t, i) => {
-    const fuente = escenasIA[Math.min(i, escenasIA.length - 1)];
-    return { prompt_ia: fuente.prompt_ia, duracion_s: +(t.hasta - t.desde).toFixed(2) };
+    const propio = t.prompt && t.prompt.trim();
+    const fuente = escenasIA?.[Math.min(i, (escenasIA?.length || 1) - 1)];
+    const prompt_ia = propio
+      ? [guion.estilo, t.prompt.trim(), guion.cola].filter(Boolean).join(' ')
+      : fuente?.prompt_ia;
+    return { prompt_ia, duracion_s: +(t.hasta - t.desde).toFixed(2) };
   });
 }
 

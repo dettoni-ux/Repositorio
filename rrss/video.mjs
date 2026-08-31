@@ -289,20 +289,6 @@ async function duracionDe(archivo) {
   return null;
 }
 
-/**
- * Cierre de marca: fondo morado con el degradado de la casa. El texto lo pone
- * el subtitulado, así que aquí solo va el lienzo. No pasa por la IA: es
- * gratis, sale idéntico siempre y la marca queda exacta.
- */
-export async function cierreDeMarca({ duracion = 5, salida, morado = '#5B2E7E', ancho = 1080, alto = 1920, fps = 24 }) {
-  mkdirSync(path.dirname(salida), { recursive: true });
-  const fondo = `color=c=${morado}:s=${ancho}x${alto}:d=${duracion}:r=${fps}`;
-  await ejecutar(ffmpeg(), ['-y', '-f', 'lavfi', '-i', fondo,
-    '-vf', `vignette=PI/5,fade=t=in:st=0:d=0.4`,
-    '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-preset', 'medium', '-crf', '20', salida]);
-  return salida;
-}
-
 /** Une clips ya normalizados (mismo tamaño) en uno solo. */
 export async function unirClips({ clips, salida, ancho = 1080, alto = 1920 }) {
   if (clips.length === 1) {

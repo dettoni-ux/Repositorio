@@ -144,6 +144,19 @@ export async function generarVozPorTramos({ tramos, total, salida }) {
     }
     if (!piezas.length) throw new Error('El guion no trae texto de voz.');
 
+    // Efectos de sonido, por debajo de la voz para no taparla.
+    for (let i = 0; i < tramos.length; i++) {
+      const t = tramos[i];
+      if (!t.sfx) continue;
+      const archivo = path.join(dir, `sfx${i + 1}.mp3`);
+      try {
+        await generarEfecto({ texto: t.sfx, duracion: t.hasta - t.desde, salida: archivo });
+        piezas.push({ archivo, desde: t.desde, ventana: t.hasta - t.desde, i: i + 1, efecto: true });
+      } catch (e) {
+        console.log(`  Sin efecto de sonido en el tramo ${i + 1} (${e.message.slice(0, 90)}).`);
+      }
+    }
+
     const entradas = [];
     const cadenas = [];
     for (let k = 0; k < piezas.length; k++) {
@@ -151,7 +164,10 @@ export async function generarVozPorTramos({ tramos, total, salida }) {
       const d = await duracion(p.archivo);
       entradas.push('-i', p.archivo);
       const pasos = [];
-      if (d != null && d > p.ventana + 0.05) {
+      if (p.efecto) {
+        // El efecto acompaña; si se pasa, se corta y se desvanece.
+        pasos.push('volume=0.28', `atrim=0:${p.ventana.toFixed(2)}`, 'afade=t=out:st=' + Math.max(0, p.ventana - 0.4).toFixed(2) + ':d=0.4');
+      } else if (d != null && d > p.ventana + 0.05) {
         const factor = Math.min(d / p.ventana, APURO_MAX);
         pasos.push(filtroTempo(factor));
         const sobra = d / factor - p.ventana;
@@ -170,6 +186,28 @@ export async function generarVozPorTramos({ tramos, total, salida }) {
   } finally {
     piezas.forEach(p => { try { unlinkSync(p.archivo); } catch (e) {} });
   }
+}
+
+/**
+ * Efecto de sonido a partir de su descripción en inglés (ElevenLabs).
+ * Si falla, no es motivo para perder el video: se sigue sin ese efecto.
+ */
+export async function generarEfecto({ texto, duracion, salida }) {
+  const clave = process.env.ELEVENLABS_API_KEY;
+  if (!clave) throw new Error('Falta ELEVENLABS_API_KEY');
+  const res = await fetch(`${API}/sound-generation`, {
+    method: 'POST',
+    headers: { 'xi-api-key': clave, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      text: texto,
+      duration_seconds: Math.min(22, Math.max(0.5, Number(duracion) || 3)),
+      prompt_influence: 0.5
+    })
+  });
+  if (!res.ok) throw new Error(`ElevenLabs efectos ${res.status}: ${(await res.text()).slice(0, 200)}`);
+  mkdirSync(path.dirname(salida), { recursive: true });
+  writeFileSync(salida, Buffer.from(await res.arrayBuffer()));
+  return salida;
 }
 
 /** Duración en segundos de un archivo multimedia, leyendo la salida de ffmpeg. */
