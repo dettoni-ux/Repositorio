@@ -1,0 +1,104 @@
+/**
+ * Guion escrito a mano (guion.json): tiempos, voz y texto en pantalla.
+ *
+ * Cuando existe y tiene «usar»: true, manda por sobre lo que escriba el
+ * generador. Cada tramo produce su propio audio y se coloca exacto en su
+ * segundo de inicio, de modo que la voz calce con lo que se ve.
+ */
+import { readFileSync, existsSync } from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const AQUI = path.dirname(fileURLToPath(import.meta.url));
+
+/** Devuelve el guion propio, o null si no hay o está desactivado. */
+export function leerGuion() {
+  const ruta = path.join(AQUI, 'guion.json');
+  if (!existsSync(ruta)) return null;
+  let cfg;
+  try {
+    cfg = JSON.parse(readFileSync(ruta, 'utf8'));
+  } catch (e) {
+    console.log(`  Aviso: guion.json no se pudo leer (${e.message}). Se usa el guion automático.`);
+    return null;
+  }
+  if (cfg.usar === false) return null;
+  const tramos = (cfg.tramos || []).filter(t => Number.isFinite(t.desde) && Number.isFinite(t.hasta) && t.hasta > t.desde);
+  if (!tramos.length) return null;
+  tramos.sort((a, b) => a.desde - b.desde);
+  return { tramos, total: tramos[tramos.length - 1].hasta };
+}
+
+/**
+ * Escenas para la IA de video, con la duración EXACTA que pide el guion.
+ * Toma los prompts que escribió el generador (que son los que describen a los
+ * personajes) y les impone los tiempos del guion, no al revés.
+ */
+export function escenasSegunGuion(guion, escenasIA) {
+  const conEscena = guion.tramos.filter(t => !t.cierre);
+  return conEscena.map((t, i) => {
+    const fuente = escenasIA[Math.min(i, escenasIA.length - 1)];
+    return { prompt_ia: fuente.prompt_ia, duracion_s: +(t.hasta - t.desde).toFixed(2) };
+  });
+}
+
+/** Tramo de cierre de marca, si el guion lo define. */
+export function tramoDeCierre(guion) {
+  return guion.tramos.find(t => t.cierre) || null;
+}
+
+/* ---------- subtítulos ---------- */
+
+function aTiempoAss(s) {
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const seg = s % 60;
+  return `${h}:${String(m).padStart(2, '0')}:${seg.toFixed(2).padStart(5, '0')}`;
+}
+
+/** &HAABBGGRR — ASS usa BGR y alfa invertido (00 = opaco). */
+function aColorAss(hex, alfa = 0) {
+  const h = hex.replace('#', '');
+  const r = h.slice(0, 2), g = h.slice(2, 4), b = h.slice(4, 6);
+  return `&H${alfa.toString(16).padStart(2, '0')}${b}${g}${r}`.toUpperCase();
+}
+
+/**
+ * Subtítulos ASS con los textos del guion, en caja de marca sobre el tercio
+ * inferior. Se queman en el video porque en Instagram la mayoría mira sin
+ * sonido: sin texto en pantalla el mensaje no llega.
+ */
+export function subtitulosAss(guion, { ancho = 1080, alto = 1920, morado = '#5B2E7E' } = {}) {
+  const cab = [
+    '[Script Info]',
+    'ScriptType: v4.00+',
+    `PlayResX: ${ancho}`,
+    `PlayResY: ${alto}`,
+    'WrapStyle: 0',
+    'ScaledBorderAndShadow: yes',
+    '',
+    '[V4+ Styles]',
+    'Format: Name, Fontname, Fontsize, PrimaryColour, OutlineColour, BackColour, Bold, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding',
+    // BorderStyle 3 = caja opaca detrás del texto, con el morado de la marca.
+    `Style: Marca,DejaVu Sans,64,${aColorAss('#FFFFFF')},${aColorAss(morado)},${aColorAss(morado, 26)},1,3,18,0,2,90,90,190,1`,
+    '',
+    '[Events]',
+    'Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text'
+  ];
+  const lineas = guion.tramos
+    .filter(t => t.pantalla)
+    .map(t => {
+      // Un respiro al entrar y al salir para que no parpadee sobre el corte.
+      const desde = t.desde + 0.25;
+      const hasta = Math.max(desde + 0.5, t.hasta - 0.25);
+      // Los emoji se quitan del texto quemado: la fuente del video no los tiene
+      // en color y salen como un monigote gris. En el caption sí van.
+      const texto = String(t.pantalla)
+        .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{2B00}-\u{2BFF}]/gu, '')
+        .replace(/[ \t]+/g, ' ')
+        .split(/\r?\n/).map(l => l.trim()).filter(Boolean).join('\\N')
+        .replace(/\{|\}/g, '');
+      return `Dialogue: 0,${aTiempoAss(desde)},${aTiempoAss(hasta)},Marca,,0,0,0,,${texto}`;
+    });
+  return [...cab, ...lineas].join('\n') + '\n';
+}

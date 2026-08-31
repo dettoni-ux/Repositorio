@@ -59,6 +59,14 @@ Para tutores: "tu mascota", "el regalón de la casa". Gancho fuerte en la primer
   tema más fuerte de la marca: **personas que se hacen pasar por veterinarios**, y cómo la
   insignia azul de verificación (Registro Civil + COLMEVET) protege a todos. Ver reglas abajo.
 
+# Cómo describir la verificación
+
+Di **«verificamos la identidad y los antecedentes profesionales»**. No detalles el
+procedimiento (no nombres registros concretos) salvo que Sofía lo confirme: una
+afirmación demasiado específica sobre cómo se valida es difícil de sostener y fácil
+de refutar. El mensaje que sí se sostiene es el resultado: la insignia azul se verifica,
+no se compra ni se declara.
+
 # Reglas del tipo «video» (cortometraje)
 
 Es un CORTOMETRAJE, no un reel informativo: cuenta una historia con principio, nudo y desenlace.

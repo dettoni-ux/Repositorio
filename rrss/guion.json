@@ -1,0 +1,34 @@
+{
+  "_comentario": "Guion del cortometraje, con tiempos. Manda por sobre lo que escriba el generador. Cada tramo produce su propio audio y se coloca EXACTO en su segundo de inicio, así la voz calza con la imagen. 'pantalla' se quema como subtítulo durante ese mismo tramo (usa \\n para cortar línea). 'escena' describe qué se ve: los tramos con escena van a la IA de video; el último, sin escena, es el cierre de marca que dibujamos nosotros (no cuesta créditos). Pon 'usar': false para volver al guion automático.",
+  "usar": true,
+  "tramos": [
+    {
+      "desde": 0,
+      "hasta": 6,
+      "voz": "Todo tranquilo en la sala de espera... hasta que aparece alguien que dice ser veterinario.",
+      "pantalla": "Todo tranquilo en la sala de espera",
+      "escena": "waiting room, the pet waits calmly"
+    },
+    {
+      "desde": 6,
+      "hasta": 14,
+      "voz": "Delantal gigante, estetoscopio de plástico y un diploma hecho a crayón. ¿El problema? Nadie sabe quién es... porque nadie lo verificó.",
+      "pantalla": "Delantal gigante.\nDiploma a crayón. 😅",
+      "escena": "the impostor walks in with the oversized coat, toy stethoscope and crayon diploma"
+    },
+    {
+      "desde": 14,
+      "hasta": 23,
+      "voz": "Por eso existe EncuentraVet: verificamos la identidad y los antecedentes profesionales de los veterinarios registrados, para que puedas reconocer a los profesionales validados.",
+      "pantalla": "Identidad + antecedentes profesionales\n= Insignia azul",
+      "escena": "the verified veterinarian arrives with the blue badge and greets the pet"
+    },
+    {
+      "desde": 23,
+      "hasta": 28,
+      "voz": "Porque cualquiera puede ponerse una bata. Pero una insignia azul se verifica. En encuentravet punto cl.",
+      "pantalla": "Cualquiera se pone una bata.\nLa insignia azul se verifica.\nencuentravet.cl",
+      "cierre": true
+    }
+  ]
+}

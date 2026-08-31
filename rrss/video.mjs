@@ -33,10 +33,10 @@ async function esquemaModelo(modelo, cab) {
 }
 
 /** Elige el primer nombre de parámetro que el modelo realmente acepta. */
-function ponerSiExiste(entrada, props, candidatos, valor) {
+function ponerSiExiste(entrada, props, candidatos, valor, haciaArriba) {
   if (!props) { entrada[candidatos[0]] = valor; return; }
   const n = candidatos.find(c => c in props);
-  if (n) entrada[n] = ajustar(props[n], valor);
+  if (n) entrada[n] = ajustar(props[n], valor, haciaArriba);
 }
 
 /**
@@ -44,13 +44,19 @@ function ponerSiExiste(entrada, props, candidatos, valor) {
  * toma la opción más parecida; si declara mínimo/máximo, lo recorta. Así una
  * duración de 8 s no rompe un modelo que solo acepta 5 o 10.
  */
-function ajustar(prop, valor) {
+function ajustar(prop, valor, haciaArriba) {
   if (!prop) return valor;
   const lista = prop.enum || prop.allOf?.[0]?.enum || prop['x-enum'];
   if (Array.isArray(lista) && lista.length) {
     if (lista.includes(valor)) return valor;
     if (typeof valor === 'number') {
       const nums = lista.filter(v => typeof v === 'number');
+      // Para la duración conviene pasarse y recortar: quedarse corto obliga a
+      // estirar la imagen, y eso se nota.
+      if (haciaArriba && nums.length) {
+        const mayores = nums.filter(n => n >= valor);
+        if (mayores.length) return Math.min(...mayores);
+      }
       if (nums.length) return nums.reduce((a, b) => Math.abs(b - valor) < Math.abs(a - valor) ? b : a);
     }
     const txt = String(valor);
@@ -71,7 +77,7 @@ export async function generarVideo({ prompt, duracion = 10, salida, imagenInicia
 
   const esquema = await esquemaModelo(modelo, cab);
   const entrada = { prompt };
-  ponerSiExiste(entrada, esquema?.props, ['duration', 'duration_seconds', 'num_frames'], duracion);
+  ponerSiExiste(entrada, esquema?.props, ['duration', 'duration_seconds', 'num_frames'], Math.ceil(duracion), true);
   ponerSiExiste(entrada, esquema?.props, ['resolution', 'video_size', 'size'], (process.env.SEEDANCE_RES || RESOLUCION_DEF).trim());
   ponerSiExiste(entrada, esquema?.props, ['aspect_ratio', 'aspect'], '9:16');
   // El modelo NO admite referencia de identidad y cuadro inicial a la vez
@@ -153,6 +159,7 @@ export async function generarCortometraje({ escenas, salida, alAvanzar }) {
         prompt: escenas[i].prompt_ia, duracion: escenas[i].duracion_s,
         salida: parcial, imagenInicial, referencias
       });
+      await recortarA(parcial, escenas[i].duracion_s);
       clips.push(parcial);
       if (i + 1 < escenas.length) {
         const puente = salida.replace(/\.mp4$/, `.puente${i + 1}.jpg`);
@@ -201,4 +208,70 @@ async function cuadroDeAnclaje(clip, destino, duracion) {
   } catch (e) {
     return null;
   }
+}
+
+/** Recorta un clip a la duración exacta que pide el guion. */
+async function recortarA(clip, segundos) {
+  const objetivo = Number(segundos);
+  if (!Number.isFinite(objetivo) || objetivo <= 0) return clip;
+  const actual = await duracionDe(clip);
+  if (actual == null || actual <= objetivo + 0.08) return clip;
+  const tmp = clip.replace(/\.mp4$/, '.recortado.mp4');
+  await ejecutar(ffmpeg(), ['-y', '-i', clip, '-t', objetivo.toFixed(2), '-c', 'copy', tmp]);
+  const { renameSync } = await import('node:fs');
+  renameSync(tmp, clip);
+  console.log(`    escena recortada de ${actual.toFixed(1)} s a ${objetivo.toFixed(1)} s (lo que pide el guion)`);
+  return clip;
+}
+
+async function duracionDe(archivo) {
+  try {
+    await ejecutar(ffmpeg(), ['-i', archivo]);
+  } catch (e) {
+    const m = /Duration:\s*(\d+):(\d+):(\d+\.?\d*)/.exec(e.stderr || '');
+    if (m) return (+m[1]) * 3600 + (+m[2]) * 60 + parseFloat(m[3]);
+  }
+  return null;
+}
+
+/**
+ * Cierre de marca: fondo morado con el degradado de la casa. El texto lo pone
+ * el subtitulado, así que aquí solo va el lienzo. No pasa por la IA: es
+ * gratis, sale idéntico siempre y la marca queda exacta.
+ */
+export async function cierreDeMarca({ duracion = 5, salida, morado = '#5B2E7E', ancho = 1080, alto = 1920, fps = 24 }) {
+  mkdirSync(path.dirname(salida), { recursive: true });
+  const fondo = `color=c=${morado}:s=${ancho}x${alto}:d=${duracion}:r=${fps}`;
+  await ejecutar(ffmpeg(), ['-y', '-f', 'lavfi', '-i', fondo,
+    '-vf', `vignette=PI/5,fade=t=in:st=0:d=0.4`,
+    '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-preset', 'medium', '-crf', '20', salida]);
+  return salida;
+}
+
+/** Une clips ya normalizados (mismo tamaño) en uno solo. */
+export async function unirClips({ clips, salida, ancho = 1080, alto = 1920 }) {
+  if (clips.length === 1) {
+    const { copyFileSync } = await import('node:fs');
+    copyFileSync(clips[0], salida);
+    return salida;
+  }
+  const entradas = clips.flatMap(c => ['-i', c]);
+  const filtro = clips.map((_, i) => `[${i}:v]scale=${ancho}:${alto}:force_original_aspect_ratio=increase,crop=${ancho}:${alto},setsar=1,fps=24[v${i}]`).join(';')
+    + ';' + clips.map((_, i) => `[v${i}]`).join('') + `concat=n=${clips.length}:v=1:a=0[v]`;
+  await ejecutar(ffmpeg(), ['-y', ...entradas, '-filter_complex', filtro, '-map', '[v]',
+    '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-preset', 'medium', '-crf', '20',
+    '-movflags', '+faststart', salida]);
+  return salida;
+}
+
+/**
+ * Quema los subtítulos en la imagen. En Instagram la mayoría mira sin sonido:
+ * si el texto no está en el video, el mensaje no llega.
+ */
+export async function quemarSubtitulos({ video, ass, salida }) {
+  const escapada = ass.replace(/\\/g, '/').replace(/:/g, '\\:').replace(/'/g, "\\'");
+  await ejecutar(ffmpeg(), ['-y', '-i', video, '-vf', `subtitles='${escapada}'`,
+    '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-preset', 'medium', '-crf', '20',
+    '-movflags', '+faststart', salida]);
+  return salida;
 }

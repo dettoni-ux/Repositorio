@@ -26,9 +26,10 @@ import { z } from 'zod';
 import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod';
 import { obtenerDatos, insertarPieza } from './datos.mjs';
 import { abrirNavegador, renderPieza } from './render.mjs';
-import { generarCortometraje, videoDisponible } from './video.mjs';
+import { generarCortometraje, videoDisponible, cierreDeMarca, unirClips, quemarSubtitulos } from './video.mjs';
 import { animarCorto } from './animar.mjs';
-import { generarVoz, mezclarVideoYVoz, vozDisponible } from './voz.mjs';
+import { generarVoz, generarVozPorTramos, mezclarVideoYVoz, vozDisponible } from './voz.mjs';
+import { leerGuion, escenasSegunGuion, tramoDeCierre, subtitulosAss } from './guion.mjs';
 
 const AQUI = path.dirname(fileURLToPath(import.meta.url));
 const DIR_PIEZAS = path.join(AQUI, '..', 'piezas');
@@ -267,6 +268,46 @@ const lote = `lote-${new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-')
 const datos = await obtenerDatos({ demo: DEMO });
 console.log(`Lote ${lote} · datos: vets=${datos.total_vets} comunas=${datos.total_comunas} reservas_mes=${datos.reservas_mes}${datos.esDemo ? ' (demo)' : ''}`);
 
+const GUION = leerGuion();
+if (GUION) {
+  console.log(`Guion propio: ${GUION.tramos.length} tramos, ${GUION.total} s en total (guion.json).`);
+}
+
+/**
+ * Agrega el cierre de marca y quema los subtítulos del guion sobre el video.
+ * El cierre no pasa por la IA: sale idéntico siempre y no cuesta créditos.
+ */
+async function montarSegunGuion(mudo, n) {
+  const cierre = tramoDeCierre(GUION);
+  const temporales = [];
+  try {
+    let actual = mudo;
+    if (cierre) {
+      const tarjeta = path.join(DIR_PIEZAS, `.cierre-${n}.mp4`);
+      await cierreDeMarca({ duracion: cierre.hasta - cierre.desde, salida: tarjeta });
+      temporales.push(tarjeta);
+      const unido = path.join(DIR_PIEZAS, `.unido-${n}.mp4`);
+      await unirClips({ clips: [actual, tarjeta], salida: unido });
+      temporales.push(unido);
+      actual = unido;
+      console.log(`    cierre de marca de ${(cierre.hasta - cierre.desde).toFixed(0)} s agregado (sin costo)`);
+    }
+    const ass = path.join(DIR_PIEZAS, `.subs-${n}.ass`);
+    writeFileSync(ass, subtitulosAss(GUION));
+    temporales.push(ass);
+    const conSubs = path.join(DIR_PIEZAS, `.subs-${n}.mp4`);
+    await quemarSubtitulos({ video: actual, ass, salida: conSubs });
+    temporales.push(conSubs);
+    renameSync(conSubs, mudo);
+    temporales.pop();
+    console.log('    subtítulos del guion quemados en la imagen');
+  } catch (e) {
+    console.warn(`    No se pudo montar el guion (${e.message}). Queda el video sin cierre ni subtítulos.`);
+  } finally {
+    temporales.forEach(f => { if (existsSync(f)) { try { unlinkSync(f); } catch (x) {} } });
+  }
+}
+
 let piezas = SIN_API ? piezasEjemplo(datos) : await generarLote(datos);
 console.log(`${piezas.length} piezas generadas.`);
 
@@ -286,13 +327,19 @@ try {
         const mudo = path.join(DIR_PIEZAS, `.mudo-${i + 1}.mp4`);
         try {
           if (conIA) {
-            const escenasIA = pieza.video.escenas_ia.slice(0, MAX_ESCENAS);
+            // Con guion propio mandan sus tiempos: las escenas duran lo que dice
+            // el guion, no al revés, para que la voz calce con la imagen.
+            const escenasIA = GUION
+              ? escenasSegunGuion(GUION, pieza.video.escenas_ia)
+              : pieza.video.escenas_ia.slice(0, MAX_ESCENAS);
             const n = escenasIA.length;
-            console.log(`  Pieza ${i + 1} (cortometraje de ${n} escena${n>1?'s':''}): generando con IA…`);
+            console.log(`  Pieza ${i + 1} (cortometraje de ${n} escena${n>1?'s':''}`
+              + (GUION ? `, guion propio de ${GUION.total} s` : '') + '): generando con IA…');
             await generarCortometraje({
               escenas: escenasIA, salida: mudo,
               alAvanzar: (k, t) => console.log(`    escena ${k + 1} de ${t}…`)
             });
+            if (GUION) await montarSegunGuion(mudo, i + 1);
           } else {
             console.log(`  Pieza ${i + 1} (cortometraje animado, sin costo): dibujando…`);
             await animarCorto({
@@ -306,7 +353,11 @@ try {
             console.log('  Generando voz en off con ElevenLabs y montándola sobre el video…');
             const voz = path.join(DIR_PIEZAS, `.voz-${i + 1}.mp3`);
             try {
-              await generarVoz({ texto: narracionAUsar(pieza.video.narracion), salida: voz });
+              if (GUION && conIA) {
+                await generarVozPorTramos({ tramos: GUION.tramos, total: GUION.total, salida: voz });
+              } else {
+                await generarVoz({ texto: narracionAUsar(pieza.video.narracion), salida: voz });
+              }
               await mezclarVideoYVoz({ video: mudo, audio: voz, salida: path.join(DIR_PIEZAS, archivo) });
             } catch (e) {
               // «fetch failed» sin más es inútil: la causa real viene en e.cause.

@@ -8,7 +8,7 @@
  *   ELEVENLABS_MODEL     (opcional) por defecto eleven_v3 (multilingüe, expresivo)
  *   FFMPEG_PATH          (opcional) ruta a ffmpeg si no está en el PATH
  */
-import { writeFileSync, mkdirSync } from 'node:fs';
+import { writeFileSync, mkdirSync, unlinkSync } from 'node:fs';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import path from 'node:path';
@@ -120,6 +120,56 @@ export async function generarVoz({ texto, salida }) {
   mkdirSync(path.dirname(salida), { recursive: true });
   writeFileSync(salida, Buffer.from(await res.arrayBuffer()));
   return salida;
+}
+
+/**
+ * Voz por tramos: cada frase se genera aparte y se coloca EXACTO en su segundo
+ * de inicio. Es la única forma de que la voz calce con lo que se ve; una sola
+ * pista corrida se desfasa apenas una frase dura más de lo previsto.
+ *
+ * Si un tramo se pasa de su ventana, se acelera solo ese tramo (hasta 18%) para
+ * que no pise al siguiente.
+ */
+export async function generarVozPorTramos({ tramos, total, salida }) {
+  const dir = path.dirname(salida);
+  mkdirSync(dir, { recursive: true });
+  const piezas = [];
+  try {
+    for (let i = 0; i < tramos.length; i++) {
+      const t = tramos[i];
+      if (!t.voz) continue;
+      const bruto = path.join(dir, `tramo${i + 1}.mp3`);
+      await generarVoz({ texto: t.voz, salida: bruto });
+      piezas.push({ archivo: bruto, desde: t.desde, ventana: t.hasta - t.desde, i: i + 1 });
+    }
+    if (!piezas.length) throw new Error('El guion no trae texto de voz.');
+
+    const entradas = [];
+    const cadenas = [];
+    for (let k = 0; k < piezas.length; k++) {
+      const p = piezas[k];
+      const d = await duracion(p.archivo);
+      entradas.push('-i', p.archivo);
+      const pasos = [];
+      if (d != null && d > p.ventana + 0.05) {
+        const factor = Math.min(d / p.ventana, APURO_MAX);
+        pasos.push(filtroTempo(factor));
+        const sobra = d / factor - p.ventana;
+        console.log(`  Tramo ${p.i}: ${d.toFixed(1)} s en una ventana de ${p.ventana.toFixed(1)} s; `
+          + `se acelera un ${((factor - 1) * 100).toFixed(0)}%`
+          + (sobra > 0.15 ? ` y aun así sobra ${sobra.toFixed(1)} s: conviene acortar esa frase.` : '.'));
+      }
+      pasos.push('aresample=48000', `adelay=${Math.round(p.desde * 1000)}:all=1`);
+      cadenas.push(`[${k}:a]${pasos.join(',')}[t${k}]`);
+    }
+    const mezcla = `${cadenas.join(';')};${piezas.map((_, k) => `[t${k}]`).join('')}`
+      + `amix=inputs=${piezas.length}:normalize=0:dropout_transition=0[voz]`;
+    await ejecutar(ffmpegBin(), ['-y', ...entradas, '-filter_complex', mezcla,
+      '-map', '[voz]', '-t', String(total), '-c:a', 'libmp3lame', '-q:a', '2', salida]);
+    return salida;
+  } finally {
+    piezas.forEach(p => { try { unlinkSync(p.archivo); } catch (e) {} });
+  }
 }
 
 /** Duración en segundos de un archivo multimedia, leyendo la salida de ffmpeg. */
