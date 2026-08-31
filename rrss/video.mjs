@@ -109,7 +109,7 @@ export async function generarVideo({ prompt, duracion = 10, salida, imagenInicia
   const esquema = await esquemaModelo(modelo, cab);
   const entrada = { prompt };
   ponerSiExiste(entrada, esquema?.props, ['duration', 'duration_seconds', 'num_frames'], Math.ceil(duracion), true);
-  const modo = (process.env.SEEDANCE_IDENTIDAD || 'encadenado').trim();
+  const modo = (process.env.SEEDANCE_IDENTIDAD || 'ancla').trim();
   const usaReferencia = modo === 'referencia' && referencias?.length;
   // «Reference images cannot be used with 1080p resolution»: lo dice el propio
   // esquema del modelo. Si se piden referencias, la resolución baja a 720p.
@@ -122,7 +122,10 @@ export async function generarVideo({ prompt, duracion = 10, salida, imagenInicia
   ponerSiExiste(entrada, esquema?.props, ['aspect_ratio', 'aspect'], '9:16');
   // Cómo se mantiene el mismo personaje entre escenas. Son excluyentes: el
   // modelo rechaza referencia y cuadro inicial juntos.
-  //   encadenado (por defecto) — cada escena parte del cuadro anterior. Probado.
+  //   ancla (por defecto) — todas las escenas parten del cuadro de la escena 1.
+  //     Mantiene mascota y escenografía sin arrastrar a las personas: encadenar
+  //     con la escena anterior le pegaba la cara del impostor al veterinario.
+  //   encadenado — cada escena parte de la anterior. Arrastra todo, bueno y malo.
   //   referencia — ancla todas a la escena 1; en el papel es mejor, pero este
   //     modelo devuelve «input was invalid» sin explicar, así que no se usa
   //     salvo que se pida a propósito con SEEDANCE_IDENTIDAD=referencia.
@@ -137,7 +140,7 @@ export async function generarVideo({ prompt, duracion = 10, salida, imagenInicia
     }
   } else if (modo !== 'ninguna' && imagenInicial) {
     ponerSiExiste(entrada, esquema?.props, ['image', 'first_frame_image', 'start_image', 'input_image'], imagenInicial);
-    comoSeAncla = 'cuadro anterior encadenado';
+    comoSeAncla = modo === 'ancla' ? 'cuadro de la escena 1' : 'cuadro anterior encadenado';
   }
   if (esquema) {
     console.log(`    parámetros aceptados por el modelo: ${Object.keys(esquema.props).join(', ')}`);
@@ -196,6 +199,7 @@ export async function generarVideo({ prompt, duracion = 10, salida, imagenInicia
 export async function generarCortometraje({ escenas, salida, alAvanzar }) {
   const clips = [];
   const puentes = [];
+  const modoIdentidad = (process.env.SEEDANCE_IDENTIDAD || 'ancla').trim();
   try {
     let imagenInicial = null;
     let referencias = null;
@@ -209,14 +213,18 @@ export async function generarCortometraje({ escenas, salida, alAvanzar }) {
       await recortarA(parcial, escenas[i].duracion_s);
       clips.push(parcial);
       if (i + 1 < escenas.length) {
-        const puente = salida.replace(/\.mp4$/, `.puente${i + 1}.jpg`);
-        imagenInicial = await cuadroDeAnclaje(parcial, puente, escenas[i].duracion_s);
-        if (imagenInicial) {
-          puentes.push(puente);
-          // La escena 1 fija cómo se ven los personajes para todo el corto.
-          if (i === 0) referencias = [imagenInicial];
-        } else {
-          console.log('    (no se pudo extraer el cuadro de anclaje: la escena siguiente parte de cero)');
+        // En modo «ancla» solo interesa el cuadro de la escena 1: repetirlo evita
+        // que un personaje de la escena 2 se cuele en la 3.
+        if (modoIdentidad !== 'ancla' || i === 0) {
+          const puente = salida.replace(/\.mp4$/, `.puente${i + 1}.jpg`);
+          const cuadro = await cuadroDeAnclaje(parcial, puente, escenas[i].duracion_s);
+          if (cuadro) {
+            puentes.push(puente);
+            imagenInicial = cuadro;
+            if (i === 0) referencias = [cuadro];
+          } else {
+            console.log('    (no se pudo extraer el cuadro de anclaje: la escena siguiente parte de cero)');
+          }
         }
       }
     }

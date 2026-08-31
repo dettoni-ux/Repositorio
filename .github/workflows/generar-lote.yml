@@ -32,9 +32,9 @@ on:
       identidad:
         description: 'Cómo se mantiene el personaje entre escenas'
         required: false
-        default: 'encadenado'
+        default: 'ancla'
         type: choice
-        options: [encadenado, referencia, ninguna]
+        options: [ancla, encadenado, referencia, ninguna]
       solo_esquema:
         description: 'Solo mostrar los parámetros que acepta el modelo (no genera nada, no cuesta)'
         required: false
@@ -80,7 +80,7 @@ jobs:
           SEEDANCE_MODEL: ${{ vars.SEEDANCE_MODEL }}
           SEEDANCE_RES: ${{ vars.SEEDANCE_RES }}
           SEEDANCE_ESPERA_MIN: ${{ vars.SEEDANCE_ESPERA_MIN }}
-          SEEDANCE_IDENTIDAD: ${{ inputs.identidad || 'encadenado' }}
+          SEEDANCE_IDENTIDAD: ${{ inputs.identidad || 'ancla' }}
           REPLICATE_USD_POR_SEG: ${{ vars.REPLICATE_USD_POR_SEG }}
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
           ELEVENLABS_VOICE_ID: ${{ vars.ELEVENLABS_VOICE_ID }}

@@ -79,6 +79,10 @@ Es un CORTOMETRAJE, no un reel informativo: cuenta una historia con principio, n
     que le queda enorme, estetoscopio de plástico de juguete.
   · La veterinaria verificada: profesional adulta, delantal blanco bien entallado, con la
     insignia azul de verificación en el pecho. Trato cálido y competente.
+    Debe ser INCONFUNDIBLEMENTE otra persona que el impostor: distinto sexo, distinta
+    edad, distinto pelo, distinta contextura. Dilo explícito en el prompt de su escena
+    («a different person, clearly not the man from the previous scene»). Si los dos se
+    parecen, el remate se pierde: no se entiende que llegó alguien de verdad.
   · La mascota paciente: perro o gato caricaturizado, expresivo.
   Varía el aspecto de las personas entre cortos (edad, tono de piel, pelo, contextura):
   Chile es diverso y el contenido debe reflejarlo.
