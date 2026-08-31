@@ -40,6 +40,11 @@ on:
         required: false
         default: false
         type: boolean
+      solo_costo:
+        description: 'Solo mostrar el gasto en Replicate (no genera nada, no cuesta)'
+        required: false
+        default: false
+        type: boolean
   schedule:
     # Lunes 13:00 UTC = 09:00 Chile (invierno, UTC-4) / 10:00 (verano, UTC-3)
     - cron: '0 13 * * 1'
@@ -76,6 +81,7 @@ jobs:
           SEEDANCE_RES: ${{ vars.SEEDANCE_RES }}
           SEEDANCE_ESPERA_MIN: ${{ vars.SEEDANCE_ESPERA_MIN }}
           SEEDANCE_IDENTIDAD: ${{ inputs.identidad || 'encadenado' }}
+          REPLICATE_USD_POR_SEG: ${{ vars.REPLICATE_USD_POR_SEG }}
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
           ELEVENLABS_VOICE_ID: ${{ vars.ELEVENLABS_VOICE_ID }}
           ELEVENLABS_MODEL: ${{ vars.ELEVENLABS_MODEL }}
@@ -83,6 +89,10 @@ jobs:
         run: |
           if [ "${{ inputs.solo_esquema }}" = "true" ]; then
             node esquema.mjs
+            exit 0
+          fi
+          if [ "${{ inputs.solo_costo }}" = "true" ]; then
+            node costo.mjs 50
             exit 0
           fi
           node generar.mjs \
