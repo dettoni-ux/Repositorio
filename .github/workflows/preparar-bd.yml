@@ -1,0 +1,37 @@
+name: Preparar base de datos
+
+# Crea la cola de piezas y el flag de autorización. Solo agrega: no borra ni cambia nada existente.
+on:
+  workflow_dispatch:
+    inputs:
+      revisar:
+        description: 'Solo revisar (muestra qué haría, sin tocar la base de datos)'
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  preparar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Instalar dependencias
+        working-directory: rrss
+        run: npm install --omit=optional --no-audit --no-fund
+      - name: Preparar
+        working-directory: rrss
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          REVISAR: ${{ inputs.revisar && '1' || '' }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "Falta el secret DATABASE_URL. Cárgalo en Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+          node preparar-bd.mjs
