@@ -74,18 +74,25 @@ export async function generarVideo({ prompt, duracion = 10, salida, imagenInicia
   ponerSiExiste(entrada, esquema?.props, ['duration', 'duration_seconds', 'num_frames'], duracion);
   ponerSiExiste(entrada, esquema?.props, ['resolution', 'video_size', 'size'], (process.env.SEEDANCE_RES || RESOLUCION_DEF).trim());
   ponerSiExiste(entrada, esquema?.props, ['aspect_ratio', 'aspect'], '9:16');
-  // Arrancar desde el último cuadro de la escena anterior es lo que mantiene
-  // al mismo gato: el texto del prompt por sí solo no basta.
-  if (imagenInicial) ponerSiExiste(entrada, esquema?.props, ['image', 'first_frame_image', 'start_image', 'input_image'], imagenInicial);
-  // Además del cuadro anterior, anclar SIEMPRE a la escena 1: encadenar sin más
-  // arrastra la deriva y para la tercera escena el personaje ya cambió.
-  if (referencias?.length) ponerSiExiste(entrada, esquema?.props, ['reference_images', 'reference_image'], referencias);
+  // El modelo NO admite referencia de identidad y cuadro inicial a la vez
+  // («Reference images cannot be used with first frame or last frame images»),
+  // así que se elige una. Se prefiere la referencia: ancla todas las escenas al
+  // MISMO original, mientras que encadenar cuadro a cuadro acumula la deriva.
+  const campoRef = referencias?.length
+    ? ['reference_images', 'reference_image'].find(c => !esquema?.props || c in esquema.props)
+    : null;
+  if (campoRef) {
+    entrada[campoRef] = campoRef === 'reference_image' ? referencias[0] : referencias;
+  } else if (imagenInicial) {
+    ponerSiExiste(entrada, esquema?.props, ['image', 'first_frame_image', 'start_image', 'input_image'], imagenInicial);
+  }
   if (esquema) {
     console.log(`    parámetros aceptados por el modelo: ${Object.keys(esquema.props).join(', ')}`);
     const resumen = { ...entrada };
     if (resumen.image) resumen.image = `«último cuadro de la escena anterior» (${Math.round(imagenInicial.length / 1024)} KB)`;
     if (resumen.reference_images) resumen.reference_images = `«${referencias.length} referencia(s) de la escena 1»`;
     if (resumen.reference_image) resumen.reference_image = '«referencia de la escena 1»';
+    console.log(`    identidad: ${campoRef ? 'referencia fija de la escena 1' : (imagenInicial ? 'cuadro anterior encadenado' : 'solo el texto del prompt')}`);
     console.log(`    enviando: ${JSON.stringify(resumen).slice(0, 260)}`);
   }
 
