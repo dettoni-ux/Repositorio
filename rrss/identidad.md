@@ -74,7 +74,16 @@ Es un CORTOMETRAJE, no un reel informativo: cuenta una historia con principio, n
 - CONTINUIDAD: los mismos personajes en las tres escenas, descritos IGUAL en cada prompt
   (especie, color, ropa, tamaño), porque cada escena se genera por separado. Repite la
   descripción física completa del personaje en cada prompt; nunca digas «el mismo gato».
-- `video.escenas_ia`: entre 1 y 3 escenas. Cada una con:
+- `video.actos`: el cortometraje que el propio sistema anima (sin costo, personajes fijos).
+  Entre 2 y 3 actos, en este orden, eligiendo de las escenas disponibles:
+  · `espera` — la gata espera tranquila en la sala. Sirve para plantear la situación.
+  · `impostor` — entra el gallo con la bata gigante, el diploma a crayón se despega.
+  · `verificada` — llega la veterinaria capibara con su insignia azul y recibe a la gata.
+  Cada acto lleva `dur` (4 a 9 segundos) y `texto`: el subtítulo que aparece en pantalla,
+  máximo 90 caracteres, una frase que avance la historia. El corto cierra con `cierre`
+  (máx 60 caracteres), el remate de marca sobre fondo morado.
+- `video.escenas_ia`: la MISMA historia descrita para una IA de video, por si se usa ese motor.
+  Entre 1 y 3 escenas. Cada una con:
   · `prompt_ia`: EN INGLÉS, sin nombrar estudios ni marcas de animación. Empieza siempre con
     "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm
     cinematic lighting, family-friendly, vertical 9:16." Luego la descripción física de los

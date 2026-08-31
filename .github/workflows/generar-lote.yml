@@ -13,6 +13,12 @@ on:
         required: false
         default: '4'
         type: string
+      motor:
+        description: 'Motor de video para los cortometrajes'
+        required: false
+        default: 'animacion'
+        type: choice
+        options: [animacion, ia]
       demo:
         description: 'Modo demo (sin BD: cifras de ejemplo y cola local)'
         required: false
@@ -59,6 +65,7 @@ jobs:
           node generar.mjs \
             --tipos "${{ inputs.tipos || 'tip,hito,video' }}" \
             --cantidad "${{ inputs.cantidad || '5' }}" \
+            --motor "${{ inputs.motor || 'animacion' }}" \
             ${{ inputs.demo && '--demo' || '' }}
       - name: Guardar piezas en el repo
         run: |

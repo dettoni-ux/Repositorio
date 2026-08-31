@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Nunito:wght@700;800&display=swap">
+<style>
+  html,body{margin:0;padding:0;background:#000;overflow:hidden}
+  canvas{display:block}
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script>
+/* ============================================================
+   Cortometraje animado de EncuentraVet — animación vectorial propia.
+   Los personajes se dibujan con formas, así son idénticos en todas
+   las escenas (la IA de video pierde la continuidad entre tomas).
+   La historia llega en window.HISTORIA; el motor la anima.
+   ============================================================ */
+const C = document.getElementById('c'), X = C.getContext('2d');
+const W = 1080, H = 1920;
+
+const MARCA = Object.assign({
+  c1:'#5B2E7E', c2:'#FFD84D', azul:'#1E9BE0', nombre:'EncuentraVet', web:'encuentravet.cl'
+}, window.MARCA || {});
+
+/* ---------- utilidades ---------- */
+const lerp=(a,b,t)=>a+(b-a)*t;
+const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+const suave=t=>t<=0?0:t>=1?1:t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+const salida=t=>1-Math.pow(1-clamp(t,0,1),3);
+const rebote=t=>{const n=7.5625,d=2.75;if(t<1/d)return n*t*t;if(t<2/d)return n*(t-=1.5/d)*t+.75;if(t<2.5/d)return n*(t-=2.25/d)*t+.9375;return n*(t-=2.625/d)*t+.984375;};
+
+function rr(x,y,w,h,r){X.beginPath();X.moveTo(x+r,y);X.arcTo(x+w,y,x+w,y+h,r);X.arcTo(x+w,y+h,x,y+h,r);X.arcTo(x,y+h,x,y,r);X.arcTo(x,y,x+w,y,r);X.closePath();}
+function elipse(x,y,rx,ry,rot){X.beginPath();X.ellipse(x,y,rx,ry,rot||0,0,Math.PI*2);X.fill();}
+function circulo(x,y,r){X.beginPath();X.arc(x,y,r,0,Math.PI*2);X.fill();}
+
+/* ---------- personajes ---------- */
+/* Cada personaje se dibuja centrado en (0,0), de pie sobre y=0, con altura ~1 unidad*esc. */
+
+function ojos(sepa, r, pupila, parpadeo, mirada){
+  const cerrado = parpadeo > .5;
+  [-sepa, sepa].forEach(dx=>{
+    X.fillStyle='#fff';
+    if(cerrado){ X.strokeStyle='#2A2028'; X.lineWidth=r*.45; X.beginPath();
+      X.moveTo(dx-r*.9,0); X.quadraticCurveTo(dx,r*.5,dx+r*.9,0); X.stroke(); }
+    else{
+      circulo(dx,0,r);
+      X.fillStyle='#2A2028'; circulo(dx + (mirada||0)*r*.35, r*.08, pupila);
+      X.fillStyle='#fff'; circulo(dx + (mirada||0)*r*.35 - pupila*.35, -pupila*.35, pupila*.32);
+    }
+  });
+}
+
+function orejaGato(x,y,s,color,interior,rot){
+  X.save(); X.translate(x,y); X.rotate(rot);
+  X.fillStyle=color; X.beginPath(); X.moveTo(-s*.5,s*.4); X.lineTo(0,-s*.75); X.lineTo(s*.5,s*.4); X.closePath(); X.fill();
+  X.fillStyle=interior; X.beginPath(); X.moveTo(-s*.22,s*.28); X.lineTo(0,-s*.32); X.lineTo(s*.22,s*.28); X.closePath(); X.fill();
+  X.restore();
+}
+
+/* Gata gris: la tutora que espera. */
+function gata(o){
+  const {x,y,esc=1,parpadeo=0,mirada=0,ceja=0,rebotecuerpo=0,cola=0} = o;
+  X.save(); X.translate(x,y); X.scale(esc,esc);
+  const gris='#8E8896', grisOsc='#6F6A78', rosa='#E9A8B8';
+  // cola
+  X.strokeStyle=gris; X.lineWidth=26; X.lineCap='round';
+  X.beginPath(); X.moveTo(78,-60); X.quadraticCurveTo(170+cola*40, -90-cola*40, 150+cola*20, -190-cola*30); X.stroke();
+  // cuerpo
+  X.fillStyle=gris; elipse(0,-110,92,116+rebotecuerpo*6);
+  X.fillStyle='#B6B1BE'; elipse(0,-88,54,74);   // pecho
+  // patas
+  X.fillStyle=grisOsc; elipse(-46,-8,30,20); elipse(46,-8,30,20);
+  // collar rojo (rasgo distintivo, presente siempre)
+  X.fillStyle='#D0324B'; rr(-52,-196,104,26,13); X.fill();
+  X.fillStyle=MARCA.c2; circulo(0,-172,15);
+  // cabeza
+  X.fillStyle=gris; elipse(0,-268,86,80);
+  orejaGato(-58,-322,58,gris,rosa,-.22); orejaGato(58,-322,58,gris,rosa,.22);
+  // cara
+  X.save(); X.translate(0,-276); ojos(34,25,11,parpadeo,mirada); X.restore();
+  X.fillStyle=rosa; X.beginPath(); X.moveTo(0,-246); X.lineTo(-11,-256); X.lineTo(11,-256); X.closePath(); X.fill();
+  X.strokeStyle=grisOsc; X.lineWidth=5;
+  X.beginPath(); X.moveTo(0,-246); X.lineTo(0,-236); X.moveTo(0,-236); X.quadraticCurveTo(-14,-228,-24,-238);
+  X.moveTo(0,-236); X.quadraticCurveTo(14,-228,24,-238); X.stroke();
+  // bigotes
+  X.lineWidth=4; [[-1,1],[1,1]].forEach(([s])=>{
+    X.beginPath(); X.moveTo(s*40,-250); X.lineTo(s*96,-262); X.moveTo(s*40,-242); X.lineTo(s*98,-242); X.stroke(); });
+  // ceja de sospecha
+  if(ceja>0){ X.strokeStyle='#4B4550'; X.lineWidth=9; X.beginPath();
+    X.moveTo(-52,-318+ceja*6); X.lineTo(-16,-330-ceja*10); X.stroke(); }
+  X.restore();
+}
+
+/* Gallo impostor: bata gigante, todo le queda grande. */
+function gallo(o){
+  const {x,y,esc=1,parpadeo=0,gesto=0,brazo=0} = o;
+  X.save(); X.translate(x,y); X.scale(esc,esc);
+  const pluma='#C8703A', cresta='#D93A3A', pico=MARCA.c2;
+  // patas
+  X.strokeStyle=pico; X.lineWidth=14; X.lineCap='round';
+  X.beginPath(); X.moveTo(-28,-20); X.lineTo(-28,0); X.moveTo(28,-20); X.lineTo(28,0); X.stroke();
+  // bata blanca enorme (le llega al suelo: le queda grande)
+  X.fillStyle='#F4F2F6'; rr(-104,-260,208,262,26); X.fill();
+  X.fillStyle='#E2DEE8'; rr(-104,-260,32,262,16); X.fill();   // solapa
+  // mangas colgando, demasiado largas
+  X.fillStyle='#F4F2F6';
+  X.save(); X.translate(-104,-236); X.rotate(-.25+brazo*.5); rr(-16,0,44,150,20); X.fill(); X.restore();
+  X.save(); X.translate(104,-236); X.rotate(.25-brazo*.5); rr(-28,0,44,150,20); X.fill(); X.restore();
+  // cuello y cabeza
+  X.fillStyle=pluma; elipse(0,-292,52,46);
+  X.fillStyle=cresta; [-22,0,22].forEach((dx,i)=> circulo(dx,-330-(i===1?12:0),17));
+  X.fillStyle=pico; X.beginPath(); X.moveTo(46,-292); X.lineTo(86,-284); X.lineTo(46,-276); X.closePath(); X.fill();
+  X.fillStyle=cresta; elipse(30,-266,12,16);
+  X.save(); X.translate(0,-298); ojos(22,17,8,parpadeo,gesto*.6); X.restore();
+  X.restore();
+}
+
+/* Veterinaria capibara verificada: bata a la medida e insignia azul. */
+function capibara(o){
+  const {x,y,esc=1,parpadeo=0,saludo=0,brillo=0} = o;
+  X.save(); X.translate(x,y); X.scale(esc,esc);
+  const pelo='#A97B4F', peloOsc='#8A6340';
+  X.fillStyle=peloOsc; elipse(-44,-10,32,20); elipse(44,-10,32,20);
+  // bata a la medida
+  X.fillStyle='#FFFFFF'; rr(-96,-268,192,264,30); X.fill();
+  X.fillStyle='#EFEAF6'; X.beginPath(); X.moveTo(-30,-268); X.lineTo(0,-206); X.lineTo(30,-268); X.closePath(); X.fill();
+  // brazo que saluda
+  X.save(); X.translate(96,-238); X.rotate(-.5 - saludo*.7);
+  X.fillStyle='#FFFFFF'; rr(-20,0,42,132,21); X.fill();
+  X.fillStyle=pelo; circulo(0,140,26); X.restore();
+  X.fillStyle='#FFFFFF'; X.save(); X.translate(-96,-238); X.rotate(.2); rr(-22,0,42,120,21); X.fill(); X.restore();
+  // insignia azul verificada
+  X.save(); X.translate(-52,-206);
+  if(brillo>0){ X.globalAlpha=brillo*.5; X.fillStyle=MARCA.azul; circulo(0,0,46+brillo*16); X.globalAlpha=1; }
+  X.fillStyle=MARCA.azul;
+  X.beginPath();
+  for(let i=0;i<12;i++){ const a=i*Math.PI/6, r=i%2?24:30; const px=Math.cos(a)*r, py=Math.sin(a)*r;
+    i?X.lineTo(px,py):X.moveTo(px,py); }
+  X.closePath(); X.fill();
+  X.strokeStyle='#fff'; X.lineWidth=6; X.lineCap='round'; X.lineJoin='round';
+  X.beginPath(); X.moveTo(-11,0); X.lineTo(-3,9); X.lineTo(12,-9); X.stroke();
+  X.restore();
+  // cabeza
+  X.fillStyle=pelo; elipse(0,-318,78,66);
+  X.fillStyle=peloOsc; elipse(-64,-360,20,18); elipse(64,-360,20,18);
+  X.fillStyle='#8A6340'; elipse(0,-292,44,30);
+  X.fillStyle='#4A3524'; elipse(0,-300,15,11);
+  X.save(); X.translate(0,-334); ojos(34,19,9,parpadeo,0); X.restore();
+  X.restore();
+}
+
+/* ---------- escenografía ---------- */
+function fondoSala(t, tono){
+  const g=X.createLinearGradient(0,0,0,H);
+  g.addColorStop(0, tono==='clinica' ? '#F3EEFA' : '#EFE6F7');
+  g.addColorStop(1, '#DDD0EC'); X.fillStyle=g; X.fillRect(0,0,W,H);
+  // piso
+  X.fillStyle='#C9B8DE'; X.fillRect(0,H*0.67,W,H*0.33);
+  X.fillStyle='rgba(255,255,255,.35)';
+  for(let i=-2;i<8;i++) { X.save(); X.beginPath(); X.moveTo(i*180+ (t*8%180), H*0.67); X.lineTo(i*180+120+(t*8%180), H*0.67); X.lineTo(i*180+220, H); X.lineTo(i*180+40, H); X.closePath(); X.fill(); X.restore(); }
+  // patitas decorativas en la pared
+  X.globalAlpha=.10; X.fillStyle=MARCA.c1;
+  [[150,300],[930,420],[210,980],[880,880]].forEach(([px,py],i)=>{
+    X.save(); X.translate(px,py+Math.sin(t*1.2+i)*8); X.rotate(i*.7);
+    elipse(0,18,30,24); [[-27,-12],[0,-24],[27,-12]].forEach(([ax,ay])=>circulo(ax,ay,13)); X.restore(); });
+  X.globalAlpha=1;
+}
+
+function silla(x,y){
+  X.fillStyle=MARCA.c2; rr(x-190,y-60,380,66,30); X.fill();
+  X.fillStyle='#E5B93E'; rr(x-190,y-330,66,280,26); X.fill(); rr(x+124,y-330,66,280,26); X.fill();
+  X.fillStyle='#C9B8DE'; rr(x-164,y,44,150,16); X.fill(); rr(x+120,y,44,150,16); X.fill();
+}
+
+function diplomaCrayon(x,y,caida){
+  X.save(); X.translate(x,y+caida*640); X.rotate(-.06 + caida*1.5); X.scale(1.5,1.5);
+  X.fillStyle='#FFFDF4'; rr(-110,-80,220,160,8); X.fill();
+  X.strokeStyle='#D8CEBE'; X.lineWidth=4; X.strokeRect(-110,-80,220,160);
+  // garabatos de crayón
+  X.strokeStyle='#3FA0E0'; X.lineWidth=9; X.lineCap='round';
+  X.beginPath(); X.moveTo(-78,-40); X.lineTo(70,-46); X.moveTo(-78,-8); X.lineTo(40,-12); X.stroke();
+  X.strokeStyle='#E0653F'; X.beginPath(); X.moveTo(-78,26); X.lineTo(56,20); X.stroke();
+  X.strokeStyle='#5BB56A'; X.lineWidth=7;
+  X.beginPath(); X.arc(52,50,22,0,Math.PI*1.7); X.stroke();
+  X.restore();
+}
+
+function maletinJuguete(x,y,abierto){
+  X.save(); X.translate(x,y);
+  X.fillStyle='#E0653F'; rr(-70,-52,140,104,16); X.fill();
+  X.fillStyle='#FFFDF4'; rr(-16,-16,32,10,4); X.fill(); rr(-5,-27,10,32,4); X.fill();
+  if(abierto>0){ X.save(); X.translate(0,-52); X.rotate(-abierto*1.1);
+    X.fillStyle='#C9542F'; rr(-70,-16,140,20,8); X.fill(); X.restore();
+    X.fillStyle='#9BD2F0'; rr(-52,-46,26,26,6); X.fill();   // juguetes dentro
+    X.fillStyle=MARCA.c2; circulo(20,-32,15); }
+  X.restore();
+}
+
+/* ---------- texto ---------- */
+function envolver(txt, maxW){
+  const p=String(txt).split(/\s+/); const l=[]; let a='';
+  p.forEach(w=>{ const pr=a?a+' '+w:w; if(X.measureText(pr).width<=maxW) a=pr; else { if(a) l.push(a); a=w; } });
+  if(a) l.push(a); return l;
+}
+function subtitulo(txt, aparece){
+  if(!txt) return;
+  X.save(); X.globalAlpha=salida(aparece);
+  X.font="800 54px 'Nunito', sans-serif"; X.textAlign='center';
+  const ls=envolver(txt, 880).slice(0,3);
+  const alto=ls.length*66+52, y=H-300-alto;
+  X.fillStyle='rgba(28,16,40,.82)'; rr(60,y,W-120,alto,28); X.fill();
+  X.fillStyle='#fff';
+  ls.forEach((l,i)=> X.fillText(l, W/2, y+72+i*66));
+  X.restore(); X.textAlign='left';
+}
+function marcaAgua(){
+  X.save(); X.font="800 46px 'Poppins', sans-serif"; X.textAlign='center';
+  X.fillStyle='rgba(60,29,85,.55)'; X.fillText(MARCA.nombre, W/2, 110); X.restore(); X.textAlign='left';
+}
+function cierreMarca(a){
+  X.save(); X.globalAlpha=salida(a);
+  X.fillStyle=MARCA.c1; X.fillRect(0,0,W,H);
+  X.textAlign='center';
+  X.font="800 92px 'Poppins', sans-serif"; X.fillStyle='#fff';
+  X.fillText(MARCA.nombre, W/2, H/2-60);
+  X.font="700 46px 'Nunito', sans-serif"; X.fillStyle=MARCA.c2;
+  X.fillText(MARCA.web, W/2, H/2+30);
+  X.font="700 40px 'Nunito', sans-serif"; X.fillStyle='rgba(255,255,255,.85)';
+  const ls=envolver(window.HISTORIA?.cierre || 'La insignia azul se verifica', 820);
+  ls.slice(0,2).forEach((l,i)=> X.fillText(l, W/2, H/2+150+i*54));
+  X.restore(); X.textAlign='left';
+}
+
+/* ---------- escenas ---------- */
+const ESCENAS = {
+  // Acto 1: la gata espera tranquila en la sala.
+  espera(p, txt){
+    fondoSala(p*4,'sala');
+    silla(540, 1290);
+    const respira = Math.sin(p*Math.PI*4)*1;
+    gata({ x:540, y:1290, esc:1.72, parpadeo: (p*3%1)>.92?1:0, rebotecuerpo:respira, cola:Math.sin(p*Math.PI*2)*.5 });
+    marcaAgua(); subtitulo(txt, p*4);
+  },
+  // Acto 2: aparece el impostor; el diploma de crayón se despega.
+  impostor(p, txt){
+    fondoSala(p*4,'sala');
+    diplomaCrayon(330, 520, clamp((p-.55)/.45,0,1)*rebote(clamp((p-.55)/.45,0,1)));
+    silla(790, 1290);
+    gata({ x:790, y:1290, esc:1.55, parpadeo:(p*3%1)>.9?1:0, mirada:-1, ceja: salida((p-.35)/.3) });
+    const entra = salida(clamp(p/.2,0,1));
+    gallo({ x: lerp(-320, 300, entra), y:1290, esc:1.72,
+            parpadeo:(p*2.3%1)>.93?1:0, gesto:1, brazo: Math.sin(p*Math.PI*3)*.35 });
+    maletinJuguete(300, 1250, clamp((p-.45)/.3,0,1));
+    marcaAgua(); subtitulo(txt, (p-.1)*4);
+  },
+  // Acto 3: llega la veterinaria verificada y la insignia brilla.
+  verificada(p, txt){
+    fondoSala(p*4,'clinica');
+    const entra = salida(clamp(p/.22,0,1));
+    gata({ x: lerp(900, 800, entra), y:1290, esc:1.5, parpadeo:(p*3%1)>.9?1:0, mirada:-1, cola:Math.sin(p*8)*1 });
+    capibara({ x: lerp(-180, 330, entra), y:1290, esc:1.72,
+               parpadeo:(p*2.5%1)>.93?1:0, saludo: Math.max(0,Math.sin(p*Math.PI*4))*.5,
+               brillo: clamp((p-.5)/.5,0,1) });
+    marcaAgua(); subtitulo(txt, (p-.15)*4);
+  }
+};
+
+/* ---------- línea de tiempo ---------- */
+function guion(){
+  const h = window.HISTORIA || {};
+  const actos = (h.actos && h.actos.length) ? h.actos : [
+    { escena:'espera', dur:6, texto:'Tu mascota no puede preguntar por el título.' },
+    { escena:'impostor', dur:8, texto:'Cualquiera puede ponerse una bata.' },
+    { escena:'verificada', dur:7, texto:'La insignia azul se verifica: Registro Civil y COLMEVET.' }
+  ];
+  let t=0; actos.forEach(a=>{ a.desde=t; t+=a.dur; });
+  return { actos, total: t + 3 };   // +3 s de cierre de marca
+}
+const G = guion();
+window.DURACION_TOTAL = G.total;
+
+window.dibujar = function(t){
+  X.clearRect(0,0,W,H);
+  const acto = G.actos.find(a => t >= a.desde && t < a.desde + a.dur);
+  if(acto){
+    ESCENAS[acto.escena in ESCENAS ? acto.escena : 'espera']((t-acto.desde)/acto.dur, acto.texto);
+  } else {
+    const ultimo = G.actos[G.actos.length-1];
+    ESCENAS[ultimo.escena]( .999, ultimo.texto);
+    cierreMarca((t - (ultimo.desde+ultimo.dur)) / 1.2);
+  }
+  // barra de progreso
+  X.fillStyle='rgba(255,255,255,.3)'; rr(70,H-90,W-140,10,5); X.fill();
+  X.fillStyle=MARCA.c2; rr(70,H-90,(W-140)*clamp(t/G.total,0,1),10,5); X.fill();
+};
+window.dibujar(0.1);
+</script>
+</body>
+</html>

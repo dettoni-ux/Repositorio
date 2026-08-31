@@ -3,7 +3,9 @@
  *
  * Estrategia: dar a conocer las herramientas de la plataforma, 80% dirigido a
  * veterinarios y 20% a tutores. Tipos: tip (imagen), hito (imagen) y video
- * (reel animado generado con IA — Seedance vía Replicate — en el mismo lote).
+ * (cortometraje). El video tiene dos motores: «animacion» (personajes vectoriales
+ * propios: gratis, ilimitado y con personajes idénticos entre escenas) e «ia»
+ * (Seedance vía Replicate, requiere saldo).
  *
  * Flujo: datos reales (Neon) → Claude (salidas estructuradas) → validación de largos
  * → render PNG / generación de video → cola de aprobación (rrss_piezas o cola-local.json).
@@ -11,6 +13,7 @@
  *
  * Uso:
  *   node generar.mjs [--demo] [--sin-api] [--tipos tip,hito,video] [--cantidad 5]
+ *                     [--motor animacion|ia]
  *
  * --demo    no toca la BD (cifras de ejemplo, cola local)
  * --sin-api no llama a Claude (piezas fijas de ejemplo; para probar plantillas/render)
@@ -24,6 +27,7 @@ import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod';
 import { obtenerDatos, insertarPieza } from './datos.mjs';
 import { abrirNavegador, renderPieza } from './render.mjs';
 import { generarCortometraje, videoDisponible } from './video.mjs';
+import { animarCorto } from './animar.mjs';
 import { generarVoz, mezclarVideoYVoz, vozDisponible } from './voz.mjs';
 
 const AQUI = path.dirname(fileURLToPath(import.meta.url));
@@ -38,6 +42,8 @@ const DEMO = flag('demo');
 const SIN_API = flag('sin-api');
 const TIPOS = valor('tipos', 'tip,hito,video').split(',').map(s => s.trim()).filter(t => TIPOS_VALIDOS.includes(t));
 const CANTIDAD = Math.min(8, Math.max(1, parseInt(valor('cantidad', '5'), 10) || 5));
+// Motor de video: 'animacion' (propio, gratis) o 'ia' (Seedance vía Replicate).
+const MOTOR = valor('motor', 'animacion') === 'ia' ? 'ia' : 'animacion';
 
 /* ---------- esquema de pieza (validación local estricta, incl. largos) ---------- */
 const Base = {
@@ -60,6 +66,14 @@ const VideoSchema = z.object({
   tipo: z.literal('video'),
   formato: z.literal('reel'),
   video: z.object({
+    // Cortometraje animado por el propio sistema: gratis, personajes siempre idénticos.
+    actos: z.array(z.object({
+      escena: z.enum(['espera', 'impostor', 'verificada']),
+      dur: z.number().int().min(4).max(9),
+      texto: z.string().max(90)
+    })).min(2).max(3),
+    cierre: z.string().max(60),
+    // Alternativa con IA de video (requiere saldo en Replicate).
     escenas_ia: z.array(z.object({
       prompt_ia: z.string().max(1600),
       duracion_s: z.number().int().min(5).max(10)
@@ -173,6 +187,12 @@ function piezasEjemplo(datos) {
       tipo: 'video', formato: 'reel', publico: 'tutores', fecha_propuesta: '2026-09-06', hora_propuesta: '12:00',
       caption: 'Cualquiera puede ponerse una bata. 🥼\n\nLa insignia azul de EncuentraVet no se compra: se verifica con Registro Civil y COLMEVET, uno a uno.\n\nRegístrate gratis en encuentravet.cl\n\n#EncuentraVet #VeterinariosVerificados #MascotasChile #TutorResponsable',
       video: {
+        actos: [
+          { escena:'espera', dur:6, texto:'Tu mascota no puede preguntar por el título.' },
+          { escena:'impostor', dur:8, texto:'Cualquiera puede ponerse una bata blanca.' },
+          { escena:'verificada', dur:7, texto:'La insignia azul se verifica: Registro Civil y COLMEVET.' }
+        ],
+        cierre: 'Busca la insignia azul',
         escenas_ia: [
           { prompt_ia: 'High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A fluffy grey cartoon cat with round amber eyes and a small red collar sits patiently on a waiting room chair, holding a tiny purse. The waiting room has purple (#5B2E7E) walls and yellow (#FFD84D) chairs. No text overlays, no logos, no watermarks.', duracion_s: 8 },
           { prompt_ia: 'High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A scruffy rooster wearing a white coat three sizes too big proudly opens a plastic toy doctor kit; behind him a diploma drawn in crayon is taped crookedly to the purple (#5B2E7E) wall and slowly peels off. The same fluffy grey cartoon cat with round amber eyes and a small red collar raises one eyebrow, unimpressed. No text overlays, no logos, no watermarks.', duracion_s: 8 },
@@ -208,15 +228,26 @@ try {
 
     if (pieza.tipo === 'video') {
       archivo = `${lote}-${i + 1}-video.mp4`;
-      if (videoDisponible()) {
-        const n = pieza.video.escenas_ia.length;
-        console.log(`  Pieza ${i + 1} (cortometraje de ${n} escena${n>1?'s':''}): generando con IA…`);
+      const conIA = MOTOR === 'ia' && videoDisponible();
+      if (conIA || MOTOR === 'animacion') {
         const mudo = path.join(DIR_PIEZAS, `.mudo-${i + 1}.mp4`);
         try {
-          await generarCortometraje({
-            escenas: pieza.video.escenas_ia, salida: mudo,
-            alAvanzar: (k, t) => console.log(`    escena ${k + 1} de ${t}…`)
-          });
+          if (conIA) {
+            const n = pieza.video.escenas_ia.length;
+            console.log(`  Pieza ${i + 1} (cortometraje de ${n} escena${n>1?'s':''}): generando con IA…`);
+            await generarCortometraje({
+              escenas: pieza.video.escenas_ia, salida: mudo,
+              alAvanzar: (k, t) => console.log(`    escena ${k + 1} de ${t}…`)
+            });
+          } else {
+            console.log(`  Pieza ${i + 1} (cortometraje animado, sin costo): dibujando…`);
+            await animarCorto({
+              historia: { actos: pieza.video.actos, cierre: pieza.video.cierre },
+              marca: { c1: '#5B2E7E', c2: '#FFD84D', azul: '#1E9BE0', nombre: 'EncuentraVet', web: 'encuentravet.cl' },
+              salida: mudo,
+              alAvanzar: p => { if (Math.round(p*100) % 25 === 0) console.log(`    ${(p*100).toFixed(0)}%`); }
+            });
+          }
           if (vozDisponible()) {
             console.log('  Generando voz en off con ElevenLabs y montándola sobre el video…');
             const voz = path.join(DIR_PIEZAS, `.voz-${i + 1}.mp3`);
@@ -243,7 +274,7 @@ try {
           if (existsSync(mudo)) unlinkSync(mudo);
         }
       } else {
-        nota = 'Video pendiente de generación: falta el secret REPLICATE_API_TOKEN. El prompt de IA está en la pieza.';
+        nota = 'Video pendiente: el motor «ia» necesita saldo en Replicate. Usa el motor «animacion» para generarlo sin costo.';
         console.warn(`  Pieza ${i + 1} (video): ${nota}`);
         archivo = null;
       }
