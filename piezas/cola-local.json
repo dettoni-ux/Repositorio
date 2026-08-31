@@ -1238,5 +1238,123 @@
     "imagen": "lote-2026-08-31-03-54-1-video.mp4",
     "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/claude/sweet-turing-nwcnd0/piezas/lote-2026-08-31-03-54-1-video.mp4",
     "nota": null
+  },
+  {
+    "fecha_propuesta": "2026-09-02",
+    "hora_propuesta": "09:00",
+    "publico": "veterinarios",
+    "caption": "Cualquiera puede comprarse un delantal blanco. Nadie puede comprarse una verificación 🔵\n\nEste corto es ficción, pero el problema no: cuando cualquier cuenta de internet puede decir \"soy veterinario\", el que pierde credibilidad eres tú, que sí estudiaste.\n\nEn EncuentraVet verificamos la identidad y los antecedentes profesionales de cada colega antes de entregar la insignia azul. No se declara, no se compra: se verifica. Y cuando un tutor la ve en tu perfil, ya no tiene que dudar.\n\nHoy somos 100 veterinarios verificados en 32 comunas, con 180 reservas este mes y 0% comisión: lo que cobras es tuyo, siempre.\n\nCertifícate y que nadie dude de ti 💙\n\nCrea tu perfil gratis en encuentravet.cl\n\n#EncuentraVet #VeterinariosVerificados #MédicoVeterinario #VeterinariosChile #InsigniaAzul #FalsosVeterinarios #COLMEVET",
+    "tipo": "video",
+    "formato": "reel",
+    "video": {
+      "actos": [
+        {
+          "escena": "espera",
+          "dur": 7,
+          "texto": "En la sala de espera nadie pregunta quién tiene título."
+        },
+        {
+          "escena": "impostor",
+          "dur": 8,
+          "texto": "Delantal gigante, estetoscopio de juguete y un diploma a crayón."
+        },
+        {
+          "escena": "verificada",
+          "dur": 7,
+          "texto": "Entra quien sí estudió: insignia azul en el pecho."
+        }
+      ],
+      "cierre": "La insignia azul se verifica, no se compra",
+      "escenas_ia": [
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A small tan short-haired mixed-breed dog with one white ear tip and a bright yellow collar sits calmly on a purple waiting-room bench, tail wagging slowly, looking at a closed consulting-room door. Cozy veterinary waiting room with deep purple (#5B2E7E) walls, yellow (#FFD84D) chairs and a small potted plant. Camera slowly pushes in on the dog. No text overlays, no logos, no watermarks.",
+          "duracion_s": 8
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A stocky man in his fifties with light-brown skin, thinning gray-black hair and a thick mustache bursts through the door wearing a white coat several sizes too big, sleeves hanging past his hands, holding a plastic toy stethoscope and a diploma clumsily drawn in crayon. He grins with exaggerated overconfidence. In front of him, a small tan short-haired mixed-breed dog with one white ear tip and a bright yellow collar sits on a purple bench and tilts its head, suspicious, ears flat. Same cozy veterinary waiting room with deep purple (#5B2E7E) walls, yellow (#FFD84D) chairs and a small potted plant. No text overlays, no logos, no watermarks.",
+          "duracion_s": 8
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A slim woman in her early thirties with deep brown skin and long black curly hair tied in a bun walks in wearing a well-fitted white coat with a small glowing blue verified badge on her chest; she is a different person, clearly not the stocky mustached man from the previous scene. She kneels warmly and gently greets a small tan short-haired mixed-breed dog with one white ear tip and a bright yellow collar, which hops off the purple bench and wags its tail happily. The stocky man in the oversized white coat shuffles away in the background, embarrassed, crayon diploma drooping. Same cozy veterinary waiting room with deep purple (#5B2E7E) walls, yellow (#FFD84D) chairs and a small potted plant. No text overlays, no logos, no watermarks.",
+          "duracion_s": 8
+        }
+      ],
+      "narracion": "Cualquiera puede comprarse un delantal blanco. Nadie puede comprarse una verificación. En EncuentraVet revisamos la identidad y los antecedentes profesionales de cada colega antes de entregar la insignia azul. Tu título vale: que se vea. En encuentravet punto cl, la insignia azul se verifica.",
+      "escenas": [
+        {
+          "tiempo": "0:00-0:07",
+          "descripcion": "Perro tan de collar amarillo espera tranquilo en la sala morada, mirando la puerta de la consulta.",
+          "texto_pantalla": "Nadie en la sala pregunta quién tiene título"
+        },
+        {
+          "tiempo": "0:07-0:15",
+          "descripcion": "Entra el impostor: delantal blanco enorme, estetoscopio de plástico y diploma a crayón. El perro ladea la cabeza, desconfiado.",
+          "texto_pantalla": "Diploma a crayón, estetoscopio de juguete"
+        },
+        {
+          "tiempo": "0:15-0:22",
+          "descripcion": "Llega la veterinaria verificada, con insignia azul al pecho, y recibe al perro con calma. El impostor se retira avergonzado.",
+          "texto_pantalla": "La insignia azul se verifica, no se compra"
+        }
+      ]
+    },
+    "visual": {
+      "actos": [
+        {
+          "escena": "espera",
+          "dur": 7,
+          "texto": "En la sala de espera nadie pregunta quién tiene título."
+        },
+        {
+          "escena": "impostor",
+          "dur": 8,
+          "texto": "Delantal gigante, estetoscopio de juguete y un diploma a crayón."
+        },
+        {
+          "escena": "verificada",
+          "dur": 7,
+          "texto": "Entra quien sí estudió: insignia azul en el pecho."
+        }
+      ],
+      "cierre": "La insignia azul se verifica, no se compra",
+      "escenas_ia": [
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A small tan short-haired mixed-breed dog with one white ear tip and a bright yellow collar sits calmly on a purple waiting-room bench, tail wagging slowly, looking at a closed consulting-room door. Cozy veterinary waiting room with deep purple (#5B2E7E) walls, yellow (#FFD84D) chairs and a small potted plant. Camera slowly pushes in on the dog. No text overlays, no logos, no watermarks.",
+          "duracion_s": 8
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A stocky man in his fifties with light-brown skin, thinning gray-black hair and a thick mustache bursts through the door wearing a white coat several sizes too big, sleeves hanging past his hands, holding a plastic toy stethoscope and a diploma clumsily drawn in crayon. He grins with exaggerated overconfidence. In front of him, a small tan short-haired mixed-breed dog with one white ear tip and a bright yellow collar sits on a purple bench and tilts its head, suspicious, ears flat. Same cozy veterinary waiting room with deep purple (#5B2E7E) walls, yellow (#FFD84D) chairs and a small potted plant. No text overlays, no logos, no watermarks.",
+          "duracion_s": 8
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A slim woman in her early thirties with deep brown skin and long black curly hair tied in a bun walks in wearing a well-fitted white coat with a small glowing blue verified badge on her chest; she is a different person, clearly not the stocky mustached man from the previous scene. She kneels warmly and gently greets a small tan short-haired mixed-breed dog with one white ear tip and a bright yellow collar, which hops off the purple bench and wags its tail happily. The stocky man in the oversized white coat shuffles away in the background, embarrassed, crayon diploma drooping. Same cozy veterinary waiting room with deep purple (#5B2E7E) walls, yellow (#FFD84D) chairs and a small potted plant. No text overlays, no logos, no watermarks.",
+          "duracion_s": 8
+        }
+      ],
+      "narracion": "Cualquiera puede comprarse un delantal blanco. Nadie puede comprarse una verificación. En EncuentraVet revisamos la identidad y los antecedentes profesionales de cada colega antes de entregar la insignia azul. Tu título vale: que se vea. En encuentravet punto cl, la insignia azul se verifica.",
+      "escenas": [
+        {
+          "tiempo": "0:00-0:07",
+          "descripcion": "Perro tan de collar amarillo espera tranquilo en la sala morada, mirando la puerta de la consulta.",
+          "texto_pantalla": "Nadie en la sala pregunta quién tiene título"
+        },
+        {
+          "tiempo": "0:07-0:15",
+          "descripcion": "Entra el impostor: delantal blanco enorme, estetoscopio de plástico y diploma a crayón. El perro ladea la cabeza, desconfiado.",
+          "texto_pantalla": "Diploma a crayón, estetoscopio de juguete"
+        },
+        {
+          "tiempo": "0:15-0:22",
+          "descripcion": "Llega la veterinaria verificada, con insignia azul al pecho, y recibe al perro con calma. El impostor se retira avergonzado.",
+          "texto_pantalla": "La insignia azul se verifica, no se compra"
+        }
+      ],
+      "nota": null
+    },
+    "estado": "pendiente",
+    "lote": "lote-2026-08-31-04-06",
+    "imagen": "lote-2026-08-31-04-06-1-video.mp4",
+    "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/claude/sweet-turing-nwcnd0/piezas/lote-2026-08-31-04-06-1-video.mp4",
+    "nota": null
   }
 ]
