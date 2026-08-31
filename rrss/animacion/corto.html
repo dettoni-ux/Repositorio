@@ -3,297 +3,419 @@
 <head>
 <meta charset="utf-8">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Nunito:wght@700;800&display=swap">
-<style>
-  html,body{margin:0;padding:0;background:#000;overflow:hidden}
-  canvas{display:block}
-</style>
+<style>html,body{margin:0;background:#000;overflow:hidden}canvas{display:block}</style>
 </head>
 <body>
 <canvas id="c" width="1080" height="1920"></canvas>
 <script>
 /* ============================================================
-   Cortometraje animado de EncuentraVet — animación vectorial propia.
-   Los personajes se dibujan con formas, así son idénticos en todas
-   las escenas (la IA de video pierde la continuidad entre tomas).
-   La historia llega en window.HISTORIA; el motor la anima.
+   Cortometraje EncuentraVet — animación vectorial con rig.
+   Cada personaje tiene partes independientes (cabeza, cuerpo,
+   brazos, patas, cola) que se animan por separado, con
+   anticipación, elasticidad y movimiento secundario.
    ============================================================ */
-const C = document.getElementById('c'), X = C.getContext('2d');
-const W = 1080, H = 1920;
+const C=document.getElementById('c'), X=C.getContext('2d');
+const W=1080,H=1920;
+const MARCA=Object.assign({c1:'#5B2E7E',c2:'#FFD84D',azul:'#1E9BE0',nombre:'EncuentraVet',web:'encuentravet.cl'},window.MARCA||{});
 
-const MARCA = Object.assign({
-  c1:'#5B2E7E', c2:'#FFD84D', azul:'#1E9BE0', nombre:'EncuentraVet', web:'encuentravet.cl'
-}, window.MARCA || {});
-
-/* ---------- utilidades ---------- */
-const lerp=(a,b,t)=>a+(b-a)*t;
-const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+/* ---------- matemática de animación ---------- */
+const lerp=(a,b,t)=>a+(b-a)*t, clamp=(v,a,b)=>v<a?a:v>b?b:v;
 const suave=t=>t<=0?0:t>=1?1:t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
 const salida=t=>1-Math.pow(1-clamp(t,0,1),3);
+const entrada=t=>clamp(t,0,1)**3;
+const elastico=t=>t<=0?0:t>=1?1:Math.pow(2,-10*t)*Math.sin((t*10-.75)*(2*Math.PI/3))+1;
 const rebote=t=>{const n=7.5625,d=2.75;if(t<1/d)return n*t*t;if(t<2/d)return n*(t-=1.5/d)*t+.75;if(t<2.5/d)return n*(t-=2.25/d)*t+.9375;return n*(t-=2.625/d)*t+.984375;};
+/* curva de fotogramas clave: kf(t, [[t,v],...], easing) */
+function kf(t,p,e){e=e||suave;
+  if(t<=p[0][0])return p[0][1];
+  for(let i=0;i<p.length-1;i++){const[a,va]=p[i],[b,vb]=p[i+1];
+    if(t>=a&&t<=b)return lerp(va,vb,e((t-a)/((b-a)||1)));}
+  return p[p.length-1][1];}
+/* oscilación con desfase, para movimiento secundario con retardo */
+const osc=(t,f,a,d)=>Math.sin((t-(d||0))*Math.PI*2*f)*a;
 
 function rr(x,y,w,h,r){X.beginPath();X.moveTo(x+r,y);X.arcTo(x+w,y,x+w,y+h,r);X.arcTo(x+w,y+h,x,y+h,r);X.arcTo(x,y+h,x,y,r);X.arcTo(x,y,x+w,y,r);X.closePath();}
-function elipse(x,y,rx,ry,rot){X.beginPath();X.ellipse(x,y,rx,ry,rot||0,0,Math.PI*2);X.fill();}
-function circulo(x,y,r){X.beginPath();X.arc(x,y,r,0,Math.PI*2);X.fill();}
+function el(x,y,rx,ry,rot){X.beginPath();X.ellipse(x,y,Math.max(0,rx),Math.max(0,ry),rot||0,0,Math.PI*2);X.fill();}
+function ci(x,y,r){X.beginPath();X.arc(x,y,Math.max(0,r),0,Math.PI*2);X.fill();}
 
-/* ---------- personajes ---------- */
-/* Cada personaje se dibuja centrado en (0,0), de pie sobre y=0, con altura ~1 unidad*esc. */
+/* ---------- cámara ---------- */
+let CAM={z:1,x:0,y:0,rot:0};
+function conCamara(fn){X.save();
+  X.translate(W/2+CAM.x,H*0.62+CAM.y);X.scale(CAM.z,CAM.z);X.rotate(CAM.rot);X.translate(-W/2,-H*0.62);
+  fn();X.restore();}
 
-function ojos(sepa, r, pupila, parpadeo, mirada){
-  const cerrado = parpadeo > .5;
-  [-sepa, sepa].forEach(dx=>{
-    X.fillStyle='#fff';
-    if(cerrado){ X.strokeStyle='#2A2028'; X.lineWidth=r*.45; X.beginPath();
-      X.moveTo(dx-r*.9,0); X.quadraticCurveTo(dx,r*.5,dx+r*.9,0); X.stroke(); }
-    else{
-      circulo(dx,0,r);
-      X.fillStyle='#2A2028'; circulo(dx + (mirada||0)*r*.35, r*.08, pupila);
-      X.fillStyle='#fff'; circulo(dx + (mirada||0)*r*.35 - pupila*.35, -pupila*.35, pupila*.32);
-    }
+/* ---------- rostro ---------- */
+function cara(o){
+  const{sepa,r,pup,parpadeo=0,mx=0,my=0,ceja=0,boca='neutral',colorCeja='#4B4550'}=o;
+  const cerrado=parpadeo>.55;
+  [-sepa,sepa].forEach((dx,i)=>{
+    if(cerrado){X.strokeStyle='#2A2028';X.lineWidth=r*.42;X.lineCap='round';
+      X.beginPath();X.moveTo(dx-r*.85,0);X.quadraticCurveTo(dx,r*.55,dx+r*.85,0);X.stroke();}
+    else{X.fillStyle='#fff';ci(dx,0,r);
+      X.fillStyle='#2A2028';ci(dx+mx*r*.4,r*.06+my*r*.35,pup);
+      X.fillStyle='#fff';ci(dx+mx*r*.4-pup*.36,-pup*.36+my*r*.35,pup*.3);}
+    if(ceja!==0){X.strokeStyle=colorCeja;X.lineWidth=r*.34;X.lineCap='round';
+      const s=i?1:-1, alza=Math.abs(ceja)*r*.5;
+      X.beginPath();X.moveTo(dx-r*.9,-r*1.35-(ceja>0?alza:0));
+      X.lineTo(dx+r*.9,-r*1.35-(ceja>0?0:alza)*s*s);X.stroke();}
   });
 }
-
-function orejaGato(x,y,s,color,interior,rot){
-  X.save(); X.translate(x,y); X.rotate(rot);
-  X.fillStyle=color; X.beginPath(); X.moveTo(-s*.5,s*.4); X.lineTo(0,-s*.75); X.lineTo(s*.5,s*.4); X.closePath(); X.fill();
-  X.fillStyle=interior; X.beginPath(); X.moveTo(-s*.22,s*.28); X.lineTo(0,-s*.32); X.lineTo(s*.22,s*.28); X.closePath(); X.fill();
-  X.restore();
+function boca(tipo,x,y,s,color){
+  X.strokeStyle=color||'#6F6A78';X.lineWidth=s*.16;X.lineCap='round';X.fillStyle=color||'#6F6A78';
+  if(tipo==='sonrisa'){X.beginPath();X.arc(x,y-s*.2,s*.5,.25*Math.PI,.75*Math.PI);X.stroke();}
+  else if(tipo==='oh'){X.beginPath();X.ellipse(x,y,s*.28,s*.4,0,0,Math.PI*2);X.fill();}
+  else if(tipo==='duda'){X.beginPath();X.moveTo(x-s*.4,y);X.quadraticCurveTo(x,y-s*.3,x+s*.4,y+s*.1);X.stroke();}
+  else{X.beginPath();X.moveTo(x-s*.32,y);X.lineTo(x+s*.32,y);X.stroke();}
 }
 
-/* Gata gris: la tutora que espera. */
-function gata(o){
-  const {x,y,esc=1,parpadeo=0,mirada=0,ceja=0,rebotecuerpo=0,cola=0} = o;
-  X.save(); X.translate(x,y); X.scale(esc,esc);
-  const gris='#8E8896', grisOsc='#6F6A78', rosa='#E9A8B8';
-  // cola
-  X.strokeStyle=gris; X.lineWidth=26; X.lineCap='round';
-  X.beginPath(); X.moveTo(78,-60); X.quadraticCurveTo(170+cola*40, -90-cola*40, 150+cola*20, -190-cola*30); X.stroke();
-  // cuerpo
-  X.fillStyle=gris; elipse(0,-110,92,116+rebotecuerpo*6);
-  X.fillStyle='#B6B1BE'; elipse(0,-88,54,74);   // pecho
-  // patas
-  X.fillStyle=grisOsc; elipse(-46,-8,30,20); elipse(46,-8,30,20);
-  // collar rojo (rasgo distintivo, presente siempre)
-  X.fillStyle='#D0324B'; rr(-52,-196,104,26,13); X.fill();
-  X.fillStyle=MARCA.c2; circulo(0,-172,15);
+/* ============================================================
+   GATA — rig: cuerpo, cabeza (rota), orejas, cola con retardo,
+   patas con ciclo de caminata, elasticidad en el cuerpo.
+   ============================================================ */
+function gata(p){
+  const{x,y,esc=1,t=0,flip=1,bob=0,squash=0,camina=0,paso=0,
+        cabRot=0,cabY=0,parpadeo=0,mx=0,my=0,ceja=0,bocaTipo='neutral',
+        colaAmp=1,inclina=0,orejaCaida=0,salto=0}=p;
+  const gris='#8E8896',grisO='#6F6A78',claro='#B6B1BE',rosa='#E9A8B8';
+  X.save();X.translate(x,y-salto);X.scale(esc*flip,esc);X.rotate(inclina);
+  const sq=1+squash, st=1-squash*.55;
+
+  // cola: sigue al cuerpo con retardo (movimiento secundario)
+  const c1=osc(t,.55,26,.15)*colaAmp, c2=osc(t,.55,48,.32)*colaAmp;
+  X.strokeStyle=gris;X.lineWidth=24;X.lineCap='round';
+  X.beginPath();X.moveTo(70,-70);
+  X.bezierCurveTo(158+c1,-84-c1*.5,196+c2,-172-c2*.5,148+c2*1.4,-250-c2*.7);X.stroke();
+  X.strokeStyle=claro;X.lineWidth=10;
+  X.beginPath();X.moveTo(166+c2*1.3,-232-c2*.7);X.lineTo(148+c2*1.4,-250-c2*.7);X.stroke();
+
+  // patas traseras (ciclo de caminata)
+  const pa=camina?Math.sin(paso)*26:0, pb=camina?Math.sin(paso+Math.PI)*26:0;
+  X.fillStyle=grisO;el(-44+pa,-10-Math.max(0,pa)*.4,30,20);el(44+pb,-10-Math.max(0,pb)*.4,30,20);
+
+  // cuerpo con elasticidad
+  X.fillStyle=gris;el(0,-108*st,90*sq,112*st+bob);
+  X.fillStyle=claro;el(0,-88*st,52*sq,72*st);
+
+  // patitas delanteras
+  X.fillStyle=grisO;el(-30,-24,22,15);el(30,-24,22,15);
+
+  // collar (rasgo fijo del personaje)
+  X.fillStyle='#D0324B';rr(-50*sq,-196*st,100*sq,25,13);X.fill();
+  X.fillStyle=MARCA.c2;ci(0,-172*st,14);
+
   // cabeza
-  X.fillStyle=gris; elipse(0,-268,86,80);
-  orejaGato(-58,-322,58,gris,rosa,-.22); orejaGato(58,-322,58,gris,rosa,.22);
-  // cara
-  X.save(); X.translate(0,-276); ojos(34,25,11,parpadeo,mirada); X.restore();
-  X.fillStyle=rosa; X.beginPath(); X.moveTo(0,-246); X.lineTo(-11,-256); X.lineTo(11,-256); X.closePath(); X.fill();
-  X.strokeStyle=grisOsc; X.lineWidth=5;
-  X.beginPath(); X.moveTo(0,-246); X.lineTo(0,-236); X.moveTo(0,-236); X.quadraticCurveTo(-14,-228,-24,-238);
-  X.moveTo(0,-236); X.quadraticCurveTo(14,-228,24,-238); X.stroke();
-  // bigotes
-  X.lineWidth=4; [[-1,1],[1,1]].forEach(([s])=>{
-    X.beginPath(); X.moveTo(s*40,-250); X.lineTo(s*96,-262); X.moveTo(s*40,-242); X.lineTo(s*98,-242); X.stroke(); });
-  // ceja de sospecha
-  if(ceja>0){ X.strokeStyle='#4B4550'; X.lineWidth=9; X.beginPath();
-    X.moveTo(-52,-318+ceja*6); X.lineTo(-16,-330-ceja*10); X.stroke(); }
-  X.restore();
+  X.save();X.translate(0,-262*st+cabY);X.rotate(cabRot);
+  const oc=orejaCaida*.5+osc(t,1.1,.05,.1);
+  [[-56,-1],[56,1]].forEach(([ox,s])=>{
+    X.save();X.translate(ox,-54);X.rotate(s*(.2+oc));
+    X.fillStyle=gris;X.beginPath();X.moveTo(-28,26);X.lineTo(0,-42);X.lineTo(28,26);X.closePath();X.fill();
+    X.fillStyle=rosa;X.beginPath();X.moveTo(-12,18);X.lineTo(0,-18);X.lineTo(12,18);X.closePath();X.fill();
+    X.restore();});
+  X.fillStyle=gris;el(0,0,84,78);
+  X.fillStyle=claro;el(0,26,46,32);
+  cara({sepa:33,r:24,pup:11,parpadeo,mx,my,ceja,colorCeja:'#4B4550'});
+  X.fillStyle=rosa;X.beginPath();X.moveTo(0,24);X.lineTo(-10,14);X.lineTo(10,14);X.closePath();X.fill();
+  boca(bocaTipo,0,44,30,grisO);
+  X.strokeStyle=grisO;X.lineWidth=4;
+  [1,-1].forEach(s=>{X.beginPath();X.moveTo(s*38,18);X.lineTo(s*94,6);X.moveTo(s*38,28);X.lineTo(s*96,28);X.stroke();});
+  X.restore();X.restore();
 }
 
-/* Gallo impostor: bata gigante, todo le queda grande. */
-function gallo(o){
-  const {x,y,esc=1,parpadeo=0,gesto=0,brazo=0} = o;
-  X.save(); X.translate(x,y); X.scale(esc,esc);
-  const pluma='#C8703A', cresta='#D93A3A', pico=MARCA.c2;
-  // patas
-  X.strokeStyle=pico; X.lineWidth=14; X.lineCap='round';
-  X.beginPath(); X.moveTo(-28,-20); X.lineTo(-28,0); X.moveTo(28,-20); X.lineTo(28,0); X.stroke();
-  // bata blanca enorme (le llega al suelo: le queda grande)
-  X.fillStyle='#F4F2F6'; rr(-104,-260,208,262,26); X.fill();
-  X.fillStyle='#E2DEE8'; rr(-104,-260,32,262,16); X.fill();   // solapa
-  // mangas colgando, demasiado largas
-  X.fillStyle='#F4F2F6';
-  X.save(); X.translate(-104,-236); X.rotate(-.25+brazo*.5); rr(-16,0,44,150,20); X.fill(); X.restore();
-  X.save(); X.translate(104,-236); X.rotate(.25-brazo*.5); rr(-28,0,44,150,20); X.fill(); X.restore();
-  // cuello y cabeza
-  X.fillStyle=pluma; elipse(0,-292,52,46);
-  X.fillStyle=cresta; [-22,0,22].forEach((dx,i)=> circulo(dx,-330-(i===1?12:0),17));
-  X.fillStyle=pico; X.beginPath(); X.moveTo(46,-292); X.lineTo(86,-284); X.lineTo(46,-276); X.closePath(); X.fill();
-  X.fillStyle=cresta; elipse(30,-266,12,16);
-  X.save(); X.translate(0,-298); ojos(22,17,8,parpadeo,gesto*.6); X.restore();
+/* ============================================================
+   GALLO IMPOSTOR — bata enorme que se balancea con retardo,
+   mangas colgando, cresta que rebota, caminata torpe.
+   ============================================================ */
+function gallo(p){
+  const{x,y,esc=1,t=0,camina=0,paso=0,bob=0,parpadeo=0,mx=0,
+        bocaAbre=0,brazoIzq=0,brazoDer=0,inclina=0,squash=0,sudor=0}=p;
+  const pluma='#C8703A',cresta='#D93A3A',pico=MARCA.c2;
+  X.save();X.translate(x,y);X.scale(esc,esc);X.rotate(inclina);
+  const sq=1+squash, st=1-squash*.5;
+  const pa=camina?Math.sin(paso)*30:0, pb=camina?Math.sin(paso+Math.PI)*30:0;
+
+  X.strokeStyle=pico;X.lineWidth=14;X.lineCap='round';
+  X.beginPath();X.moveTo(-26+pa,-24);X.lineTo(-26+pa,-2-Math.max(0,pa)*.3);
+  X.moveTo(26+pb,-24);X.lineTo(26+pb,-2-Math.max(0,pb)*.3);X.stroke();
+
+  // bata: se balancea con retardo respecto al cuerpo
+  const vaiven=osc(t,.5,.05,.2)+camina*Math.sin(paso*.5)*.03;
+  X.save();X.rotate(vaiven);
+  X.fillStyle='#F4F2F6';rr(-102*sq,-256*st,204*sq,258*st+bob,26);X.fill();
+  X.fillStyle='#E4E0EA';X.beginPath();X.moveTo(-34,-256*st);X.lineTo(0,-176*st);X.lineTo(34,-256*st);X.closePath();X.fill();
+  X.fillStyle='#D8D3E0';ci(-46,-150*st,9);ci(-46,-108*st,9);
   X.restore();
+
+  // mangas demasiado largas, con retardo propio
+  [[-102,-1,brazoIzq,.0],[102,1,brazoDer,.18]].forEach(([ox,s,br,d])=>{
+    X.save();X.translate(ox,-232*st);X.rotate(s*(.22+br)+osc(t,.5,.07,d));
+    manga(s<0?-18:-26,0,44,158,20);
+    X.restore();});
+
+  // cabeza y cresta con rebote
+  X.save();X.translate(0,-288*st+bob*.4);X.rotate(osc(t,.45,.04,.1));
+  X.fillStyle=pluma;el(0,0,50,44);
+  X.fillStyle=cresta;[-20,0,20].forEach((dx,i)=>ci(dx,-38-(i===1?12:0)+osc(t,1.4,4,i*.1),16));
+  X.fillStyle=pico;X.beginPath();X.moveTo(44,2);X.lineTo(84,10+bocaAbre*10);X.lineTo(44,18+bocaAbre*16);X.closePath();X.fill();
+  X.fillStyle=cresta;el(28,28,11,15);
+  cara({sepa:21,r:16,pup:8,parpadeo,mx,ceja:0});
+  if(sudor>0){X.globalAlpha=sudor;X.fillStyle='#7FC7EA';
+    [[-48,-18],[46,-26]].forEach(([sx,sy],i)=>{X.save();X.translate(sx,sy+((t*90+i*30)%60));
+      X.beginPath();X.moveTo(0,-12);X.quadraticCurveTo(9,2,0,10);X.quadraticCurveTo(-9,2,0,-12);X.fill();X.restore();});
+    X.globalAlpha=1;}
+  X.restore();X.restore();
 }
 
-/* Veterinaria capibara verificada: bata a la medida e insignia azul. */
-function capibara(o){
-  const {x,y,esc=1,parpadeo=0,saludo=0,brillo=0} = o;
-  X.save(); X.translate(x,y); X.scale(esc,esc);
-  const pelo='#A97B4F', peloOsc='#8A6340';
-  X.fillStyle=peloOsc; elipse(-44,-10,32,20); elipse(44,-10,32,20);
-  // bata a la medida
-  X.fillStyle='#FFFFFF'; rr(-96,-268,192,264,30); X.fill();
-  X.fillStyle='#EFEAF6'; X.beginPath(); X.moveTo(-30,-268); X.lineTo(0,-206); X.lineTo(30,-268); X.closePath(); X.fill();
-  // brazo que saluda
-  X.save(); X.translate(96,-238); X.rotate(-.5 - saludo*.7);
-  X.fillStyle='#FFFFFF'; rr(-20,0,42,132,21); X.fill();
-  X.fillStyle=pelo; circulo(0,140,26); X.restore();
-  X.fillStyle='#FFFFFF'; X.save(); X.translate(-96,-238); X.rotate(.2); rr(-22,0,42,120,21); X.fill(); X.restore();
-  // insignia azul verificada
-  X.save(); X.translate(-52,-206);
-  if(brillo>0){ X.globalAlpha=brillo*.5; X.fillStyle=MARCA.azul; circulo(0,0,46+brillo*16); X.globalAlpha=1; }
-  X.fillStyle=MARCA.azul;
-  X.beginPath();
-  for(let i=0;i<12;i++){ const a=i*Math.PI/6, r=i%2?24:30; const px=Math.cos(a)*r, py=Math.sin(a)*r;
-    i?X.lineTo(px,py):X.moveTo(px,py); }
-  X.closePath(); X.fill();
-  X.strokeStyle='#fff'; X.lineWidth=6; X.lineCap='round'; X.lineJoin='round';
-  X.beginPath(); X.moveTo(-11,0); X.lineTo(-3,9); X.lineTo(12,-9); X.stroke();
+/* ============================================================
+   VETERINARIA CAPIBARA — camina, saluda con hombro real,
+   insignia azul con destellos.
+   ============================================================ */
+function capibara(p){
+  const{x,y,esc=1,t=0,camina=0,paso=0,parpadeo=0,saludo=0,brillo=0,
+        bocaTipo='sonrisa',cabRot=0,bob=0,squash=0}=p;
+  const pelo='#A97B4F',peloO='#8A6340';
+  X.save();X.translate(x,y);X.scale(esc,esc);
+  const sq=1+squash, st=1-squash*.5;
+  const pa=camina?Math.sin(paso)*28:0, pb=camina?Math.sin(paso+Math.PI)*28:0;
+  X.fillStyle=peloO;el(-42+pa,-10,30,19);el(42+pb,-10,30,19);
+
+  X.fillStyle='#FFFFFF';rr(-94*sq,-264*st,188*sq,262*st+bob,30);X.fill();
+  X.fillStyle='#EFEAF6';X.beginPath();X.moveTo(-30,-264*st);X.lineTo(0,-200*st);X.lineTo(30,-264*st);X.closePath();X.fill();
+
+  // brazo izquierdo quieto
+  X.save();X.translate(-94,-234*st);X.rotate(.18+osc(t,.5,.05,.1));
+  manga(-22,0,42,118,21);
+  X.fillStyle=pelo;ci(0,126,24);X.restore();
+  // brazo derecho: saluda desde el hombro, con antebrazo
+  X.save();X.translate(94,-234*st);X.rotate(-.35-saludo*1.95);
+  manga(-20,0,42,110,21);
+  X.save();X.translate(0,110);X.rotate(saludo*.45+osc(t,1.9,.32,0)*saludo);
+  manga(-19,0,38,64,19);
+  X.fillStyle=pelo;ci(0,74,25);X.restore();X.restore();
+
+  // insignia con destellos
+  X.save();X.translate(-50,-202*st);
+  if(brillo>0){const pulso=.5+.5*Math.sin(t*5), R=46+pulso*16;
+    const g=X.createRadialGradient(0,0,10,0,0,R);
+    g.addColorStop(0,`rgba(30,155,224,${.30*brillo})`);
+    g.addColorStop(.55,`rgba(30,155,224,${.14*brillo})`);
+    g.addColorStop(1,'rgba(30,155,224,0)');
+    X.fillStyle=g;ci(0,0,R);}
+  X.fillStyle=MARCA.azul;X.beginPath();
+  for(let i=0;i<12;i++){const a=i*Math.PI/6-.2,r=i%2?23:29;const px=Math.cos(a)*r,py=Math.sin(a)*r;i?X.lineTo(px,py):X.moveTo(px,py);}
+  X.closePath();X.fill();
+  X.strokeStyle='#fff';X.lineWidth=6;X.lineCap='round';X.lineJoin='round';
+  X.beginPath();X.moveTo(-10,0);X.lineTo(-3,8);X.lineTo(11,-9);X.stroke();
+  if(brillo>0){X.fillStyle='#fff';
+    for(let i=0;i<3;i++){const a=t*2.2+i*2.1,rr2=42+Math.sin(t*3+i)*10;
+      X.globalAlpha=brillo*(.4+.4*Math.sin(t*4+i));
+      const px=Math.cos(a)*rr2,py=Math.sin(a)*rr2;
+      X.beginPath();X.moveTo(px,py-9);X.lineTo(px+3.5,py);X.lineTo(px,py+9);X.lineTo(px-3.5,py);X.closePath();X.fill();}
+    X.globalAlpha=1;}
   X.restore();
-  // cabeza
-  X.fillStyle=pelo; elipse(0,-318,78,66);
-  X.fillStyle=peloOsc; elipse(-64,-360,20,18); elipse(64,-360,20,18);
-  X.fillStyle='#8A6340'; elipse(0,-292,44,30);
-  X.fillStyle='#4A3524'; elipse(0,-300,15,11);
-  X.save(); X.translate(0,-334); ojos(34,19,9,parpadeo,0); X.restore();
-  X.restore();
+
+  X.save();X.translate(0,-316*st+bob*.5);X.rotate(cabRot);
+  X.fillStyle=pelo;el(0,0,76,64);
+  X.fillStyle=peloO;el(-62,-42,19,17);el(62,-42,19,17);
+  X.fillStyle=peloO;el(0,26,42,29);
+  X.fillStyle='#4A3524';el(0,18,14,10);
+  cara({sepa:33,r:18,pup:9,parpadeo,ceja:0});
+  boca(bocaTipo,0,44,34,'#5C4126');
+  X.restore();X.restore();
 }
 
 /* ---------- escenografía ---------- */
-function fondoSala(t, tono){
+let particulas=[];
+function polvo(x,y,n){for(let i=0;i<n;i++)particulas.push({x,y,vx:(Math.random()-.5)*7,vy:-Math.random()*4,r:6+Math.random()*10,v:1});}
+function dibujaParticulas(){X.fillStyle='rgba(255,255,255,.55)';
+  particulas=particulas.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.22;p.v-=.028;
+    if(p.v<=0)return false;X.globalAlpha=p.v*.6;ci(p.x,p.y,p.r*p.v);return true;});
+  X.globalAlpha=1;}
+
+function fondo(t,tono){
   const g=X.createLinearGradient(0,0,0,H);
-  g.addColorStop(0, tono==='clinica' ? '#F3EEFA' : '#EFE6F7');
-  g.addColorStop(1, '#DDD0EC'); X.fillStyle=g; X.fillRect(0,0,W,H);
-  // piso
-  X.fillStyle='#C9B8DE'; X.fillRect(0,H*0.67,W,H*0.33);
-  X.fillStyle='rgba(255,255,255,.35)';
-  for(let i=-2;i<8;i++) { X.save(); X.beginPath(); X.moveTo(i*180+ (t*8%180), H*0.67); X.lineTo(i*180+120+(t*8%180), H*0.67); X.lineTo(i*180+220, H); X.lineTo(i*180+40, H); X.closePath(); X.fill(); X.restore(); }
-  // patitas decorativas en la pared
-  X.globalAlpha=.10; X.fillStyle=MARCA.c1;
-  [[150,300],[930,420],[210,980],[880,880]].forEach(([px,py],i)=>{
-    X.save(); X.translate(px,py+Math.sin(t*1.2+i)*8); X.rotate(i*.7);
-    elipse(0,18,30,24); [[-27,-12],[0,-24],[27,-12]].forEach(([ax,ay])=>circulo(ax,ay,13)); X.restore(); });
+  g.addColorStop(0,tono==='clinica'?'#F6F1FC':'#F0E8F8');
+  g.addColorStop(.62,'#E3D7F0');g.addColorStop(1,'#CFC0E4');
+  X.fillStyle=g;X.fillRect(0,0,W,H);
+  // rayo de luz de la ventana
+  X.save();X.globalAlpha=.28;const lg=X.createLinearGradient(700,0,1000,900);
+  lg.addColorStop(0,'rgba(255,255,255,.9)');lg.addColorStop(1,'rgba(255,255,255,0)');
+  X.fillStyle=lg;X.beginPath();X.moveTo(620,0);X.lineTo(1080,0);X.lineTo(1080,760);X.lineTo(860,900);X.closePath();X.fill();X.restore();
+  // patitas con parallax
+  X.globalAlpha=.09;X.fillStyle=MARCA.c1;
+  [[140,320,.7],[930,430,1.1],[220,900,.5],[880,820,.9],[520,180,.6]].forEach(([px,py,f],i)=>{
+    X.save();X.translate(px+osc(t,.15*f,14,i),py+osc(t,.2*f,10,i*.4));X.rotate(i*.6);
+    el(0,17,29,23);[[-26,-11],[0,-23],[26,-11]].forEach(([ax,ay])=>ci(ax,ay,12));X.restore();});
   X.globalAlpha=1;
+  X.fillStyle='#C3B2DA';X.fillRect(0,H*.665,W,H*.335);
+  X.fillStyle='rgba(255,255,255,.3)';
+  for(let i=-2;i<9;i++){X.beginPath();X.moveTo(i*170,H*.665);X.lineTo(i*170+110,H*.665);X.lineTo(i*170+215,H);X.lineTo(i*170+35,H);X.closePath();X.fill();}
+  X.fillStyle='rgba(90,50,130,.10)';X.fillRect(0,H*.665,W,10);
 }
+function manga(x,y,w,h,r){
+  X.fillStyle='#FBFAFD';rr(x,y,w,h,r);X.fill();
+  X.strokeStyle='rgba(88,52,128,.22)';X.lineWidth=3.5;X.stroke();
+}
+function sombra(x,y,w,a){X.save();X.globalAlpha=a===undefined?.16:a;X.fillStyle='#3C1D55';el(x,y,w,w*.22);X.restore();}
+function silla(x,y,esc){esc=esc||1;X.save();X.translate(x,y);X.scale(esc,esc);
+  X.fillStyle='#E5B93E';rr(-186,-330,64,282,26);X.fill();rr(122,-330,64,282,26);X.fill();
+  X.fillStyle=MARCA.c2;rr(-190,-62,380,66,30);X.fill();
+  X.fillStyle='#C9B8DE';rr(-160,0,42,146,16);X.fill();rr(118,0,42,146,16);X.fill();X.restore();}
+function diploma(x,y,despegue,caida,t){
+  X.save();X.translate(x,y+caida*760+Math.sin(caida*9)*caida*40);
+  X.rotate(-.05+despegue*.35+caida*2.4+osc(t,1.2,.05,0)*despegue);
+  X.scale(1.5,1.5);
+  X.fillStyle='rgba(60,29,85,.10)';rr(-104,-74,220,160,8);X.fill();
+  X.fillStyle='#FFFDF4';rr(-110,-80,220,160,8);X.fill();
+  X.strokeStyle='#DCD2C2';X.lineWidth=4;X.strokeRect(-110,-80,220,160);
+  X.lineCap='round';X.strokeStyle='#3FA0E0';X.lineWidth=9;
+  X.beginPath();X.moveTo(-78,-40);X.lineTo(70,-46);X.moveTo(-78,-8);X.lineTo(40,-12);X.stroke();
+  X.strokeStyle='#E0653F';X.beginPath();X.moveTo(-78,26);X.lineTo(56,20);X.stroke();
+  X.strokeStyle='#5BB56A';X.lineWidth=7;X.beginPath();X.arc(52,50,22,0,Math.PI*1.7);X.stroke();
+  X.restore();}
+function maletin(x,y,abre,t){X.save();X.translate(x,y);X.rotate(osc(t,.6,.03,0));
+  X.fillStyle='#E0653F';rr(-66,-50,132,100,16);X.fill();
+  X.fillStyle='#FFFDF4';rr(-15,-14,30,9,4);X.fill();rr(-4.5,-24,9,29,4);X.fill();
+  if(abre>0){X.save();X.translate(0,-50);X.rotate(-abre*1.15);
+    X.fillStyle='#C9542F';rr(-66,-16,132,20,8);X.fill();X.restore();
+    X.globalAlpha=abre;X.fillStyle='#9BD2F0';rr(-48,-42,24,24,6);X.fill();
+    X.fillStyle=MARCA.c2;ci(18,-30,14);X.globalAlpha=1;}
+  X.restore();}
 
-function silla(x,y){
-  X.fillStyle=MARCA.c2; rr(x-190,y-60,380,66,30); X.fill();
-  X.fillStyle='#E5B93E'; rr(x-190,y-330,66,280,26); X.fill(); rr(x+124,y-330,66,280,26); X.fill();
-  X.fillStyle='#C9B8DE'; rr(x-164,y,44,150,16); X.fill(); rr(x+120,y,44,150,16); X.fill();
-}
+/* ---------- interfaz ---------- */
+function envolver(txt,mw){const p=String(txt).split(/\s+/),l=[];let a='';
+  p.forEach(w=>{const pr=a?a+' '+w:w;if(X.measureText(pr).width<=mw)a=pr;else{if(a)l.push(a);a=w;}});
+  if(a)l.push(a);return l;}
+function subtitulo(txt,ap){if(!txt)return;
+  X.save();const e=salida(ap);X.globalAlpha=e;
+  X.font="800 54px 'Nunito', sans-serif";X.textAlign='center';
+  const ls=envolver(txt,880).slice(0,3),alto=ls.length*66+52,y=H-300-alto+(1-e)*30;
+  X.fillStyle='rgba(28,16,40,.84)';rr(60,y,W-120,alto,28);X.fill();
+  X.fillStyle=MARCA.c2;rr(60,y,10,alto,5);X.fill();
+  X.fillStyle='#fff';ls.forEach((l,i)=>X.fillText(l,W/2,y+72+i*66));
+  X.restore();X.textAlign='left';}
+function marcaAgua(){X.save();X.font="800 44px 'Poppins', sans-serif";X.textAlign='center';
+  X.fillStyle='rgba(60,29,85,.45)';X.fillText(MARCA.nombre,W/2,104);X.restore();X.textAlign='left';}
+function vineta(){const g=X.createRadialGradient(W/2,H*.5,H*.32,W/2,H*.5,H*.78);
+  g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(45,20,70,.30)');
+  X.fillStyle=g;X.fillRect(0,0,W,H);}
+function cierre(a){X.save();const e=salida(a);X.globalAlpha=e;
+  X.fillStyle=MARCA.c1;X.fillRect(0,0,W,H);
+  X.textAlign='center';const sube=(1-e)*40;
+  X.font="800 96px 'Poppins', sans-serif";X.fillStyle='#fff';X.fillText(MARCA.nombre,W/2,H/2-70+sube);
+  const pulso=1+Math.sin(a*6)*.04;
+  X.save();X.translate(W/2,H/2+20+sube);X.scale(pulso,pulso);
+  X.font="700 48px 'Nunito', sans-serif";X.fillStyle=MARCA.c2;X.fillText(MARCA.web,0,0);X.restore();
+  X.font="700 40px 'Nunito', sans-serif";X.fillStyle='rgba(255,255,255,.88)';
+  envolver(window.HISTORIA?.cierre||'La insignia azul se verifica',820).slice(0,2)
+    .forEach((l,i)=>X.fillText(l,W/2,H/2+140+i*54+sube));
+  X.restore();X.textAlign='left';}
 
-function diplomaCrayon(x,y,caida){
-  X.save(); X.translate(x,y+caida*640); X.rotate(-.06 + caida*1.5); X.scale(1.5,1.5);
-  X.fillStyle='#FFFDF4'; rr(-110,-80,220,160,8); X.fill();
-  X.strokeStyle='#D8CEBE'; X.lineWidth=4; X.strokeRect(-110,-80,220,160);
-  // garabatos de crayón
-  X.strokeStyle='#3FA0E0'; X.lineWidth=9; X.lineCap='round';
-  X.beginPath(); X.moveTo(-78,-40); X.lineTo(70,-46); X.moveTo(-78,-8); X.lineTo(40,-12); X.stroke();
-  X.strokeStyle='#E0653F'; X.beginPath(); X.moveTo(-78,26); X.lineTo(56,20); X.stroke();
-  X.strokeStyle='#5BB56A'; X.lineWidth=7;
-  X.beginPath(); X.arc(52,50,22,0,Math.PI*1.7); X.stroke();
-  X.restore();
-}
-
-function maletinJuguete(x,y,abierto){
-  X.save(); X.translate(x,y);
-  X.fillStyle='#E0653F'; rr(-70,-52,140,104,16); X.fill();
-  X.fillStyle='#FFFDF4'; rr(-16,-16,32,10,4); X.fill(); rr(-5,-27,10,32,4); X.fill();
-  if(abierto>0){ X.save(); X.translate(0,-52); X.rotate(-abierto*1.1);
-    X.fillStyle='#C9542F'; rr(-70,-16,140,20,8); X.fill(); X.restore();
-    X.fillStyle='#9BD2F0'; rr(-52,-46,26,26,6); X.fill();   // juguetes dentro
-    X.fillStyle=MARCA.c2; circulo(20,-32,15); }
-  X.restore();
-}
-
-/* ---------- texto ---------- */
-function envolver(txt, maxW){
-  const p=String(txt).split(/\s+/); const l=[]; let a='';
-  p.forEach(w=>{ const pr=a?a+' '+w:w; if(X.measureText(pr).width<=maxW) a=pr; else { if(a) l.push(a); a=w; } });
-  if(a) l.push(a); return l;
-}
-function subtitulo(txt, aparece){
-  if(!txt) return;
-  X.save(); X.globalAlpha=salida(aparece);
-  X.font="800 54px 'Nunito', sans-serif"; X.textAlign='center';
-  const ls=envolver(txt, 880).slice(0,3);
-  const alto=ls.length*66+52, y=H-300-alto;
-  X.fillStyle='rgba(28,16,40,.82)'; rr(60,y,W-120,alto,28); X.fill();
-  X.fillStyle='#fff';
-  ls.forEach((l,i)=> X.fillText(l, W/2, y+72+i*66));
-  X.restore(); X.textAlign='left';
-}
-function marcaAgua(){
-  X.save(); X.font="800 46px 'Poppins', sans-serif"; X.textAlign='center';
-  X.fillStyle='rgba(60,29,85,.55)'; X.fillText(MARCA.nombre, W/2, 110); X.restore(); X.textAlign='left';
-}
-function cierreMarca(a){
-  X.save(); X.globalAlpha=salida(a);
-  X.fillStyle=MARCA.c1; X.fillRect(0,0,W,H);
-  X.textAlign='center';
-  X.font="800 92px 'Poppins', sans-serif"; X.fillStyle='#fff';
-  X.fillText(MARCA.nombre, W/2, H/2-60);
-  X.font="700 46px 'Nunito', sans-serif"; X.fillStyle=MARCA.c2;
-  X.fillText(MARCA.web, W/2, H/2+30);
-  X.font="700 40px 'Nunito', sans-serif"; X.fillStyle='rgba(255,255,255,.85)';
-  const ls=envolver(window.HISTORIA?.cierre || 'La insignia azul se verifica', 820);
-  ls.slice(0,2).forEach((l,i)=> X.fillText(l, W/2, H/2+150+i*54));
-  X.restore(); X.textAlign='left';
-}
-
-/* ---------- escenas ---------- */
-const ESCENAS = {
-  // Acto 1: la gata espera tranquila en la sala.
-  espera(p, txt){
-    fondoSala(p*4,'sala');
-    silla(540, 1290);
-    const respira = Math.sin(p*Math.PI*4)*1;
-    gata({ x:540, y:1290, esc:1.72, parpadeo: (p*3%1)>.92?1:0, rebotecuerpo:respira, cola:Math.sin(p*Math.PI*2)*.5 });
-    marcaAgua(); subtitulo(txt, p*4);
+/* ============================================================
+   ESCENAS — cada una con su propia dirección de cámara
+   ============================================================ */
+const SUELO=1300;
+const ESCENAS={
+  /* Acto 1 — la gata espera; la cámara se acerca lentamente. */
+  espera(p,txt,t){
+    CAM={z:lerp(1.06,1.14,suave(p)),x:0,y:lerp(20,-10,suave(p)),rot:0};
+    conCamara(()=>{
+      fondo(t,'sala');silla(540,SUELO,1);
+      sombra(540,SUELO+8,150);
+      const mira=kf(p,[[0,0],[.3,0],[.45,-1],[.6,-1],[.72,1],[.85,0]]);
+      gata({x:540,y:SUELO,esc:1.72,t,
+        bob:osc(t,.42,5,0),parpadeo:(p*3.4%1)>.93?1:0,
+        cabRot:osc(t,.3,.05,.2)+mira*.06,mx:mira,my:osc(t,.25,.15,0),
+        bocaTipo:'neutral',colaAmp:1,orejaCaida:0});
+      dibujaParticulas();vineta();});
+    marcaAgua();subtitulo(txt,p*4.5);
   },
-  // Acto 2: aparece el impostor; el diploma de crayón se despega.
-  impostor(p, txt){
-    fondoSala(p*4,'sala');
-    diplomaCrayon(330, 520, clamp((p-.55)/.45,0,1)*rebote(clamp((p-.55)/.45,0,1)));
-    silla(790, 1290);
-    gata({ x:790, y:1290, esc:1.55, parpadeo:(p*3%1)>.9?1:0, mirada:-1, ceja: salida((p-.35)/.3) });
-    const entra = salida(clamp(p/.2,0,1));
-    gallo({ x: lerp(-320, 300, entra), y:1290, esc:1.72,
-            parpadeo:(p*2.3%1)>.93?1:0, gesto:1, brazo: Math.sin(p*Math.PI*3)*.35 });
-    maletinJuguete(300, 1250, clamp((p-.45)/.3,0,1));
-    marcaAgua(); subtitulo(txt, (p-.1)*4);
+
+  /* Acto 2 — entra el impostor; la gata reacciona; el diploma se cae. */
+  impostor(p,txt,t){
+    const golpe=p>.62&&p<.72?osc(t,9,.006,0):0;      // sacudida cuando cae el diploma
+    CAM={z:lerp(1.18,1.08,suave(clamp(p/.35,0,1))),x:lerp(-70,0,suave(clamp(p/.4,0,1))),y:0,rot:golpe};
+    const entra=suave(clamp(p/.26,0,1));
+    const gx=lerp(-300,300,entra);
+    const despegue=clamp((p-.42)/.22,0,1), caida=clamp((p-.64)/.36,0,1);
+    conCamara(()=>{
+      fondo(t,'sala');
+      diploma(330,540,despegue,caida?rebote(caida)*0+caida:0,t);
+      silla(800,SUELO,1);sombra(800,SUELO+8,140);
+      // la gata: primero mira al frente, hace doble toma y se echa atrás
+      const susto=kf(p,[[0,0],[.24,0],[.3,1],[.42,.55],[.62,.55],[.72,1],[.9,.7]]);
+      gata({x:800,y:SUELO,esc:1.55,t,flip:1,
+        bob:osc(t,.5,4,0),parpadeo:(p*4%1)>.9?1:0,
+        cabRot:-.1-susto*.12,mx:-1,my:caida>0?.6:0,
+        ceja:susto,bocaTipo:susto>.6?'oh':'duda',
+        inclina:susto*.06,colaAmp:1+susto,orejaCaida:susto});
+      sombra(gx,SUELO+8,150,.14);
+      gallo({x:gx,y:SUELO,esc:1.72,t,
+        camina:p<.3?1:0,paso:t*7,bob:osc(t,1.1,6,0),
+        parpadeo:(p*2.6%1)>.92?1:0,mx:.5,
+        bocaAbre:Math.max(0,Math.sin(t*6))*.7,
+        brazoIzq:osc(t,.9,.3,0),brazoDer:kf(p,[[0,0],[.45,0],[.55,.7],[.7,.2]]),
+        sudor:clamp((p-.66)/.2,0,1)});
+      maletin(305,SUELO-40,clamp((p-.36)/.18,0,1),t);
+      if(p>.64&&p<.68)polvo(330,SUELO-30,2);
+      dibujaParticulas();vineta();});
+    marcaAgua();subtitulo(txt,(p-.08)*4.5);
   },
-  // Acto 3: llega la veterinaria verificada y la insignia brilla.
-  verificada(p, txt){
-    fondoSala(p*4,'clinica');
-    const entra = salida(clamp(p/.22,0,1));
-    gata({ x: lerp(900, 800, entra), y:1290, esc:1.5, parpadeo:(p*3%1)>.9?1:0, mirada:-1, cola:Math.sin(p*8)*1 });
-    capibara({ x: lerp(-180, 330, entra), y:1290, esc:1.72,
-               parpadeo:(p*2.5%1)>.93?1:0, saludo: Math.max(0,Math.sin(p*Math.PI*4))*.5,
-               brillo: clamp((p-.5)/.5,0,1) });
-    marcaAgua(); subtitulo(txt, (p-.15)*4);
+
+  /* Acto 3 — llega la verificada; cámara empuja hacia la insignia. */
+  verificada(p,txt,t){
+    CAM={z:lerp(1.05,1.2,suave(p)),x:lerp(0,60,suave(p)),y:lerp(0,-30,suave(p)),rot:0};
+    const entra=suave(clamp(p/.24,0,1));
+    const cx=lerp(-200,330,entra);
+    conCamara(()=>{
+      fondo(t,'clinica');
+      sombra(lerp(900,800,entra),SUELO+8,140,.14);
+      gata({x:lerp(900,800,entra),y:SUELO,esc:1.5,t,
+        bob:osc(t,.8,7,0),parpadeo:(p*3.2%1)>.9?1:0,
+        cabRot:.08,mx:-1,ceja:0,bocaTipo:'sonrisa',
+        colaAmp:2.2,salto:p>.45?Math.abs(osc(t,1.6,14,0)):0,
+        squash:p>.45?Math.max(0,osc(t,1.6,.07,.25)):0});
+      sombra(cx,SUELO+8,155,.15);
+      capibara({x:cx,y:SUELO,esc:1.72,t,
+        camina:p<.28?1:0,paso:t*6,bob:osc(t,.5,5,0),
+        parpadeo:(p*2.8%1)>.93?1:0,
+        saludo:p>.3?Math.max(0,Math.sin((t-1)*4)):0,
+        brillo:clamp((p-.34)/.3,0,1),cabRot:osc(t,.4,.04,0)});
+      if(p>.3&&p<.34)polvo(cx,SUELO,3);
+      dibujaParticulas();vineta();});
+    marcaAgua();subtitulo(txt,(p-.12)*4.5);
   }
 };
 
 /* ---------- línea de tiempo ---------- */
 function guion(){
-  const h = window.HISTORIA || {};
-  const actos = (h.actos && h.actos.length) ? h.actos : [
-    { escena:'espera', dur:6, texto:'Tu mascota no puede preguntar por el título.' },
-    { escena:'impostor', dur:8, texto:'Cualquiera puede ponerse una bata.' },
-    { escena:'verificada', dur:7, texto:'La insignia azul se verifica: Registro Civil y COLMEVET.' }
-  ];
-  let t=0; actos.forEach(a=>{ a.desde=t; t+=a.dur; });
-  return { actos, total: t + 3 };   // +3 s de cierre de marca
+  const h=window.HISTORIA||{};
+  const actos=(h.actos&&h.actos.length)?h.actos:[
+    {escena:'espera',dur:6,texto:'Tu mascota no puede preguntar por el título.'},
+    {escena:'impostor',dur:9,texto:'Cualquiera puede ponerse una bata blanca.'},
+    {escena:'verificada',dur:8,texto:'La insignia azul se verifica: Registro Civil y COLMEVET.'}];
+  let t=0;actos.forEach(a=>{a.desde=t;t+=a.dur;});
+  return {actos,total:t+3.2};
 }
-const G = guion();
-window.DURACION_TOTAL = G.total;
+const G=guion();
+window.DURACION_TOTAL=G.total;
 
-window.dibujar = function(t){
+window.dibujar=function(t){
   X.clearRect(0,0,W,H);
-  const acto = G.actos.find(a => t >= a.desde && t < a.desde + a.dur);
+  const acto=G.actos.find(a=>t>=a.desde&&t<a.desde+a.dur);
   if(acto){
-    ESCENAS[acto.escena in ESCENAS ? acto.escena : 'espera']((t-acto.desde)/acto.dur, acto.texto);
-  } else {
-    const ultimo = G.actos[G.actos.length-1];
-    ESCENAS[ultimo.escena]( .999, ultimo.texto);
-    cierreMarca((t - (ultimo.desde+ultimo.dur)) / 1.2);
+    const fn=ESCENAS[acto.escena]||ESCENAS.espera;
+    fn((t-acto.desde)/acto.dur,acto.texto,t);
+    // fundido entre actos
+    const desde=t-acto.desde, hasta=acto.desde+acto.dur-t;
+    const fade=Math.min(clamp(desde/.35,0,1),clamp(hasta/.35,0,1));
+    if(fade<1){X.fillStyle=`rgba(255,255,255,${(1-fade)*.75})`;X.fillRect(0,0,W,H);}
+  }else{
+    const u=G.actos[G.actos.length-1];
+    ESCENAS[u.escena](.999,u.texto,t);
+    cierre((t-(u.desde+u.dur))/1.1);
   }
-  // barra de progreso
-  X.fillStyle='rgba(255,255,255,.3)'; rr(70,H-90,W-140,10,5); X.fill();
-  X.fillStyle=MARCA.c2; rr(70,H-90,(W-140)*clamp(t/G.total,0,1),10,5); X.fill();
+  X.fillStyle='rgba(255,255,255,.28)';rr(70,H-88,W-140,10,5);X.fill();
+  X.fillStyle=MARCA.c2;rr(70,H-88,(W-140)*clamp(t/G.total,0,1),10,5);X.fill();
 };
 window.dibujar(0.1);
 </script>

@@ -26,14 +26,36 @@ function ffmpegBin() {
   return process.env.FFMPEG_PATH || ffmpegStatic || 'ffmpeg';
 }
 
+/** ¿Esta voz sirve para español (idealmente latino/chileno)? */
+function puntajeEspanol(v) {
+  const txt = JSON.stringify([v.labels || {}, v.verified_languages || [], v.description || '']).toLowerCase();
+  let p = 0;
+  if (/chile/.test(txt)) p += 100;
+  if (/latin|mexic|colomb|argentin|peru/.test(txt)) p += 40;
+  if (/"es"|spanish|español|espanol|castilian/.test(txt)) p += 30;
+  if (/spain|castell/.test(txt)) p -= 10;   // el acento de España suena ajeno en Chile
+  return p;
+}
+
+export async function listarVoces(clave) {
+  const res = await fetch(`${API}/voices`, { headers: { 'xi-api-key': clave || process.env.ELEVENLABS_API_KEY } });
+  if (!res.ok) throw new Error(`No se pudo listar voces (${res.status}).`);
+  const { voices } = await res.json();
+  return (voices || []).map(v => ({
+    id: v.voice_id, nombre: v.name, puntaje: puntajeEspanol(v),
+    etiquetas: Object.values(v.labels || {}).join(', ')
+  })).sort((a, b) => b.puntaje - a.puntaje);
+}
+
 async function elegirVoz(clave) {
   if (process.env.ELEVENLABS_VOICE_ID) return process.env.ELEVENLABS_VOICE_ID.trim();
-  const res = await fetch(`${API}/voices`, { headers: { 'xi-api-key': clave } });
-  if (!res.ok) throw new Error(`No se pudo listar voces (${res.status}). Define ELEVENLABS_VOICE_ID.`);
-  const { voices } = await res.json();
-  if (!voices?.length) throw new Error('La cuenta de ElevenLabs no tiene voces disponibles.');
-  console.log(`  Voz: «${voices[0].name}» (${voices[0].voice_id}). Fíjala con ELEVENLABS_VOICE_ID.`);
-  return voices[0].voice_id;
+  const voces = await listarVoces(clave);
+  if (!voces.length) throw new Error('La cuenta de ElevenLabs no tiene voces disponibles.');
+  const v = voces[0];
+  console.log(`  Voz elegida para español: «${v.nombre}» (${v.id})${v.etiquetas ? ' — ' + v.etiquetas : ''}.`);
+  if (v.puntaje <= 0) console.log('  Aviso: ninguna voz de la cuenta declara español. Elige una en elevenlabs.io → Voices y fíjala en la variable ELEVENLABS_VOICE_ID.');
+  else console.log('  Para fijarla, guarda ese id en la variable ELEVENLABS_VOICE_ID.');
+  return v.id;
 }
 
 /** Genera el audio de la narración y lo guarda como mp3. */
@@ -43,15 +65,20 @@ export async function generarVoz({ texto, salida }) {
   const voz = await elegirVoz(clave);
   const modelo = (process.env.ELEVENLABS_MODEL || 'eleven_v3').trim();
 
-  const res = await fetch(`${API}/text-to-speech/${voz}?output_format=mp3_44100_128`, {
+  const ajustes = { stability: 0.45, similarity_boost: 0.8, style: 0.35, use_speaker_boost: true };
+  const pedir = cuerpo => fetch(`${API}/text-to-speech/${voz}?output_format=mp3_44100_128`, {
     method: 'POST',
     headers: { 'xi-api-key': clave, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      text: texto,
-      model_id: modelo,
-      voice_settings: { stability: 0.45, similarity_boost: 0.8, style: 0.35, use_speaker_boost: true }
-    })
+    body: JSON.stringify(cuerpo)
   });
+
+  const idioma = process.env.ELEVENLABS_LANG || 'es';
+  let res = await pedir({ text: texto, model_id: modelo, language_code: idioma, voice_settings: ajustes });
+  if (res.status === 400) {
+    // Algunos modelos no aceptan language_code (lo detectan solo): reintentar sin él.
+    console.log('  El modelo no acepta el código de idioma; se reintenta dejando que lo detecte.');
+    res = await pedir({ text: texto, model_id: modelo, voice_settings: ajustes });
+  }
   if (!res.ok) {
     const detalle = await res.text().catch(() => '');
     throw new Error(`ElevenLabs ${res.status}: ${detalle.slice(0, 300)}`);
