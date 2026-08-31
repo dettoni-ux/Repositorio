@@ -151,7 +151,7 @@ export async function generarVozPorTramos({ tramos, total, salida }) {
       const archivo = path.join(dir, `sfx${i + 1}.mp3`);
       try {
         await generarEfecto({ texto: t.sfx, duracion: t.hasta - t.desde, salida: archivo });
-        piezas.push({ archivo, desde: t.desde, ventana: t.hasta - t.desde, i: i + 1, efecto: true });
+        piezas.push({ archivo, desde: t.desde, ventana: t.hasta - t.desde, i: i + 1, efecto: true, nivel: t.sfx_nivel });
       } catch (e) {
         console.log(`  Sin efecto de sonido en el tramo ${i + 1} (${e.message.slice(0, 90)}).`);
       }
@@ -165,11 +165,14 @@ export async function generarVozPorTramos({ tramos, total, salida }) {
       entradas.push('-i', p.archivo);
       const pasos = [];
       if (p.efecto) {
-        // Cada efecto llega con su propio volumen; se nivelan todos al mismo
-        // antes de mezclar, si no unos se pierden y otros gritan.
-        pasos.push('loudnorm=I=-20:TP=-3:LRA=11',
-          `atrim=0:${p.ventana.toFixed(2)}`,
-          'afade=t=out:st=' + Math.max(0.1, p.ventana - 0.5).toFixed(2) + ':d=0.5');
+        // Cada efecto llega con su propio volumen; se nivelan todos al mismo,
+        // bien bajo la voz. «nivel» permite bajar uno en particular desde el
+        // guion sin tocar los demás.
+        pasos.push(NIVEL_EFECTO);
+        if (p.nivel != null && p.nivel !== 1) pasos.push(`volume=${Number(p.nivel).toFixed(2)}`);
+        pasos.push(`atrim=0:${p.ventana.toFixed(2)}`,
+          'afade=t=in:st=0:d=0.15',
+          'afade=t=out:st=' + Math.max(0.2, p.ventana - 0.5).toFixed(2) + ':d=0.5');
       } else if (d != null && d > p.ventana + 0.05) {
         const factor = Math.min(d / p.ventana, APURO_MAX);
         pasos.push(filtroTempo(factor));
@@ -193,10 +196,10 @@ export async function generarVozPorTramos({ tramos, total, salida }) {
       // solos cuando entra la voz. Eso es el «ducking».
       mezcla = `${unir(cadVoz, 'vz')};[vz]asplit=2[vzMix][vzLado];`
         + `${unir(cadEfx, 'ef')};`
-        + `[ef][vzLado]sidechaincompress=threshold=0.02:ratio=12:attack=8:release=320:makeup=1[efDuck];`
+        + `[ef][vzLado]sidechaincompress=threshold=0.008:ratio=20:attack=5:release=280:makeup=1[efDuck];`
         + `[vzMix][efDuck]amix=inputs=2:normalize=0:dropout_transition=0,${NIVEL_FINAL}[out]`;
       salidaFinal = '[out]';
-      console.log(`  ${cadEfx.length} efectos de sonido mezclados bajo la voz (se agachan cuando ella habla).`);
+      console.log(`  ${cadEfx.length} efectos de sonido, muy por debajo de la voz y agachándose cuando ella habla.`);
     } else {
       mezcla = `${unir(cadVoz, 'vz')};[vz]${NIVEL_FINAL}[out]`;
       salidaFinal = '[out]';
@@ -248,6 +251,10 @@ const APURO_MAX = 1.18;
 /* Nivel de salida parejo, en el rango que usan los comerciales: sin esto el
    video suena más bajo que todo lo demás del feed y hay que subir el volumen. */
 const NIVEL_FINAL = 'loudnorm=I=-16:TP=-1.5:LRA=11';
+
+/* Los efectos van MUY por debajo de la voz. La prioridad es siempre el locutor:
+   un efecto que compite con la voz arruina el aviso, por bueno que suene. */
+const NIVEL_EFECTO = 'loudnorm=I=-34:TP=-9:LRA=7';
 
 /** Cadena de filtros atempo: cada uno admite como máximo 2x. */
 function filtroTempo(factor) {

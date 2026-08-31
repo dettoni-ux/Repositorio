@@ -1,5 +1,5 @@
 {
-  "_comentario": "Guion del cortometraje. Manda por sobre lo que escriba el generador. Cada tramo genera su propio audio y se coloca EXACTO en su segundo de inicio. 'voz' debe caber en su ventana a 2,1 palabras por segundo: el generador avisa antes de gastar créditos si se pasa. 'pantalla' se quema como subtítulo y debe decir lo MISMO que la voz, no otra cosa. 'prompt' es lo que se le pide a la IA de video; se le antepone 'estilo' y se le agrega 'cola'. 'anclar': false cuando la escena introduce un personaje nuevo, porque partir del cuadro anterior impide que entre en cuadro. 'sfx' se genera con ElevenLabs. El tramo con 'cierre' lo dibujamos nosotros, sin costo. 'estilo_activo' elige entre los estilos de 'estilos': cambia esa palabra y cambia el look de todo el corto. Lo que NO puede pasar es que unas escenas salgan de un estilo y otras de otro.",
+  "_comentario": "Guion del cortometraje. Manda por sobre lo que escriba el generador. Cada tramo genera su propio audio y se coloca EXACTO en su segundo de inicio. 'voz' debe caber en su ventana a 2,1 palabras por segundo: el generador avisa antes de gastar créditos si se pasa. 'pantalla' se quema como subtítulo y debe decir lo MISMO que la voz, no otra cosa. 'prompt' es lo que se le pide a la IA de video; se le antepone 'estilo' y se le agrega 'cola'. 'anclar': false cuando la escena introduce un personaje nuevo, porque partir del cuadro anterior impide que entre en cuadro. 'sfx' se genera con ElevenLabs. El tramo con 'cierre' lo dibujamos nosotros, sin costo. 'estilo_activo' elige entre los estilos de 'estilos': cambia esa palabra y cambia el look de todo el corto. Lo que NO puede pasar es que unas escenas salgan de un estilo y otras de otro. 'sfx_nivel' baja un efecto en particular (0.5 = a la mitad) sin tocar los otros.",
   "usar": true,
   "estilo_activo": "animado",
   "estilos": {
@@ -34,7 +34,8 @@
       "pantalla": "Bata gigante.\nDiploma dibujado a crayón.",
       "prompt": "Medium shot, camera steady. In {sala}, {impostor} stands proudly facing the camera, his whole face clearly visible, grinning with absurd confidence. The comically huge coat is obvious at a glance: he has to shake a sleeve back to hold up a child's crayon drawing as if it were a diploma, and a plastic toy stethoscope hangs around his neck. {mascota} sits on the bench beside him and tilts its head, unconvinced. Exactly two characters in frame, no other people, no duplicate characters, no one in the background.",
       "anclar": true,
-      "sfx": "funny comedic record scratch, short cartoon stinger"
+      "sfx": "funny comedic record scratch, short cartoon stinger",
+      "sfx_nivel": 0.5
     },
     {
       "desde": 13,
@@ -43,7 +44,8 @@
       "pantalla": "¿Le confiarías tu mascota?",
       "prompt": "Wide shot at floor level in {sala}. {veterinaria} kneels with open arms and a warm smile, her whole face and her blue chest badge clearly visible, and {mascota} runs happily toward her with its tail wagging. She is a woman and is unmistakably a different person from any man seen before: do not show the moustached man. Exactly two characters in frame, clean uncluttered background, no other people, no duplicate characters.",
       "anclar": false,
-      "sfx": "happy single dog bark, warm and short"
+      "sfx": "happy single dog bark, warm and short",
+      "sfx_nivel": 0.5
     },
     {
       "desde": 22,
