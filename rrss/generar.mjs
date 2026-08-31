@@ -44,6 +44,8 @@ const TIPOS = valor('tipos', 'tip,hito,video').split(',').map(s => s.trim()).fil
 const CANTIDAD = Math.min(8, Math.max(1, parseInt(valor('cantidad', '5'), 10) || 5));
 // Motor de video: 'animacion' (propio, gratis) o 'ia' (Seedance vía Replicate).
 const MOTOR = valor('motor', 'animacion') === 'ia' ? 'ia' : 'animacion';
+// Tope de escenas del cortometraje: cada escena con IA cuesta USD 2-3.
+const MAX_ESCENAS = Math.min(3, Math.max(1, parseInt(valor('max-escenas', '2'), 10) || 2));
 
 /* ---------- esquema de pieza (validación local estricta, incl. largos) ---------- */
 const Base = {
@@ -233,10 +235,11 @@ try {
         const mudo = path.join(DIR_PIEZAS, `.mudo-${i + 1}.mp4`);
         try {
           if (conIA) {
-            const n = pieza.video.escenas_ia.length;
+            const escenasIA = pieza.video.escenas_ia.slice(0, MAX_ESCENAS);
+            const n = escenasIA.length;
             console.log(`  Pieza ${i + 1} (cortometraje de ${n} escena${n>1?'s':''}): generando con IA…`);
             await generarCortometraje({
-              escenas: pieza.video.escenas_ia, salida: mudo,
+              escenas: escenasIA, salida: mudo,
               alAvanzar: (k, t) => console.log(`    escena ${k + 1} de ${t}…`)
             });
           } else {
