@@ -83,11 +83,28 @@ export async function generarVoz({ texto, salida }) {
   const modelo = (process.env.ELEVENLABS_MODEL || 'eleven_v3').trim();
 
   const ajustes = { stability: 0.45, similarity_boost: 0.8, style: 0.35, use_speaker_boost: true };
-  const pedir = cuerpo => fetch(`${API}/text-to-speech/${voz}?output_format=mp3_44100_128`, {
-    method: 'POST',
-    headers: { 'xi-api-key': clave, 'Content-Type': 'application/json' },
-    body: JSON.stringify(cuerpo)
-  });
+
+  /* Un corte de red deja el video mudo, así que se reintenta antes de rendirse.
+     Los errores de la propia API (4xx/5xx) se devuelven tal cual: reintentarlos
+     no cambiaría nada y el detalle sirve para saber qué pasó. */
+  async function pedir(cuerpo) {
+    let ultimo;
+    for (let intento = 1; intento <= 3; intento++) {
+      try {
+        return await fetch(`${API}/text-to-speech/${voz}?output_format=mp3_44100_128`, {
+          method: 'POST',
+          headers: { 'xi-api-key': clave, 'Content-Type': 'application/json' },
+          body: JSON.stringify(cuerpo)
+        });
+      } catch (e) {
+        ultimo = e;
+        const causa = e.cause?.code || e.cause?.message || e.message;
+        console.log(`  Falló la conexión con ElevenLabs (${causa}); intento ${intento} de 3.`);
+        if (intento < 3) await new Promise(r => setTimeout(r, intento * 3000));
+      }
+    }
+    throw ultimo;
+  }
 
   const idioma = process.env.ELEVENLABS_LANG || 'es';
   let res = await pedir({ text: texto, model_id: modelo, language_code: idioma, voice_settings: ajustes });

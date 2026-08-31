@@ -290,7 +290,9 @@ try {
               await generarVoz({ texto: pieza.video.narracion, salida: voz });
               await mezclarVideoYVoz({ video: mudo, audio: voz, salida: path.join(DIR_PIEZAS, archivo) });
             } catch (e) {
-              nota = `Video generado sin voz en off (${e.message}).`;
+              // «fetch failed» sin más es inútil: la causa real viene en e.cause.
+              const causa = [e.message, e.cause?.code, e.cause?.message].filter(Boolean).join(' · ');
+              nota = `Video generado sin voz en off (${causa}).`;
               console.warn(`  ${nota}`);
               renameSync(mudo, path.join(DIR_PIEZAS, archivo));
             } finally {
