@@ -1,0 +1,10 @@
+# Guion de la voz en off del cortometraje.
+#
+# Escribe abajo el texto tal cual quieres que se escuche. Se usa así, sin que
+# nadie lo reescriba. Las líneas que empiezan con # son notas y no se leen.
+# Si dejas esto vacío, el guion lo escribe el generador.
+#
+# Se lee a unas 2,3 palabras por segundo, y debe caber en la duración de las
+# escenas: para un corto de 24 segundos, apunta a unas 50 palabras.
+# Escribe "encuentravet punto cl" para que no lo deletree.
+

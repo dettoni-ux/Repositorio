@@ -112,7 +112,12 @@ Es un CORTOMETRAJE, no un reel informativo: cuenta una historia con principio, n
   **2,3 palabras por segundo sobre el 90% de la duración total de las escenas**, para que
   la voz cierre antes que la imagen y quede un respiro final: si las escenas suman 24
   segundos, apunta a unas 50 palabras, nunca más de 55. Pasarse obliga a apurar el habla.
-  Debe acompañar la historia acto por acto y rematar con el mensaje de la marca.
+  NO NARRES LO QUE YA SE VE. La imagen muestra al perro esperando; la voz no dice
+  «un perrito chico espera». Contar en palabras lo que el ojo ya captó suena a
+  audiodescripción y desperdicia los segundos. La voz aporta lo que la imagen NO puede
+  decir: quién verificó a ese profesional, qué arriesga el tutor, qué respalda la insignia.
+  Nada de diminutivos («perrito», «gatito», «chiquitito»): restan seriedad a un mensaje
+  que trata de una estafa real. Habla de tú, en chileno neutro, sin modismos forzados.
   Sin emoji, sin hashtags, sin leer la URL letra por letra: se dice "encuentravet punto cl".
   Cierra con el gancho de la marca (la insignia azul se verifica).
 - El caption del video refuerza el mensaje: cualquiera puede ponerse una bata; la insignia azul

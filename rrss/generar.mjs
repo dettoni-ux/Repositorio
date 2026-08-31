@@ -148,6 +148,25 @@ async function llamarClaude(mensaje, correccion) {
   return llamarClaude(mensaje, detalle);
 }
 
+/**
+ * Guion de la voz en off escrito a mano en narracion.txt. Si tiene contenido
+ * manda por sobre lo que escriba el generador: el guion es de quien lo escribe.
+ */
+function narracionAUsar(generada) {
+  try {
+    const ruta = path.join(AQUI, 'narracion.txt');
+    if (!existsSync(ruta)) return generada;
+    const propio = readFileSync(ruta, 'utf8')
+      .split('\n').filter(l => !l.trim().startsWith('#')).join('\n').trim();
+    if (!propio) return generada;
+    const palabras = propio.split(/\s+/).length;
+    console.log(`  Voz en off: guion propio de narracion.txt (${palabras} palabras).`);
+    return propio;
+  } catch (e) {
+    return generada;
+  }
+}
+
 function bloqueDatos(datos) {
   return [
     'DATOS REALES (únicas cifras que puedes usar):',
@@ -287,7 +306,7 @@ try {
             console.log('  Generando voz en off con ElevenLabs y montándola sobre el video…');
             const voz = path.join(DIR_PIEZAS, `.voz-${i + 1}.mp3`);
             try {
-              await generarVoz({ texto: pieza.video.narracion, salida: voz });
+              await generarVoz({ texto: narracionAUsar(pieza.video.narracion), salida: voz });
               await mezclarVideoYVoz({ video: mudo, audio: voz, salida: path.join(DIR_PIEZAS, archivo) });
             } catch (e) {
               // «fetch failed» sin más es inútil: la causa real viene en e.cause.
