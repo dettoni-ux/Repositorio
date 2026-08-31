@@ -3,7 +3,9 @@
  *
  * Estrategia: dar a conocer las herramientas de la plataforma, 80% dirigido a
  * veterinarios y 20% a tutores. Tipos: tip (imagen), hito (imagen) y video
- * (reel animado generado con IA — Seedance vía Replicate — en el mismo lote).
+ * (cortometraje). El video tiene dos motores: «animacion» (personajes vectoriales
+ * propios: gratis, ilimitado y con personajes idénticos entre escenas) e «ia»
+ * (Seedance vía Replicate, requiere saldo).
  *
  * Flujo: datos reales (Neon) → Claude (salidas estructuradas) → validación de largos
  * → render PNG / generación de video → cola de aprobación (rrss_piezas o cola-local.json).
@@ -11,6 +13,7 @@
  *
  * Uso:
  *   node generar.mjs [--demo] [--sin-api] [--tipos tip,hito,video] [--cantidad 5]
+ *                     [--motor animacion|ia]
  *
  * --demo    no toca la BD (cifras de ejemplo, cola local)
  * --sin-api no llama a Claude (piezas fijas de ejemplo; para probar plantillas/render)
