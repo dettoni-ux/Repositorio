@@ -500,5 +500,133 @@
     "imagen": "lote-2026-08-31-02-46-1-video.mp4",
     "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/claude/sweet-turing-nwcnd0/piezas/lote-2026-08-31-02-46-1-video.mp4",
     "nota": null
+  },
+  {
+    "fecha_propuesta": "2026-09-02",
+    "hora_propuesta": "09:00",
+    "publico": "veterinarios",
+    "caption": "Cualquiera puede comprarse una bata blanca. 🥼\n\nEn una sala de espera nadie pide el título. Entra alguien con delantal, estetoscopio y voz segura… y ya parece veterinario.\n\nHicimos este cortometraje porque el cuento se repite: el impostor improvisa, el diploma es de crayón y el que pierde credibilidad es el gremio completo. Tú estudiaste años para eso.\n\nPor eso en EncuentraVet la insignia azul no se compra ni se pide de favor: se verifica uno a uno contra el Registro Civil y COLMEVET. Cuando un tutor ve ese sello en tu perfil, deja de dudar y reserva directo en tu agenda.\n\nHoy somos 100 veterinarios verificados en 32 comunas, con 180 reservas este mes. Tu título vale: que se vea. 💙\n\nCertifícate y que nadie dude de ti.\n\nCrea tu perfil gratis en encuentravet.cl\n\n#EncuentraVet #VeterinariosVerificados #MédicoVeterinario #VeterinariosChile #InsigniaAzul #Colmevet #FalsosVeterinarios",
+    "tipo": "video",
+    "formato": "reel",
+    "video": {
+      "actos": [
+        {
+          "escena": "espera",
+          "dur": 5,
+          "texto": "Martes, 10 de la mañana. Nadie en esa sala pidió ver un título."
+        },
+        {
+          "escena": "impostor",
+          "dur": 6,
+          "texto": "Delantal gigante, estetoscopio de juguete y un diploma hecho con crayón."
+        },
+        {
+          "escena": "verificada",
+          "dur": 7,
+          "texto": "Entonces llega la insignia azul: Registro Civil y COLMEVET, uno a uno."
+        }
+      ],
+      "cierre": "La bata se compra. La insignia azul se verifica.",
+      "escenas_ia": [
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A chubby caramel-brown short-haired beagle-mix dog with floppy ears, a white patch on his chest and a bright yellow collar sits patiently on a rounded waiting-room chair, tail thumping slowly. The waiting room has deep purple (#5B2E7E) walls, yellow (#FFD84D) cushions, a small plant and a clock on the wall. Gentle camera push-in on the dog looking hopefully toward a closed consulting-room door. No text overlays, no logos, no watermarks.",
+          "duracion_s": 6
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A stocky man in his forties, medium-brown skin, short curly black hair, thin moustache, wearing a white coat several sizes too big with sleeves swallowing his hands, holds a bright orange plastic toy stethoscope and proudly lifts a wobbly diploma scribbled in crayon. He grins with exaggerated overconfidence and trips slightly on the long coat. In front of him, a chubby caramel-brown short-haired beagle-mix dog with floppy ears, a white patch on his chest and a bright yellow collar tilts his head, ears raised in comic suspicion. Deep purple (#5B2E7E) walls, yellow (#FFD84D) cushions, small plant, clock on the wall. No text overlays, no logos, no watermarks.",
+          "duracion_s": 7
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A calm woman in her mid-thirties, light-tan skin, straight dark brown hair in a low bun, slim build, wearing a well-fitted white coat with a glowing blue verification badge on her chest, opens the consulting-room door and kneels warmly to greet a chubby caramel-brown short-haired beagle-mix dog with floppy ears, a white patch on his chest and a bright yellow collar; the dog wags his tail happily and steps toward her. In the background, a stocky man in his forties, medium-brown skin, short curly black hair, thin moustache, wearing a white coat several sizes too big with sleeves swallowing his hands, holding an orange plastic toy stethoscope and a crayon-scribbled diploma, shrinks away sheepishly. Deep purple (#5B2E7E) walls, yellow (#FFD84D) cushions, small plant, clock on the wall. No text overlays, no logos, no watermarks.",
+          "duracion_s": 8
+        }
+      ],
+      "narracion": "Martes por la mañana. En la sala de espera nadie pide ver un título. Entonces aparece él: delantal enorme, estetoscopio de juguete y un diploma pintado con crayón. Se ve seguro, pero no estudió nada. Hasta que llega ella, con su insignia azul en el pecho, verificada contra el Registro Civil y COLMEVET. La bata cualquiera se la compra. La insignia azul se verifica. Certifícate en encuentravet punto cl.",
+      "escenas": [
+        {
+          "tiempo": "0:00-0:06",
+          "descripcion": "Sala de espera morada. Un perrito caramelo con collar amarillo espera tranquilo en la silla, mirando la puerta de la consulta.",
+          "texto_pantalla": "Nadie en esta sala pidió ver un título"
+        },
+        {
+          "tiempo": "0:06-0:13",
+          "descripcion": "Entra un hombre con delantal blanco gigante que le tapa las manos, estetoscopio de plástico y un diploma hecho a crayón. El perrito ladea la cabeza, desconfiado.",
+          "texto_pantalla": "Delantal XXL y diploma a crayón"
+        },
+        {
+          "tiempo": "0:13-0:21",
+          "descripcion": "Se abre la puerta: veterinaria con delantal entallado e insignia azul en el pecho se agacha a recibir al perrito. El impostor retrocede avergonzado.",
+          "texto_pantalla": "Verificada: Registro Civil + COLMEVET"
+        },
+        {
+          "tiempo": "0:21-0:26",
+          "descripcion": "Cierre en fondo morado con la insignia azul al centro y el remate de marca.",
+          "texto_pantalla": "La bata se compra. La insignia azul se verifica"
+        }
+      ]
+    },
+    "visual": {
+      "actos": [
+        {
+          "escena": "espera",
+          "dur": 5,
+          "texto": "Martes, 10 de la mañana. Nadie en esa sala pidió ver un título."
+        },
+        {
+          "escena": "impostor",
+          "dur": 6,
+          "texto": "Delantal gigante, estetoscopio de juguete y un diploma hecho con crayón."
+        },
+        {
+          "escena": "verificada",
+          "dur": 7,
+          "texto": "Entonces llega la insignia azul: Registro Civil y COLMEVET, uno a uno."
+        }
+      ],
+      "cierre": "La bata se compra. La insignia azul se verifica.",
+      "escenas_ia": [
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A chubby caramel-brown short-haired beagle-mix dog with floppy ears, a white patch on his chest and a bright yellow collar sits patiently on a rounded waiting-room chair, tail thumping slowly. The waiting room has deep purple (#5B2E7E) walls, yellow (#FFD84D) cushions, a small plant and a clock on the wall. Gentle camera push-in on the dog looking hopefully toward a closed consulting-room door. No text overlays, no logos, no watermarks.",
+          "duracion_s": 6
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A stocky man in his forties, medium-brown skin, short curly black hair, thin moustache, wearing a white coat several sizes too big with sleeves swallowing his hands, holds a bright orange plastic toy stethoscope and proudly lifts a wobbly diploma scribbled in crayon. He grins with exaggerated overconfidence and trips slightly on the long coat. In front of him, a chubby caramel-brown short-haired beagle-mix dog with floppy ears, a white patch on his chest and a bright yellow collar tilts his head, ears raised in comic suspicion. Deep purple (#5B2E7E) walls, yellow (#FFD84D) cushions, small plant, clock on the wall. No text overlays, no logos, no watermarks.",
+          "duracion_s": 7
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A calm woman in her mid-thirties, light-tan skin, straight dark brown hair in a low bun, slim build, wearing a well-fitted white coat with a glowing blue verification badge on her chest, opens the consulting-room door and kneels warmly to greet a chubby caramel-brown short-haired beagle-mix dog with floppy ears, a white patch on his chest and a bright yellow collar; the dog wags his tail happily and steps toward her. In the background, a stocky man in his forties, medium-brown skin, short curly black hair, thin moustache, wearing a white coat several sizes too big with sleeves swallowing his hands, holding an orange plastic toy stethoscope and a crayon-scribbled diploma, shrinks away sheepishly. Deep purple (#5B2E7E) walls, yellow (#FFD84D) cushions, small plant, clock on the wall. No text overlays, no logos, no watermarks.",
+          "duracion_s": 8
+        }
+      ],
+      "narracion": "Martes por la mañana. En la sala de espera nadie pide ver un título. Entonces aparece él: delantal enorme, estetoscopio de juguete y un diploma pintado con crayón. Se ve seguro, pero no estudió nada. Hasta que llega ella, con su insignia azul en el pecho, verificada contra el Registro Civil y COLMEVET. La bata cualquiera se la compra. La insignia azul se verifica. Certifícate en encuentravet punto cl.",
+      "escenas": [
+        {
+          "tiempo": "0:00-0:06",
+          "descripcion": "Sala de espera morada. Un perrito caramelo con collar amarillo espera tranquilo en la silla, mirando la puerta de la consulta.",
+          "texto_pantalla": "Nadie en esta sala pidió ver un título"
+        },
+        {
+          "tiempo": "0:06-0:13",
+          "descripcion": "Entra un hombre con delantal blanco gigante que le tapa las manos, estetoscopio de plástico y un diploma hecho a crayón. El perrito ladea la cabeza, desconfiado.",
+          "texto_pantalla": "Delantal XXL y diploma a crayón"
+        },
+        {
+          "tiempo": "0:13-0:21",
+          "descripcion": "Se abre la puerta: veterinaria con delantal entallado e insignia azul en el pecho se agacha a recibir al perrito. El impostor retrocede avergonzado.",
+          "texto_pantalla": "Verificada: Registro Civil + COLMEVET"
+        },
+        {
+          "tiempo": "0:21-0:26",
+          "descripcion": "Cierre en fondo morado con la insignia azul al centro y el remate de marca.",
+          "texto_pantalla": "La bata se compra. La insignia azul se verifica"
+        }
+      ],
+      "nota": "Video no generado: Generación en estado failed: The input was invalid. Please try again with different inputs. (E006) (uIJ6l3ruRD) — Warning: Reference images cannot be used with first frame or last frame images. Ignoring first frame and last frame images. | Using seed: 1832308376 | helpers.exceptions.prediction.ModelError: The input was invalid. Please try again with different inputs. (E006) (uIJ6l3ruRD). El prompt queda en la pieza para regenerar."
+    },
+    "estado": "pendiente",
+    "lote": "lote-2026-08-31-03-01",
+    "imagen": null,
+    "imagen_url": null,
+    "nota": "Video no generado: Generación en estado failed: The input was invalid. Please try again with different inputs. (E006) (uIJ6l3ruRD) — Warning: Reference images cannot be used with first frame or last frame images. Ignoring first frame and last frame images. | Using seed: 1832308376 | helpers.exceptions.prediction.ModelError: The input was invalid. Please try again with different inputs. (E006) (uIJ6l3ruRD). El prompt queda en la pieza para regenerar."
   }
 ]
