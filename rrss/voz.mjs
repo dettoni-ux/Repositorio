@@ -39,6 +39,37 @@ function puntajeEspanol(v) {
   return p;
 }
 
+/**
+ * Créditos que quedan en ElevenLabs. Se consulta ANTES de generar: quedarse sin
+ * cuota a mitad de un montaje bota el trabajo y no avisa hasta que revienta.
+ */
+export async function cuotaRestante(clave) {
+  try {
+    const res = await fetch(`${API}/user/subscription`, {
+      headers: { 'xi-api-key': clave || process.env.ELEVENLABS_API_KEY }
+    });
+    if (!res.ok) return null;
+    const d = await res.json();
+    const usados = d.character_count, tope = d.character_limit;
+    if (typeof usados !== 'number' || typeof tope !== 'number') return null;
+    return { usados, tope, quedan: tope - usados, renueva: d.next_character_count_reset_unix };
+  } catch (e) { return null; }
+}
+
+/** Avisa si la cuota está por agotarse, con nombres claros y sin tecnicismos. */
+export async function avisarCuota() {
+  const c = await cuotaRestante();
+  if (!c) return null;
+  const fecha = c.renueva ? new Date(c.renueva * 1000).toLocaleDateString('es-CL') : null;
+  const pct = ((c.quedan / c.tope) * 100).toFixed(0);
+  console.log(`  ElevenLabs: quedan ${c.quedan.toLocaleString('es-CL')} de ${c.tope.toLocaleString('es-CL')} créditos (${pct}%)`
+    + (fecha ? `, se renuevan el ${fecha}.` : '.'));
+  if (c.quedan < 2000) {
+    console.log('  AVISO: la cuota está casi agotada. La voz y los efectos van a fallar.');
+  }
+  return c;
+}
+
 export async function listarVoces(clave) {
   const res = await fetch(`${API}/voices`, { headers: { 'xi-api-key': clave || process.env.ELEVENLABS_API_KEY } });
   if (!res.ok) throw new Error(`No se pudo listar voces (${res.status}).`);
@@ -133,6 +164,7 @@ export async function generarVoz({ texto, salida }) {
 export async function generarVozPorTramos({ tramos, total, salida }) {
   const dir = path.dirname(salida);
   mkdirSync(dir, { recursive: true });
+  await avisarCuota();
   const piezas = [];
   try {
     for (let i = 0; i < tramos.length; i++) {
