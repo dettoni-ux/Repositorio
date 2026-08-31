@@ -12,7 +12,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const AQUI = path.dirname(fileURLToPath(import.meta.url));
-const ROSA = '#FA2778';
+/* Los colores de la web: morado y amarillo. El rosado es solo del logo. */
+const AMARILLO = '#FFD84D';
+const TINTA = '#241A1F';
 const ANCHO = 720, ALTO = 1280;
 
 function cartel(logo) {
@@ -25,15 +27,15 @@ function cartel(logo) {
      oscurecerlo: por eso llega a opaco antes de esa altura. */
   .velo{position:absolute;left:0;right:0;top:760px;bottom:0;
         background:linear-gradient(to bottom,
-          rgba(18,10,16,0) 0%, rgba(18,10,16,.55) 14%,
-          rgba(18,10,16,.93) 26%, rgba(18,10,16,.985) 38%,
-          rgba(18,10,16,.99) 100%)}
+          rgba(18,10,16,0) 0%, rgba(18,10,16,.62) 11%,
+          rgba(18,10,16,.97) 20%, rgba(18,10,16,1) 28%,
+          rgba(18,10,16,1) 100%)}
   .texto{position:absolute;left:0;right:0;bottom:104px;text-align:center;padding:0 44px}
   .l1{color:#fff;font-size:52px;font-weight:800;letter-spacing:-1px;line-height:1.16;
       text-shadow:0 3px 18px rgba(0,0,0,.55)}
-  .l2{margin-top:22px;display:inline-block;background:${ROSA};color:#fff;
+  .l2{margin-top:22px;display:inline-block;background:${AMARILLO};color:${TINTA};
       font-size:34px;font-weight:800;letter-spacing:.3px;
-      padding:15px 34px;border-radius:999px;box-shadow:0 8px 26px rgba(250,39,120,.4)}
+      padding:15px 34px;border-radius:999px;box-shadow:0 8px 26px rgba(255,216,77,.35)}
 </style>
 <div class="velo"></div>
 <div class="texto">
