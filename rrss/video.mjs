@@ -169,7 +169,8 @@ export async function generarCortometraje({ escenas, salida, alAvanzar }) {
     const filtro = clips.map((_, i) => `[${i}:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,setsar=1[v${i}]`).join(';')
       + ';' + clips.map((_, i) => `[v${i}]`).join('') + `concat=n=${clips.length}:v=1:a=0[v]`;
     await ejecutar(ffmpeg(), ['-y', ...entradas, '-filter_complex', filtro, '-map', '[v]',
-      '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-preset', 'medium', '-crf', '20', salida]);
+      '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-preset', 'medium', '-crf', '20',
+      '-movflags', '+faststart', salida]);
     return salida;
   } finally {
     [...clips, ...puentes].forEach(c => { if (existsSync(c)) { try { unlinkSync(c); } catch (e) {} } });

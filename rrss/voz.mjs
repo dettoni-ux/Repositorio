@@ -146,7 +146,12 @@ export async function mezclarVideoYVoz({ video, audio, salida }) {
   } else {
     args.push('-map', '0:v');
   }
-  args.push('-map', '1:a', '-af', 'apad', '-shortest', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '192k', salida);
+  // Estéreo a 48 kHz y el índice (moov) al principio: sin faststart hay
+  // reproductores que muestran el video y se saltan la pista de audio.
+  args.push('-map', '1:a', '-af', 'apad', '-shortest',
+    '-c:v', 'libx264', '-pix_fmt', 'yuv420p',
+    '-c:a', 'aac', '-ac', '2', '-ar', '48000', '-b:a', '192k',
+    '-movflags', '+faststart', salida);
   await ejecutar(ffmpegBin(), args);
   return salida;
 }
