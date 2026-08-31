@@ -244,5 +244,133 @@
     "imagen": null,
     "imagen_url": null,
     "nota": "Video no generado: Generación de video en estado failed: \"\". El prompt queda en la pieza para regenerar."
+  },
+  {
+    "fecha_propuesta": "2026-09-02",
+    "hora_propuesta": "09:00",
+    "publico": "veterinarios",
+    "caption": "Cualquiera puede comprar una bata blanca. Nadie puede comprar tu título. 🩺\n\nEste corto es ficción, pero el problema no: en internet basta con decir \"soy veterinario\" para que alguien te crea. Un diploma hecho a mano, un estetoscopio de juguete y listo, ya hay una mascota en la camilla equivocada.\n\nY el que paga el costo también eres tú, colega: cada impostor que atiende mal deja a un tutor desconfiado que después duda de todos.\n\nPor eso en EncuentraVet nadie se autodeclara veterinario. Validamos uno a uno contra el Registro Civil y COLMEVET, y recién ahí aparece la insignia azul en tu perfil. No es un adorno: es la prueba pública de que estudiaste seis años y estás habilitado para ejercer.\n\nCertifícate y que nadie dude de ti. Tu título vale, muéstralo donde te buscan.\n\n✅ Perfil verificado con insignia azul\n✅ Agenda online con tu disponibilidad real\n✅ 0% comisión: lo que cobras es tuyo\n\nCrea tu perfil gratis en encuentravet.cl\n\n#EncuentraVet #VeterinariosVerificados #MédicoVeterinario #VeterinariosChile #InsigniaAzul #FalsosVeterinarios #COLMEVET",
+    "tipo": "video",
+    "formato": "reel",
+    "video": {
+      "actos": [
+        {
+          "escena": "espera",
+          "dur": 7,
+          "texto": "Micha esperaba tranquila su hora. Confiaba en quien la iba a atender."
+        },
+        {
+          "escena": "impostor",
+          "dur": 9,
+          "texto": "Bata gigante, estetoscopio de juguete y un diploma a crayón despegándose."
+        },
+        {
+          "escena": "verificada",
+          "dur": 8,
+          "texto": "Insignia azul: título validado en Registro Civil y COLMEVET."
+        }
+      ],
+      "cierre": "La insignia azul se verifica",
+      "escenas_ia": [
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A small gray tabby cat with a white chest and a red collar sits calmly on a rounded purple bench in a cozy veterinary clinic waiting room, swinging her tail slowly and looking hopefully toward a door. The walls are deep purple (#5B2E7E) with soft yellow (#FFD84D) accents, a yellow lamp and potted plants. Gentle camera push-in on the cat's patient, trusting face. No text overlays, no logos, no watermarks.",
+          "duracion_s": 7
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. In the same cozy veterinary waiting room with deep purple (#5B2E7E) walls and soft yellow (#FFD84D) accents, a plump orange rooster with a floppy red comb bursts in wearing an oversized white lab coat whose sleeves drag on the floor, a bright plastic toy stethoscope around his neck and a tiny toy briefcase. Behind him, a crayon-drawn diploma taped to the wall peels off and flutters to the ground. A small gray tabby cat with a white chest and a red collar, sitting on the purple bench, raises one eyebrow in comic suspicion. Light comedic timing, no danger. No text overlays, no logos, no watermarks.",
+          "duracion_s": 9
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. In the same cozy veterinary waiting room with deep purple (#5B2E7E) walls and soft yellow (#FFD84D) accents, a calm brown capybara veterinarian in a well-fitted clean white coat, wearing round glasses and a small glowing blue verified badge pin on her chest, opens the door and warmly greets a small gray tabby cat with a white chest and a red collar sitting on the purple bench. The plump orange rooster with the floppy red comb and the oversized white lab coat tiptoes away in the background, embarrassed. The cat relaxes and purrs as the capybara gently kneels beside her. No text overlays, no logos, no watermarks.",
+          "duracion_s": 8
+        }
+      ],
+      "narracion": "Todo empezó como una consulta normal. Una gata esperaba tranquila su hora. Entonces apareció él: bata gigante, estetoscopio de juguete y un diploma pintado a crayón que se despegó de la pared. Nadie le pidió nunca su título. Hasta que llegó la veterinaria verificada, con su insignia azul validada en el Registro Civil y en COLMEVET. Cualquiera puede ponerse una bata. La insignia azul se verifica. Encuentravet punto cl.",
+      "escenas": [
+        {
+          "tiempo": "0:00-0:07",
+          "descripcion": "Micha, gata gris atigrada de collar rojo, espera sentada en la banca morada de la sala de espera. Mira la puerta con confianza.",
+          "texto_pantalla": "Micha esperaba tranquila su hora"
+        },
+        {
+          "tiempo": "0:07-0:16",
+          "descripcion": "Entra un gallo naranjo con bata blanca gigante, estetoscopio de plástico y maletín de juguete. El diploma a crayón se despega de la pared. Micha levanta una ceja.",
+          "texto_pantalla": "Nadie le pidió nunca su título"
+        },
+        {
+          "tiempo": "0:16-0:24",
+          "descripcion": "Llega la veterinaria capibara con bata impecable e insignia azul en el pecho. Recibe a Micha con calma mientras el gallo se escabulle avergonzado.",
+          "texto_pantalla": "Registro Civil + COLMEVET: verificada"
+        },
+        {
+          "tiempo": "0:24-0:28",
+          "descripcion": "Placa final sobre fondo morado con la insignia azul y el remate de marca.",
+          "texto_pantalla": "La insignia azul se verifica · encuentravet.cl"
+        }
+      ]
+    },
+    "visual": {
+      "actos": [
+        {
+          "escena": "espera",
+          "dur": 7,
+          "texto": "Micha esperaba tranquila su hora. Confiaba en quien la iba a atender."
+        },
+        {
+          "escena": "impostor",
+          "dur": 9,
+          "texto": "Bata gigante, estetoscopio de juguete y un diploma a crayón despegándose."
+        },
+        {
+          "escena": "verificada",
+          "dur": 8,
+          "texto": "Insignia azul: título validado en Registro Civil y COLMEVET."
+        }
+      ],
+      "cierre": "La insignia azul se verifica",
+      "escenas_ia": [
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A small gray tabby cat with a white chest and a red collar sits calmly on a rounded purple bench in a cozy veterinary clinic waiting room, swinging her tail slowly and looking hopefully toward a door. The walls are deep purple (#5B2E7E) with soft yellow (#FFD84D) accents, a yellow lamp and potted plants. Gentle camera push-in on the cat's patient, trusting face. No text overlays, no logos, no watermarks.",
+          "duracion_s": 7
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. In the same cozy veterinary waiting room with deep purple (#5B2E7E) walls and soft yellow (#FFD84D) accents, a plump orange rooster with a floppy red comb bursts in wearing an oversized white lab coat whose sleeves drag on the floor, a bright plastic toy stethoscope around his neck and a tiny toy briefcase. Behind him, a crayon-drawn diploma taped to the wall peels off and flutters to the ground. A small gray tabby cat with a white chest and a red collar, sitting on the purple bench, raises one eyebrow in comic suspicion. Light comedic timing, no danger. No text overlays, no logos, no watermarks.",
+          "duracion_s": 9
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. In the same cozy veterinary waiting room with deep purple (#5B2E7E) walls and soft yellow (#FFD84D) accents, a calm brown capybara veterinarian in a well-fitted clean white coat, wearing round glasses and a small glowing blue verified badge pin on her chest, opens the door and warmly greets a small gray tabby cat with a white chest and a red collar sitting on the purple bench. The plump orange rooster with the floppy red comb and the oversized white lab coat tiptoes away in the background, embarrassed. The cat relaxes and purrs as the capybara gently kneels beside her. No text overlays, no logos, no watermarks.",
+          "duracion_s": 8
+        }
+      ],
+      "narracion": "Todo empezó como una consulta normal. Una gata esperaba tranquila su hora. Entonces apareció él: bata gigante, estetoscopio de juguete y un diploma pintado a crayón que se despegó de la pared. Nadie le pidió nunca su título. Hasta que llegó la veterinaria verificada, con su insignia azul validada en el Registro Civil y en COLMEVET. Cualquiera puede ponerse una bata. La insignia azul se verifica. Encuentravet punto cl.",
+      "escenas": [
+        {
+          "tiempo": "0:00-0:07",
+          "descripcion": "Micha, gata gris atigrada de collar rojo, espera sentada en la banca morada de la sala de espera. Mira la puerta con confianza.",
+          "texto_pantalla": "Micha esperaba tranquila su hora"
+        },
+        {
+          "tiempo": "0:07-0:16",
+          "descripcion": "Entra un gallo naranjo con bata blanca gigante, estetoscopio de plástico y maletín de juguete. El diploma a crayón se despega de la pared. Micha levanta una ceja.",
+          "texto_pantalla": "Nadie le pidió nunca su título"
+        },
+        {
+          "tiempo": "0:16-0:24",
+          "descripcion": "Llega la veterinaria capibara con bata impecable e insignia azul en el pecho. Recibe a Micha con calma mientras el gallo se escabulle avergonzado.",
+          "texto_pantalla": "Registro Civil + COLMEVET: verificada"
+        },
+        {
+          "tiempo": "0:24-0:28",
+          "descripcion": "Placa final sobre fondo morado con la insignia azul y el remate de marca.",
+          "texto_pantalla": "La insignia azul se verifica · encuentravet.cl"
+        }
+      ],
+      "nota": "Video generado sin voz en off (fetch failed)."
+    },
+    "estado": "pendiente",
+    "lote": "lote-2026-08-31-02-13",
+    "imagen": "lote-2026-08-31-02-13-1-video.mp4",
+    "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/claude/sweet-turing-nwcnd0/piezas/lote-2026-08-31-02-13-1-video.mp4",
+    "nota": "Video generado sin voz en off (fetch failed)."
   }
 ]
