@@ -243,8 +243,9 @@
         </div>
       </div>
       <div class="panel">
-        <h2>Crear reel</h2>
-        <p class="sub">Convierte los textos de arriba en un reel vertical animado (1080 × 1920) y descárgalo listo para subir. Usa la foto que tengas seleccionada.</p>
+        <h2>Reel de texto</h2>
+        <p class="sub">Tarjetas animadas con tus textos, en vertical 1080 × 1920 y listas para subir. Sirven para tips, cifras y anuncios.</p>
+        <p class="aviso">Esto <strong>no</strong> es el cortometraje animado. Los personajes en 3D se generan con IA fuera de esta página, porque aquí el navegador no puede llamar a Replicate ni a ElevenLabs. Ese video llega a la cola de aprobación desde el generador automático.</p>
         <div class="reel-zona">
           <div>
             <canvas id="lienzo-reel" width="1080" height="1920" aria-label="Vista previa del reel"></canvas>
@@ -271,7 +272,7 @@
             </div>
             <div class="fila-botones">
               <button class="btn sec" id="btn-reel-previa">▶ Ver previa</button>
-              <button class="btn" id="btn-reel-crear">🎬 Generar reel MP4</button>
+              <button class="btn" id="btn-reel-crear">🎬 Generar MP4</button>
             </div>
             <p class="aviso" id="reel-estado">La grabación ocurre en tu navegador: dura lo mismo que el reel y no sube nada a ningún servidor.</p>
           </div>
@@ -963,7 +964,7 @@ function renderResultado(g){
       '<button class="btn sec" id="btn-regenerar">↻ Otra variante</button>'+
       '<button class="btn sec" id="btn-copiar">Copiar todo</button>'+
       '<button class="btn sec" id="btn-a-visual">🖼 Crear la imagen →</button>'+
-      '<button class="btn sec" id="btn-a-reel">🎬 Crear el reel →</button>'+
+      '<button class="btn sec" id="btn-a-reel">🎬 Reel de texto →</button>'+
       '<button class="btn" id="btn-guardar">Guardar</button>'+
     '</div></div>';
   $('#btn-regenerar').addEventListener('click', generarDesdeControles);
@@ -1522,7 +1523,7 @@ function enviarAVisual(g, alReel){
       z.animate([{boxShadow:'0 0 0 0 rgba(206,31,99,.55)'},{boxShadow:'0 0 0 16px rgba(206,31,99,0)'}],
                 {duration:900, iterations:2});
     }, 80);
-    toast('Listo para generar el reel 🎬');
+    toast('Listo para generar el reel de texto 🎬');
   } else {
     toast('Contenido cargado en el estudio visual');
   }
