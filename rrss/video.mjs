@@ -80,17 +80,24 @@ export async function generarVideo({ prompt, duracion = 10, salida, imagenInicia
   ponerSiExiste(entrada, esquema?.props, ['duration', 'duration_seconds', 'num_frames'], Math.ceil(duracion), true);
   ponerSiExiste(entrada, esquema?.props, ['resolution', 'video_size', 'size'], (process.env.SEEDANCE_RES || RESOLUCION_DEF).trim());
   ponerSiExiste(entrada, esquema?.props, ['aspect_ratio', 'aspect'], '9:16');
-  // El modelo NO admite referencia de identidad y cuadro inicial a la vez
-  // («Reference images cannot be used with first frame or last frame images»),
-  // así que se elige una. Se prefiere la referencia: ancla todas las escenas al
-  // MISMO original, mientras que encadenar cuadro a cuadro acumula la deriva.
-  const campoRef = referencias?.length
-    ? ['reference_images', 'reference_image'].find(c => !esquema?.props || c in esquema.props)
-    : null;
-  if (campoRef) {
-    entrada[campoRef] = campoRef === 'reference_image' ? referencias[0] : referencias;
-  } else if (imagenInicial) {
+  // Cómo se mantiene el mismo personaje entre escenas. Son excluyentes: el
+  // modelo rechaza referencia y cuadro inicial juntos.
+  //   encadenado (por defecto) — cada escena parte del cuadro anterior. Probado.
+  //   referencia — ancla todas a la escena 1; en el papel es mejor, pero este
+  //     modelo devuelve «input was invalid» sin explicar, así que no se usa
+  //     salvo que se pida a propósito con SEEDANCE_IDENTIDAD=referencia.
+  //   ninguna — solo el texto del prompt.
+  const modo = (process.env.SEEDANCE_IDENTIDAD || 'encadenado').trim();
+  let comoSeAncla = 'solo el texto del prompt';
+  if (modo === 'referencia' && referencias?.length) {
+    const campo = ['reference_images', 'reference_image'].find(c => !esquema?.props || c in esquema.props);
+    if (campo) {
+      entrada[campo] = campo === 'reference_image' ? referencias[0] : referencias;
+      comoSeAncla = 'referencia fija de la escena 1';
+    }
+  } else if (modo !== 'ninguna' && imagenInicial) {
     ponerSiExiste(entrada, esquema?.props, ['image', 'first_frame_image', 'start_image', 'input_image'], imagenInicial);
+    comoSeAncla = 'cuadro anterior encadenado';
   }
   if (esquema) {
     console.log(`    parámetros aceptados por el modelo: ${Object.keys(esquema.props).join(', ')}`);
@@ -98,7 +105,7 @@ export async function generarVideo({ prompt, duracion = 10, salida, imagenInicia
     if (resumen.image) resumen.image = `«último cuadro de la escena anterior» (${Math.round(imagenInicial.length / 1024)} KB)`;
     if (resumen.reference_images) resumen.reference_images = `«${referencias.length} referencia(s) de la escena 1»`;
     if (resumen.reference_image) resumen.reference_image = '«referencia de la escena 1»';
-    console.log(`    identidad: ${campoRef ? 'referencia fija de la escena 1' : (imagenInicial ? 'cuadro anterior encadenado' : 'solo el texto del prompt')}`);
+    console.log(`    identidad: ${comoSeAncla}`);
     console.log(`    enviando: ${JSON.stringify(resumen).slice(0, 260)}`);
   }
 
