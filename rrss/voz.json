@@ -1,11 +1,11 @@
 {
   "_comentario": "Voz de las narraciones. Cambia 'elegida' por otro id de 'disponibles'. La variable ELEVENLABS_VOICE_ID, si existe, tiene prioridad.",
-  "elegida": "ClNifCEVq1smkl4M3aTk",
+  "elegida": "P6PQtQGB3yM21Aj1vGJ2",
   "disponibles": [
+    { "id": "P6PQtQGB3yM21Aj1vGJ2", "nombre": "Luis", "acento": "Latinoamericano", "perfil": "Ronca, expresiva, narrativa" },
     { "id": "ClNifCEVq1smkl4M3aTk", "nombre": "Cristian Cornejo", "acento": "Chileno", "perfil": "Seguro, redes sociales, mediana edad" },
     { "id": "s8WAhMSU6uxtDpE0pBPw", "nombre": "Eigam Chile", "acento": "Chileno", "perfil": "Casual, narrativo, joven" },
     { "id": "nmvA11Y688M5reLqDsVm", "nombre": "Samuel Rosales", "acento": "Mexicano", "perfil": "Cálido y conversacional" },
-    { "id": "P6PQtQGB3yM21Aj1vGJ2", "nombre": "Luis", "acento": "Argentino", "perfil": "Expresivo, narrativo" },
     { "id": "EXAVITQu4vr4xnSDxMaL", "nombre": "Sarah", "acento": "Neutro (inglés)", "perfil": "Femenina, profesional" }
   ]
 }

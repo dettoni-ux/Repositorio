@@ -109,7 +109,9 @@ Es un CORTOMETRAJE, no un reel informativo: cuenta una historia con principio, n
   al editar). El texto en pantalla NO va en el prompt de IA.
 - `video.narracion`: el guion de la VOZ EN OFF en español de Chile, neutro y cálido, que se
   generará con voz sintética y se montará sobre el cortometraje completo. Calcula unas
-  **2,5 palabras por segundo**: para un corto de 30 segundos, entre 60 y 75 palabras.
+  **2,3 palabras por segundo sobre el 90% de la duración total de las escenas**, para que
+  la voz cierre antes que la imagen y quede un respiro final: si las escenas suman 24
+  segundos, apunta a unas 50 palabras, nunca más de 55. Pasarse obliga a apurar el habla.
   Debe acompañar la historia acto por acto y rematar con el mensaje de la marca.
   Sin emoji, sin hashtags, sin leer la URL letra por letra: se dice "encuentravet punto cl".
   Cierra con el gancho de la marca (la insignia azul se verifica).

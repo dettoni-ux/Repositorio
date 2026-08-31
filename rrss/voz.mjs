@@ -133,22 +133,52 @@ async function duracion(archivo) {
   return null;
 }
 
+/* Hasta aquí se puede acelerar el habla sin que se note ni suene apurada. */
+const APURO_MAX = 1.18;
+
+/** Cadena de filtros atempo: cada uno admite como máximo 2x. */
+function filtroTempo(factor) {
+  const partes = [];
+  let f = factor;
+  while (f > 2) { partes.push('atempo=2.0'); f /= 2; }
+  partes.push(`atempo=${f.toFixed(4)}`);
+  return partes.join(',');
+}
+
 /**
- * Une video y voz en off en un solo mp4. Si el audio es más largo que el video,
- * congela el último cuadro para que no se corte la frase; si es más corto,
- * completa con silencio. Nunca recorta la narración a mitad de camino.
+ * Une video y voz en off en un solo mp4, haciendo que la narración TERMINE
+ * CON EL CORTO. Si el audio se pasa, se acelera lo justo (hasta un 18%, que no
+ * se nota) para que calce. Solo si aun así no alcanza se congela el último
+ * cuadro: una imagen pegada mientras la voz sigue hablando se ve como un error.
+ * Si el audio es más corto, se completa con silencio.
  */
 export async function mezclarVideoYVoz({ video, audio, salida }) {
   const [dv, da] = await Promise.all([duracion(video), duracion(audio)]);
   const args = ['-y', '-i', video, '-i', audio];
+  let filtroAudio = 'apad';
+
   if (dv != null && da != null && da > dv + 0.1) {
-    args.push('-filter_complex', `[0:v]tpad=stop_mode=clone:stop_duration=${(da - dv).toFixed(2)}[v]`, '-map', '[v]');
+    const factor = da / dv;
+    const aplicado = Math.min(factor, APURO_MAX);
+    filtroAudio = `${filtroTempo(aplicado)},apad`;
+    const restante = da / aplicado - dv;
+    if (restante > 0.1) {
+      // La narración es demasiado larga para las escenas: se avisa y se estira
+      // el video lo mínimo, en vez de cortar la frase a la mitad.
+      console.log(`  La narración excede el video en ${(da - dv).toFixed(1)} s. `
+        + `Se acelera un ${((aplicado - 1) * 100).toFixed(0)}% y se extiende el cierre ${restante.toFixed(1)} s. `
+        + 'Conviene acortar el guion o alargar las escenas.');
+      args.push('-filter_complex', `[0:v]tpad=stop_mode=clone:stop_duration=${restante.toFixed(2)}[v]`, '-map', '[v]');
+    } else {
+      console.log(`  Voz ${(da - dv).toFixed(1)} s más larga que el video: se acelera un ${((aplicado - 1) * 100).toFixed(0)}% para que termine con el corto.`);
+      args.push('-map', '0:v');
+    }
   } else {
     args.push('-map', '0:v');
   }
   // Estéreo a 48 kHz y el índice (moov) al principio: sin faststart hay
   // reproductores que muestran el video y se saltan la pista de audio.
-  args.push('-map', '1:a', '-af', 'apad', '-shortest',
+  args.push('-map', '1:a', '-af', filtroAudio, '-shortest',
     '-c:v', 'libx264', '-pix_fmt', 'yuv420p',
     '-c:a', 'aac', '-ac', '2', '-ar', '48000', '-b:a', '192k',
     '-movflags', '+faststart', salida);
