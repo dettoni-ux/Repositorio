@@ -78,6 +78,28 @@ function ajustar(prop, valor, haciaArriba) {
   return valor;
 }
 
+/**
+ * Sube una imagen a Replicate y devuelve su URL.
+ *
+ * El cuadro inicial acepta un data URI, pero reference_images no: el modelo lo
+ * rechaza con «input was invalid» sin más detalle, porque necesita una URL que
+ * pueda descargar. Subir el archivo primero es lo que lo destraba.
+ */
+async function subirImagen(dataUri, token) {
+  const m = /^data:([^;]+);base64,(.+)$/.exec(dataUri);
+  if (!m) return dataUri;               // ya es una URL
+  const cuerpo = new FormData();
+  cuerpo.append('content', new Blob([Buffer.from(m[2], 'base64')], { type: m[1] }), 'referencia.jpg');
+  const res = await fetch('https://api.replicate.com/v1/files', {
+    method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: cuerpo
+  });
+  if (!res.ok) throw new Error(`No se pudo subir la referencia (${res.status}): ${(await res.text()).slice(0, 200)}`);
+  const datos = await res.json();
+  const url = datos?.urls?.get;
+  if (!url) throw new Error('La subida no devolvió URL de la referencia.');
+  return url;
+}
+
 export async function generarVideo({ prompt, duracion = 10, salida, imagenInicial, referencias }) {
   const token = process.env.REPLICATE_API_TOKEN;
   if (!token) throw new Error('Falta REPLICATE_API_TOKEN');
@@ -109,8 +131,9 @@ export async function generarVideo({ prompt, duracion = 10, salida, imagenInicia
   if (usaReferencia) {
     const campo = ['reference_images', 'reference_image'].find(c => !esquema?.props || c in esquema.props);
     if (campo) {
-      entrada[campo] = campo === 'reference_image' ? referencias[0] : referencias;
-      comoSeAncla = 'referencia fija de la escena 1';
+      const urls = await Promise.all(referencias.map(r => subirImagen(r, token)));
+      entrada[campo] = campo === 'reference_image' ? urls[0] : urls;
+      comoSeAncla = `referencia fija de la escena 1 (subida a Replicate)`;
     }
   } else if (modo !== 'ninguna' && imagenInicial) {
     ponerSiExiste(entrada, esquema?.props, ['image', 'first_frame_image', 'start_image', 'input_image'], imagenInicial);
@@ -121,8 +144,7 @@ export async function generarVideo({ prompt, duracion = 10, salida, imagenInicia
     const resumen = { ...entrada };
     delete resumen.prompt;
     if (resumen.image) resumen.image = `«cuadro anterior» (${Math.round(imagenInicial.length / 1024)} KB)`;
-    if (resumen.reference_images) resumen.reference_images = `«${referencias.length} referencia(s) de la escena 1»`;
-    if (resumen.reference_image) resumen.reference_image = '«referencia de la escena 1»';
+    // Las URLs de referencia sí se muestran: son cortas y sirven para diagnosticar.
     console.log(`    identidad: ${comoSeAncla} · parámetros: ${JSON.stringify(resumen)}`);
     console.log(`    enviando: ${JSON.stringify(resumen).slice(0, 260)}`);
   }
