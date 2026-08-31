@@ -19,6 +19,16 @@ import { generarVozPorTramos, vozDisponible } from './voz.mjs';
 const ejecutar = promisify(execFile);
 const ffmpeg = () => process.env.FFMPEG_PATH || ffmpegStatic || 'ffmpeg';
 
+async function duracionDe(archivo) {
+  try {
+    await ejecutar(ffmpeg(), ['-i', archivo]);
+  } catch (e) {
+    const m = /Duration:\s*(\d+):(\d+):(\d+\.?\d*)/.exec(e.stderr || '');
+    if (m) return (+m[1]) * 3600 + (+m[2]) * 60 + parseFloat(m[3]);
+  }
+  return null;
+}
+
 const entrada = process.argv[2];
 if (!entrada || !existsSync(entrada)) {
   console.error('Uso: node remontar.mjs <video.mp4>   (el archivo debe existir)');
@@ -41,10 +51,13 @@ console.log(`Rehaciendo el audio de ${path.basename(entrada)} (la imagen no se t
 try {
   await generarVozPorTramos({ tramos: guion.tramos, total: guion.total, salida: pista });
   // La imagen se copia tal cual: no se recodifica, así no pierde calidad.
+  // Nada de «-shortest»: si el audio queda corto recorta el video y se pierde
+  // el final del cierre. Se rellena el audio con silencio hasta el largo real.
   await ejecutar(ffmpeg(), ['-y', '-i', entrada, '-i', pista,
-    '-map', '0:v', '-map', '1:a', '-c:v', 'copy',
+    '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-af', 'apad',
     '-c:a', 'aac', '-ac', '2', '-ar', '48000', '-b:a', '192k',
-    '-shortest', '-movflags', '+faststart', salida]);
+    '-t', String(await duracionDe(entrada) ?? guion.total),
+    '-movflags', '+faststart', salida]);
   console.log(`Listo: ${salida}`);
 } finally {
   if (existsSync(pista)) { try { unlinkSync(pista); } catch (e) {} }

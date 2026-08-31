@@ -165,10 +165,13 @@ export async function generarVozPorTramos({ tramos, total, salida }) {
       entradas.push('-i', p.archivo);
       const pasos = [];
       if (p.efecto) {
-        // Cada efecto llega con su propio volumen; se nivelan todos al mismo,
-        // bien bajo la voz. «nivel» permite bajar uno en particular desde el
-        // guion sin tocar los demás.
-        pasos.push(NIVEL_EFECTO);
+        // Se mide el pico real y se calcula cuánto bajarlo: así todos quedan
+        // al mismo nivel, vengan como vengan. «nivel» baja uno en particular
+        // desde el guion sin tocar los demás.
+        const pico = await picoDe(p.archivo);
+        const baja = pico != null ? (PICO_EFECTO_DB - pico) : -24;
+        pasos.push(`volume=${baja.toFixed(1)}dB`);
+        console.log(`    efecto ${p.i}: pico ${pico != null ? pico.toFixed(1) : '?'} dB → ${baja.toFixed(1)} dB de ajuste`);
         if (p.nivel != null && p.nivel !== 1) pasos.push(`volume=${Number(p.nivel).toFixed(2)}`);
         pasos.push(`atrim=0:${p.ventana.toFixed(2)}`,
           'afade=t=in:st=0:d=0.15',
@@ -234,6 +237,20 @@ export async function generarEfecto({ texto, duracion, salida }) {
   return salida;
 }
 
+/**
+ * Pico real de un archivo, en dB. Hace falta para atenuar con precisión: los
+ * normalizadores de un solo paso apenas mueven la aguja, así que se mide y se
+ * calcula la ganancia exacta.
+ */
+async function picoDe(archivo) {
+  try {
+    const { stderr } = await ejecutar(ffmpegBin(), ['-i', archivo, '-af', 'volumedetect', '-f', 'null', '-'])
+      .catch(e => ({ stderr: e.stderr || '' }));
+    const m = /max_volume:\s*(-?\d+\.?\d*) dB/.exec(stderr);
+    return m ? parseFloat(m[1]) : null;
+  } catch (e) { return null; }
+}
+
 /** Duración en segundos de un archivo multimedia, leyendo la salida de ffmpeg. */
 async function duracion(archivo) {
   try {
@@ -252,9 +269,9 @@ const APURO_MAX = 1.18;
    video suena más bajo que todo lo demás del feed y hay que subir el volumen. */
 const NIVEL_FINAL = 'loudnorm=I=-16:TP=-1.5:LRA=11';
 
-/* Los efectos van MUY por debajo de la voz. La prioridad es siempre el locutor:
-   un efecto que compite con la voz arruina el aviso, por bueno que suene. */
-const NIVEL_EFECTO = 'loudnorm=I=-34:TP=-9:LRA=7';
+/* Pico al que se lleva cada efecto. La voz queda cerca de -3 dB, así que a
+   -30 el efecto acompaña sin pelear. La prioridad es siempre el locutor. */
+const PICO_EFECTO_DB = -30;
 
 /** Cadena de filtros atempo: cada uno admite como máximo 2x. */
 function filtroTempo(factor) {
