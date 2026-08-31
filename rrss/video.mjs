@@ -63,7 +63,7 @@ function ajustar(prop, valor) {
   return valor;
 }
 
-export async function generarVideo({ prompt, duracion = 10, salida, imagenInicial }) {
+export async function generarVideo({ prompt, duracion = 10, salida, imagenInicial, referencias }) {
   const token = process.env.REPLICATE_API_TOKEN;
   if (!token) throw new Error('Falta REPLICATE_API_TOKEN');
   const modelo = (process.env.SEEDANCE_MODEL || MODELO_DEF).trim();
@@ -77,10 +77,15 @@ export async function generarVideo({ prompt, duracion = 10, salida, imagenInicia
   // Arrancar desde el último cuadro de la escena anterior es lo que mantiene
   // al mismo gato: el texto del prompt por sí solo no basta.
   if (imagenInicial) ponerSiExiste(entrada, esquema?.props, ['image', 'first_frame_image', 'start_image', 'input_image'], imagenInicial);
+  // Además del cuadro anterior, anclar SIEMPRE a la escena 1: encadenar sin más
+  // arrastra la deriva y para la tercera escena el personaje ya cambió.
+  if (referencias?.length) ponerSiExiste(entrada, esquema?.props, ['reference_images', 'reference_image'], referencias);
   if (esquema) {
     console.log(`    parámetros aceptados por el modelo: ${Object.keys(esquema.props).join(', ')}`);
     const resumen = { ...entrada };
     if (resumen.image) resumen.image = `«último cuadro de la escena anterior» (${Math.round(imagenInicial.length / 1024)} KB)`;
+    if (resumen.reference_images) resumen.reference_images = `«${referencias.length} referencia(s) de la escena 1»`;
+    if (resumen.reference_image) resumen.reference_image = '«referencia de la escena 1»';
     console.log(`    enviando: ${JSON.stringify(resumen).slice(0, 260)}`);
   }
 
@@ -133,16 +138,25 @@ export async function generarCortometraje({ escenas, salida, alAvanzar }) {
   const puentes = [];
   try {
     let imagenInicial = null;
+    let referencias = null;
     for (let i = 0; i < escenas.length; i++) {
       if (alAvanzar) alAvanzar(i, escenas.length);
       const parcial = salida.replace(/\.mp4$/, `.escena${i + 1}.mp4`);
-      await generarVideo({ prompt: escenas[i].prompt_ia, duracion: escenas[i].duracion_s, salida: parcial, imagenInicial });
+      await generarVideo({
+        prompt: escenas[i].prompt_ia, duracion: escenas[i].duracion_s,
+        salida: parcial, imagenInicial, referencias
+      });
       clips.push(parcial);
       if (i + 1 < escenas.length) {
         const puente = salida.replace(/\.mp4$/, `.puente${i + 1}.jpg`);
-        imagenInicial = await ultimoCuadro(parcial, puente);
-        if (imagenInicial) puentes.push(puente);
-        else console.log('    (no se pudo extraer el último cuadro: la escena siguiente parte de cero)');
+        imagenInicial = await cuadroDeAnclaje(parcial, puente, escenas[i].duracion_s);
+        if (imagenInicial) {
+          puentes.push(puente);
+          // La escena 1 fija cómo se ven los personajes para todo el corto.
+          if (i === 0) referencias = [imagenInicial];
+        } else {
+          console.log('    (no se pudo extraer el cuadro de anclaje: la escena siguiente parte de cero)');
+        }
       }
     }
     if (clips.length === 1) {
@@ -163,12 +177,16 @@ export async function generarCortometraje({ escenas, salida, alAvanzar }) {
 }
 
 /**
- * Último cuadro de un clip, como data URI, para encadenar la escena siguiente.
- * Es lo que hace que el personaje no cambie de color entre escenas.
+ * Cuadro de anclaje de un clip, como data URI, para que la escena siguiente
+ * conserve los personajes. No se toma el último cuadro: suele caer en mitad de
+ * un movimiento o de una transición y sirve de pésima referencia. Se toma uno
+ * poco antes del final, ya con la acción resuelta.
  */
-async function ultimoCuadro(clip, destino) {
+async function cuadroDeAnclaje(clip, destino, duracion) {
+  const dur = Number(duracion) || 8;
+  const momento = Math.max(0.5, dur * 0.8).toFixed(2);
   try {
-    await ejecutar(ffmpeg(), ['-y', '-sseof', '-0.5', '-i', clip, '-frames:v', '1', '-q:v', '3', destino]);
+    await ejecutar(ffmpeg(), ['-y', '-ss', momento, '-i', clip, '-frames:v', '1', '-q:v', '2', destino]);
     if (!existsSync(destino)) return null;
     const { readFileSync } = await import('node:fs');
     return `data:image/jpeg;base64,${readFileSync(destino).toString('base64')}`;
