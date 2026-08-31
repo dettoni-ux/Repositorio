@@ -36,7 +36,31 @@ async function esquemaModelo(modelo, cab) {
 function ponerSiExiste(entrada, props, candidatos, valor) {
   if (!props) { entrada[candidatos[0]] = valor; return; }
   const n = candidatos.find(c => c in props);
-  if (n) entrada[n] = valor;
+  if (n) entrada[n] = ajustar(props[n], valor);
+}
+
+/**
+ * Encaja el valor en lo que el parámetro admite: si declara una lista cerrada,
+ * toma la opción más parecida; si declara mínimo/máximo, lo recorta. Así una
+ * duración de 8 s no rompe un modelo que solo acepta 5 o 10.
+ */
+function ajustar(prop, valor) {
+  if (!prop) return valor;
+  const lista = prop.enum || prop.allOf?.[0]?.enum || prop['x-enum'];
+  if (Array.isArray(lista) && lista.length) {
+    if (lista.includes(valor)) return valor;
+    if (typeof valor === 'number') {
+      const nums = lista.filter(v => typeof v === 'number');
+      if (nums.length) return nums.reduce((a, b) => Math.abs(b - valor) < Math.abs(a - valor) ? b : a);
+    }
+    const txt = String(valor);
+    return lista.find(v => String(v) === txt) ?? lista[0];
+  }
+  if (typeof valor === 'number') {
+    if (typeof prop.minimum === 'number' && valor < prop.minimum) return prop.minimum;
+    if (typeof prop.maximum === 'number' && valor > prop.maximum) return prop.maximum;
+  }
+  return valor;
 }
 
 export async function generarVideo({ prompt, duracion = 10, salida }) {
