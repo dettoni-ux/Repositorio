@@ -11,7 +11,11 @@ import ffmpegStatic from 'ffmpeg-static';
 const ejecutar = promisify(execFile);
 const ffmpeg = () => process.env.FFMPEG_PATH || ffmpegStatic || 'ffmpeg';
 
-const MODELO_DEF = 'bytedance/seedance-1-pro';
+// «lite» genera en minutos y cuesta una fracción; «pro» es más lento y a 1080p
+// se queda en cola tanto rato que agotaba la espera. SEEDANCE_MODEL lo cambia.
+const MODELO_DEF = 'bytedance/seedance-1-lite';
+const RESOLUCION_DEF = '720p';           // 720×1280 vertical: Instagram lo acepta sin recomprimir
+const ESPERA_MAX_MIN = 45;
 
 export function videoDisponible() {
   return Boolean(process.env.REPLICATE_API_TOKEN);
@@ -44,7 +48,7 @@ export async function generarVideo({ prompt, duracion = 10, salida }) {
   const esquema = await esquemaModelo(modelo, cab);
   const entrada = { prompt };
   ponerSiExiste(entrada, esquema?.props, ['duration', 'duration_seconds', 'num_frames'], duracion);
-  ponerSiExiste(entrada, esquema?.props, ['resolution', 'video_size', 'size'], '1080p');
+  ponerSiExiste(entrada, esquema?.props, ['resolution', 'video_size', 'size'], (process.env.SEEDANCE_RES || RESOLUCION_DEF).trim());
   ponerSiExiste(entrada, esquema?.props, ['aspect_ratio', 'aspect'], '9:16');
   if (esquema) {
     console.log(`    parámetros aceptados por el modelo: ${Object.keys(esquema.props).join(', ')}`);
@@ -57,12 +61,24 @@ export async function generarVideo({ prompt, duracion = 10, salida }) {
   let pred = await res.json();
   if (!res.ok) throw new Error(`Replicate ${res.status}: ${JSON.stringify(pred).slice(0, 400)}`);
 
-  const limite = Date.now() + 20 * 60_000;
+  const espera = Number(process.env.SEEDANCE_ESPERA_MIN || ESPERA_MAX_MIN);
+  const limite = Date.now() + espera * 60_000;
+  const t0 = Date.now();
+  console.log(`    predicción ${pred.id} (${pred.status}) — seguimiento en https://replicate.com/p/${pred.id}`);
+  let ultimo = pred.status, avisado = 0;
   while (pred.status === 'starting' || pred.status === 'processing') {
-    if (Date.now() > limite) throw new Error('Tiempo de espera agotado generando el video');
+    if (Date.now() > limite) {
+      throw new Error(`Tiempo de espera agotado (${espera} min) en estado «${pred.status}». `
+        + `La predicción ${pred.id} sigue viva en https://replicate.com/p/${pred.id}: `
+        + 'si suele quedarse en cola, usa un modelo más liviano (variable SEEDANCE_MODEL) '
+        + 'o baja la resolución (SEEDANCE_RES).');
+    }
     await new Promise(r => setTimeout(r, 8000));
     res = await fetch(pred.urls.get, { headers: cab });
     pred = await res.json();
+    const min = Math.floor((Date.now() - t0) / 60_000);
+    if (pred.status !== ultimo) { console.log(`    estado: ${ultimo} → ${pred.status} (${min} min)`); ultimo = pred.status; }
+    else if (min >= avisado + 5) { avisado = min; console.log(`    sigue en «${pred.status}» (${min} min)…`); }
   }
   if (pred.status !== 'succeeded') {
     // El campo error suele venir vacío; los logs del modelo dicen la causa real.

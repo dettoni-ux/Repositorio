@@ -243,6 +243,41 @@
         </div>
       </div>
       <div class="panel">
+        <h2>Crear reel</h2>
+        <p class="sub">Convierte los textos de arriba en un reel vertical animado (1080 × 1920) y descárgalo listo para subir. Usa la foto que tengas seleccionada.</p>
+        <div class="reel-zona">
+          <div>
+            <canvas id="lienzo-reel" width="1080" height="1920" aria-label="Vista previa del reel"></canvas>
+            <div class="barra" id="reel-barra"><i></i></div>
+          </div>
+          <div>
+            <div class="controles">
+              <div>
+                <label class="campo" for="reel-seg">Segundos por línea</label>
+                <select id="reel-seg">
+                  <option value="2">2 s (ágil)</option>
+                  <option value="2.5" selected>2,5 s (equilibrado)</option>
+                  <option value="3">3 s (pausado)</option>
+                </select>
+              </div>
+              <div>
+                <label class="campo" for="reel-fondo">Fondo</label>
+                <select id="reel-fondo">
+                  <option value="degradado">Degradado de marca</option>
+                  <option value="foto">Foto con velo de marca</option>
+                  <option value="claro">Claro con acentos</option>
+                </select>
+              </div>
+            </div>
+            <div class="fila-botones">
+              <button class="btn sec" id="btn-reel-previa">▶ Ver previa</button>
+              <button class="btn" id="btn-reel-crear">🎬 Generar reel MP4</button>
+            </div>
+            <p class="aviso" id="reel-estado">La grabación ocurre en tu navegador: dura lo mismo que el reel y no sube nada a ningún servidor.</p>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
         <h2>Diseñador de posts</h2>
         <p class="sub">Plantillas en morado y amarillo al estilo de tu referencia. Edita los textos, elige foto y exporta el PNG listo para publicar (1080 × 1350).</p>
         <div class="grid2">
@@ -284,41 +319,6 @@ Encuentra veterinarios verificados cerca tuyo en encuentravet.cl — gratis.
               <button class="btn sec" id="btn-add-feed">Agregar al feed</button>
             </div>
             <p class="aviso" style="text-align:center">Para publicar por la API de Instagram usa el JPG (es el único formato de imagen que acepta).</p>
-          </div>
-        </div>
-      </div>
-      <div class="panel">
-        <h2>Crear reel</h2>
-        <p class="sub">Convierte los textos de arriba en un reel vertical animado (1080 × 1920) y descárgalo listo para subir. Usa la foto que tengas seleccionada.</p>
-        <div class="reel-zona">
-          <div>
-            <canvas id="lienzo-reel" width="1080" height="1920" aria-label="Vista previa del reel"></canvas>
-            <div class="barra" id="reel-barra"><i></i></div>
-          </div>
-          <div>
-            <div class="controles">
-              <div>
-                <label class="campo" for="reel-seg">Segundos por línea</label>
-                <select id="reel-seg">
-                  <option value="2">2 s (ágil)</option>
-                  <option value="2.5" selected>2,5 s (equilibrado)</option>
-                  <option value="3">3 s (pausado)</option>
-                </select>
-              </div>
-              <div>
-                <label class="campo" for="reel-fondo">Fondo</label>
-                <select id="reel-fondo">
-                  <option value="degradado">Degradado de marca</option>
-                  <option value="foto">Foto con velo de marca</option>
-                  <option value="claro">Claro con acentos</option>
-                </select>
-              </div>
-            </div>
-            <div class="fila-botones">
-              <button class="btn sec" id="btn-reel-previa">▶ Ver previa</button>
-              <button class="btn" id="btn-reel-crear">🎬 Generar reel MP4</button>
-            </div>
-            <p class="aviso" id="reel-estado">La grabación ocurre en tu navegador: dura lo mismo que el reel y no sube nada a ningún servidor.</p>
           </div>
         </div>
       </div>
@@ -962,11 +962,13 @@ function renderResultado(g){
     '<div class="fila-botones">'+
       '<button class="btn sec" id="btn-regenerar">↻ Otra variante</button>'+
       '<button class="btn sec" id="btn-copiar">Copiar todo</button>'+
-      '<button class="btn sec" id="btn-a-visual">Crear la imagen →</button>'+
+      '<button class="btn sec" id="btn-a-visual">🖼 Crear la imagen →</button>'+
+      '<button class="btn sec" id="btn-a-reel">🎬 Crear el reel →</button>'+
       '<button class="btn" id="btn-guardar">Guardar</button>'+
     '</div></div>';
   $('#btn-regenerar').addEventListener('click', generarDesdeControles);
   $('#btn-a-visual').addEventListener('click', ()=> enviarAVisual(g));
+  $('#btn-a-reel').addEventListener('click', ()=> enviarAVisual(g, true));
   const bPrompt = $('#btn-copiar-prompt-ia');
   if(bPrompt) bPrompt.addEventListener('click', ()=> copiar(g.promptIA));
   $('#btn-copiar').addEventListener('click', ()=> copiar(textoPlano(g)));
@@ -1502,7 +1504,7 @@ function reducirImagen(file, maxLado, mime, calidad){
   });
 }
 
-function enviarAVisual(g){
+function enviarAVisual(g, alReel){
   $('#v-tag').value = PILARES[g.pilar].nombre;
   $('#v-titulo').value = g.titulo;
   const num = (g.titulo.match(/\d+/)||[])[0];
@@ -1512,7 +1514,18 @@ function enviarAVisual(g){
   $('#v-plantilla').value = g.formato==='carrusel' ? 't6' : (num ? 't1' : 't2');
   activarPane('visual');
   pedirRender();
-  toast('Contenido cargado en el estudio visual');
+  if(alReel){
+    pintarPrimerCuadroReel();
+    setTimeout(()=>{
+      const z = $('#lienzo-reel').closest('.panel');
+      z.scrollIntoView({behavior:'smooth', block:'center'});
+      z.animate([{boxShadow:'0 0 0 0 rgba(206,31,99,.55)'},{boxShadow:'0 0 0 16px rgba(206,31,99,0)'}],
+                {duration:900, iterations:2});
+    }, 80);
+    toast('Listo para generar el reel 🎬');
+  } else {
+    toast('Contenido cargado en el estudio visual');
+  }
 }
 
 
