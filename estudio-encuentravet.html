@@ -134,6 +134,8 @@
   .thumbs img.sel{border-color:var(--morado)}
   input[type=file]{display:none}
   input[type=color]{width:100%; height:42px; border:1px solid var(--line); border-radius:10px; background:var(--bg); padding:4px; cursor:pointer}
+  .nav-cards{display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:12px; font-weight:700; color:var(--ink2)}
+  .nav-cards button{min-width:44px}
   .lienzo-wrap{display:flex; justify-content:center}
   .lienzo-wrap canvas{width:100%; max-width:380px; height:auto; border-radius:14px; border:1px solid var(--line); box-shadow:var(--shadow)}
   .feed-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:5px; margin-top:12px; max-width:520px}
@@ -291,6 +293,7 @@
               <option value="t4">Checklist morado</option>
               <option value="t5">Anuncio amarillo</option>
               <option value="t6">Portada de carrusel (blanca)</option>
+              <option value="tc">Card de carrusel (título + cuerpo)</option>
             </select>
             <label class="campo" for="v-tag">Etiqueta</label>
             <input type="text" id="v-tag" value="Tip EncuentraVet">
@@ -302,6 +305,8 @@
             <textarea id="v-lineas">Deja de comer o esconde su comida
 Se esconde más de lo habitual
 Cambios en el arenero</textarea>
+            <label class="campo" for="v-cuerpo">Cuerpo (para cards de carrusel)</label>
+            <textarea id="v-cuerpo" style="min-height:70px"></textarea>
             <label class="campo" for="v-cta">Cierre / llamado a la acción</label>
             <input type="text" id="v-cta" value="Guarda este post 🐾 encuentravet.cl">
             <label class="campo" for="v-caption">Descripción del post (caption para Instagram)</label>
@@ -313,10 +318,16 @@ Encuentra veterinarios verificados cerca tuyo en encuentravet.cl — gratis.
             <div class="fila-botones"><button class="btn sec mini" id="btn-copiar-caption">Copiar descripción</button></div>
           </div>
           <div>
+            <div class="nav-cards" id="nav-cards" hidden>
+              <button class="btn sec mini" id="card-antes" aria-label="Card anterior">‹</button>
+              <span id="card-cuenta">Card 1 de 1</span>
+              <button class="btn sec mini" id="card-sig" aria-label="Card siguiente">›</button>
+            </div>
             <div class="lienzo-wrap"><canvas id="lienzo" width="1080" height="1350" aria-label="Vista previa del post"></canvas></div>
             <div class="fila-botones" style="justify-content:center">
               <button class="btn" id="btn-export-png">Descargar PNG</button>
               <button class="btn" id="btn-export-jpg">Descargar JPG</button>
+              <button class="btn" id="btn-export-carrusel" hidden>Descargar las 6 cards</button>
               <button class="btn sec" id="btn-add-feed">Agregar al feed</button>
             </div>
             <p class="aviso" style="text-align:center">Para publicar por la API de Instagram usa el JPG (es el único formato de imagen que acepta).</p>
@@ -892,8 +903,14 @@ function genCarrusel(pilar, objetivo, temaLibre, forzarIdx){
   const cards = [];
   cards.push({ num:'Card 1 · Portada', titulo: topic.e+' '+topic.t, cuerpo: hook+' →' });
   topic.puntos.forEach((p,i)=>{
-    const [cabeza, ...resto] = p.split(':');
-    cards.push({ num:'Card '+(i+2), titulo: resto.length? cabeza : 'Punto '+(i+1), cuerpo: resto.length? resto.join(':').trim() : p });
+    // Partir en «etiqueta: contenido» solo si la etiqueta se sostiene sola.
+    // Si no, la card va sin título y el texto completo manda: vale más una
+    // frase entera que un título cortado a la mitad.
+    const corte = p.indexOf(':');
+    const cabeza = corte > 0 ? p.slice(0, corte).trim() : '';
+    const cola = corte > 0 ? p.slice(corte+1).trim() : '';
+    const sirve = cabeza && cola && cabeza.length <= 42 && cola.length > 12;
+    cards.push({ num:'Card '+(i+2), titulo: sirve ? cabeza : '', cuerpo: sirve ? cola : p });
   });
   if(topic.cierre) cards.push({ num:'Card '+(cards.length+1)+' · Clave', titulo:'Lo importante', cuerpo: conMarca(topic.cierre) });
   cards.push({ num:'Card '+(cards.length+1)+' · Cierre', titulo: marca.nombre, cuerpo: ctaPara(pilar,objetivo)+' — '+marca.ig });
@@ -1425,6 +1442,49 @@ t6(ctx, o){ // Portada de carrusel blanca
   dibujaLogo(ctx, 260, 1210, 78, 'chip', o.c1, o.c2);
   ctx.fillStyle = '#8A80A6'; ctx.font = "600 30px 'Figtree', sans-serif";
   ctx.fillText(marca.ig+' · '+marca.web, 520, 1262);
+},
+tc(ctx, o){ // Card interior de carrusel: una idea, título y cuerpo
+  ctx.fillStyle = tinte(o.c1, 0.95); ctx.fillRect(0,0,W,H);
+  patronPatas(ctx, o.c1, 0.05);
+
+  // Se mide primero para que la tarjeta abrace el texto en vez de dejar un vacío.
+  const anchoTxt = W - 320;
+  const txtCuerpo = o.cuerpo || o.lineas.join(' ');
+  const hayTitulo = Boolean(o.titulo && o.titulo.trim());
+  // Sin título, el cuerpo es el protagonista y se dibuja más grande.
+  const pxCuerpo = hayTitulo ? 46 : 62;
+  const altoCuerpo = hayTitulo ? 62 : 82;
+  ctx.font = "800 78px 'Bricolage Grotesque', sans-serif";
+  const lTitulo = hayTitulo ? wrapLineas(ctx, o.titulo, anchoTxt).slice(0,3) : [];
+  ctx.font = (hayTitulo ? '500 ' : '600 ') + pxCuerpo + "px 'Figtree', sans-serif";
+  const lCuerpo = wrapLineas(ctx, txtCuerpo, anchoTxt).slice(0,7);
+
+  const alto = 210 + lTitulo.length*88 + (lCuerpo.length ? (hayTitulo ? 66 : 0) + lCuerpo.length*altoCuerpo : 0) + 60;
+  const cy = Math.max(190, Math.min(280, (H - 260 - alto) / 2 + 90));
+  ctx.save(); ctx.shadowColor = rgba(o.c1,0.18); ctx.shadowBlur = 50; ctx.shadowOffsetY = 18;
+  ctx.fillStyle = '#FFFFFF'; rr(ctx, 70, cy, W-140, alto, 38); ctx.fill(); ctx.restore();
+
+  pill(ctx, o.destacado, 130, cy + 60, {bg:o.c1, color:'#FFFFFF', px:34});
+
+  let y = cy + 250;
+  ctx.fillStyle = sombra(o.c1, 0.2);
+  ctx.font = "800 78px 'Bricolage Grotesque', sans-serif";
+  lTitulo.forEach(l=>{ ctx.fillText(l, 130, y); y += 88; });
+
+  if(lCuerpo.length){
+    if(hayTitulo){
+      y += 26;
+      ctx.fillStyle = o.c1; ctx.fillRect(130, y-46, 110, 7);
+      y += 40;
+    }
+    ctx.fillStyle = hayTitulo ? '#4A4048' : sombra(o.c1, 0.18);
+    ctx.font = (hayTitulo ? '500 ' : '600 ') + pxCuerpo + "px 'Figtree', sans-serif";
+    lCuerpo.forEach(l=>{ ctx.fillText(l, 130, y); y += altoCuerpo; });
+  }
+
+  dibujaLogo(ctx, 250, H-170, 66, 'chip', o.c1, o.c2);
+  ctx.fillStyle = '#8A80A6'; ctx.font = "600 30px 'Figtree', sans-serif";
+  ctx.textAlign = 'right'; ctx.fillText(marca.web, W-80, H-128); ctx.textAlign = 'left';
 }
 };
 
@@ -1446,6 +1506,7 @@ async function renderVisual(){
     titulo: $('#v-titulo').value || marca.propuesta.split('.')[0],
     destacado: $('#v-destacado').value || '🐾',
     lineas: $('#v-lineas').value.split('\n').map(s=>s.trim()).filter(Boolean),
+    cuerpo: $('#v-cuerpo').value,
     cta: $('#v-cta').value || marca.web
   };
   ctx.clearRect(0,0,W,H);
@@ -1505,14 +1566,116 @@ function reducirImagen(file, maxLado, mime, calidad){
   });
 }
 
+/* ---- Carrusel: todas las cards, no solo la portada ---- */
+let carrusel = null;   // { cards, idx }
+
+function pintarNavCards(){
+  const nav = $('#nav-cards'), btn = $('#btn-export-carrusel');
+  const hay = Boolean(carrusel && carrusel.cards.length > 1);
+  nav.hidden = !hay; btn.hidden = !hay;
+  if(!hay) return;
+  $('#card-cuenta').textContent = 'Card '+(carrusel.idx+1)+' de '+carrusel.cards.length;
+  btn.textContent = 'Descargar las '+carrusel.cards.length+' cards';
+  $('#card-antes').disabled = carrusel.idx === 0;
+  $('#card-sig').disabled = carrusel.idx === carrusel.cards.length-1;
+}
+
+/* Carga una card en el formulario. La portada usa la plantilla blanca;
+   las demás, la de card con título y cuerpo. */
+function mostrarCard(i){
+  if(!carrusel) return;
+  carrusel.idx = Math.max(0, Math.min(carrusel.cards.length-1, i));
+  const c = carrusel.cards[carrusel.idx];
+  const portada = carrusel.idx === 0;
+  $('#v-titulo').value = c.titulo;
+  $('#v-cuerpo').value = c.cuerpo || '';
+  $('#v-destacado').value = portada
+    ? ((c.titulo.match(/\d+/)||[])[0] || carrusel.emoji || '🐾')
+    : String(carrusel.idx+1)+'/'+carrusel.cards.length;
+  $('#v-plantilla').value = portada ? 't6' : 'tc';
+  pintarNavCards();
+  pedirRender();
+}
+
+function moverCard(d){ if(carrusel) mostrarCard(carrusel.idx + d); }
+
+/* Exporta las cards una por una, en orden, listas para subir como carrusel. */
+async function descargarCarrusel(){
+  if(!carrusel) return;
+  const btn = $('#btn-export-carrusel');
+  const original = btn.textContent;
+  const vueltaA = carrusel.idx;
+  btn.disabled = true;
+  const hechas = [];
+  try{
+    for(let i=0; i<carrusel.cards.length; i++){
+      btn.textContent = 'Generando card '+(i+1)+' de '+carrusel.cards.length+'…';
+      mostrarCard(i);
+      await renderVisual();
+      const blob = await new Promise(r=> $('#lienzo').toBlob(r, 'image/jpeg', 0.92));
+      if(!blob) continue;
+      const nombre = 'encuentravet-carrusel-'+String(i+1).padStart(2,'0')+'.jpg';
+      if(descargas){
+        try{ await descargas.save({ filename:nombre, data: blob }); hechas.push(nombre); }
+        catch(err){ if(err && err.code==='declined'){ toast('Descarga cancelada'); break; } throw err; }
+      } else {
+        hechas.push({ nombre, url: URL.createObjectURL(blob) });
+      }
+    }
+    if(descargas) toast(hechas.length+' cards descargadas ✓ Súbelas en ese orden');
+    else if(hechas.length) mostrarCardsEnPantalla(hechas);
+  }catch(e){
+    toast('No se pudieron descargar todas las cards');
+  }finally{
+    btn.disabled = false; btn.textContent = original;
+    mostrarCard(vueltaA);
+  }
+}
+
+/* Sin permiso de descarga (típico en el celular): se muestran para guardar a mano. */
+function mostrarCardsEnPantalla(lista){
+  const modal = document.createElement('div');
+  modal.className = 'modal-img';
+  const cajon = document.createElement('div');
+  cajon.style.cssText = 'display:flex; gap:12px; overflow-x:auto; max-width:92vw; padding:4px';
+  lista.forEach(it=>{
+    const im = document.createElement('img');
+    im.src = it.url; im.alt = it.nombre;
+    im.style.cssText = 'height:60vh; border-radius:12px; flex:0 0 auto';
+    cajon.appendChild(im);
+  });
+  const p = document.createElement('p');
+  p.textContent = 'Desliza para ver las '+lista.length+' cards. Mantén presionada cada una para guardarla, en este mismo orden.';
+  modal.appendChild(cajon); modal.appendChild(p);
+  modal.addEventListener('click', ev=>{
+    if(ev.target.tagName === 'IMG') return;
+    lista.forEach(it=> URL.revokeObjectURL(it.url));
+    modal.remove();
+  });
+  document.body.appendChild(modal);
+}
+
 function enviarAVisual(g, alReel){
   $('#v-tag').value = PILARES[g.pilar].nombre;
-  $('#v-titulo').value = g.titulo;
-  const num = (g.titulo.match(/\d+/)||[])[0];
-  $('#v-destacado').value = num || g.emoji || '🐾';
-  if(g.puntos) $('#v-lineas').value = g.puntos.slice(0,4).map(p=> p.split(':')[0]).join('\n');
   $('#v-caption').value = g.caption || '';
-  $('#v-plantilla').value = g.formato==='carrusel' ? 't6' : (num ? 't1' : 't2');
+  const num = (g.titulo.match(/\d+/)||[])[0];
+
+  if(g.formato === 'carrusel' && g.cards && g.cards.length){
+    // Cada card es su propia imagen: se cargan todas y se navegan.
+    carrusel = { cards: g.cards.map(c=>({ titulo:c.titulo, cuerpo:c.cuerpo })), idx:0, emoji:g.emoji };
+    if(g.puntos) $('#v-lineas').value = g.puntos.slice(0,4).map(p=> p.split(':')[0]).join('\n');
+    mostrarCard(0);
+    activarPane('visual');
+    if(!alReel){ toast(g.cards.length+' cards cargadas: navégalas con ‹ ›'); return; }
+  } else {
+    carrusel = null;
+    pintarNavCards();
+    $('#v-titulo').value = g.titulo;
+    $('#v-cuerpo').value = '';
+    $('#v-destacado').value = num || g.emoji || '🐾';
+    if(g.puntos) $('#v-lineas').value = g.puntos.slice(0,4).map(p=> p.split(':')[0]).join('\n');
+    $('#v-plantilla').value = num ? 't1' : 't2';
+  }
   activarPane('visual');
   pedirRender();
   if(alReel){
@@ -1944,9 +2107,12 @@ let descargas = null;
     fotoSel = Math.max(0, fotoSel-1);
     lzSet(LZ.fotos, fotosData); renderThumbs(); pedirRender();
   });
-  ['v-plantilla','v-tag','v-destacado','v-titulo','v-lineas','v-cta'].forEach(id=>
+  ['v-plantilla','v-tag','v-destacado','v-titulo','v-lineas','v-cuerpo','v-cta'].forEach(id=>
     $('#'+id).addEventListener('input', pedirRender));
   $('#btn-copiar-caption').addEventListener('click', ()=> copiar($('#v-caption').value));
+  $('#card-antes').addEventListener('click', ()=> moverCard(-1));
+  $('#card-sig').addEventListener('click', ()=> moverCard(1));
+  $('#btn-export-carrusel').addEventListener('click', descargarCarrusel);
   $('#btn-reel-crear').addEventListener('click', crearReel);
   $('#btn-reel-previa').addEventListener('click', previaReel);
   ['reel-seg','reel-fondo'].forEach(id=> $('#'+id).addEventListener('change', pintarPrimerCuadroReel));
