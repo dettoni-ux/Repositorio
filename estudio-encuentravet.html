@@ -1,0 +1,1977 @@
+<meta charset="utf-8">
+<title>Estudio EncuentraVet</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<script src="https://cdn.jsdelivr.net/npm/mp4-muxer@5.2.2/build/mp4-muxer.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --bg:#FDF8FA; --panel:#FFFFFF; --panel2:#FDEEF3; --ink:#241A1F; --ink2:#7A6870;
+    --line:#F2DFE6; --morado:#CE1F63; --morado-fuerte:#8E1145; --morado-suave:#FDE7EF;
+    --amarillo:#0B7A54; --amarillo-bg:#DFF5EB; --negro:#241A1F; --negro-txt:#FFFFFF;
+    --hist:#CE1F63; --hist-bg:#FDE7EF; --reel:#0B7A54; --reel-bg:#DCF3E9;
+    --carr:#4A5568; --carr-bg:#EDF0F3; --ok:#0B7A54; --shadow:0 1px 2px rgba(36,26,31,.05), 0 8px 24px rgba(206,31,99,.07);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#161013; --panel:#201820; --panel2:#2B2028; --ink:#F6EAEF; --ink2:#B79FAA;
+      --line:#3A2B33; --morado:#FF6FA5; --morado-fuerte:#FF9CC1; --morado-suave:#47182F;
+      --amarillo:#3DD68C; --amarillo-bg:#10352A; --negro:#F1E9EE; --negro-txt:#161013;
+      --hist:#FF6FA5; --hist-bg:#47182F; --reel:#3DD68C; --reel-bg:#10352A;
+      --carr:#A8B8CC; --carr-bg:#2A3340; --ok:#3DD68C; --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#161013; --panel:#201820; --panel2:#2B2028; --ink:#F6EAEF; --ink2:#B79FAA;
+    --line:#3A2B33; --morado:#FF6FA5; --morado-fuerte:#FF9CC1; --morado-suave:#47182F;
+    --amarillo:#3DD68C; --amarillo-bg:#10352A; --negro:#F1E9EE; --negro-txt:#161013;
+    --hist:#FF6FA5; --hist-bg:#47182F; --reel:#3DD68C; --reel-bg:#10352A;
+    --carr:#A8B8CC; --carr-bg:#2A3340; --ok:#3DD68C; --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.4);
+  }
+  *{box-sizing:border-box}
+  body{
+    background:var(--bg); color:var(--ink); margin:0;
+    font-family:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;
+    font-size:16px; line-height:1.55;
+  }
+  h1,h2,h3,h4{font-family:'Bricolage Grotesque','Figtree',system-ui,sans-serif; text-wrap:balance; margin:0}
+  .wrap{max-width:1080px; margin:0 auto; padding:0 20px 80px}
+  header.top{padding:34px 0 18px; display:flex; flex-wrap:wrap; align-items:flex-end; gap:16px; justify-content:space-between}
+  .marca-head .kicker{font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--amarillo)}
+  .marca-head h1{font-size:clamp(28px,4.4vw,40px); font-weight:800; letter-spacing:-.01em}
+  .marca-head p{margin:6px 0 0; color:var(--ink2); max-width:56ch}
+  nav.tabs{display:flex; gap:6px; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:6px; box-shadow:var(--shadow); position:sticky; top:12px; z-index:20; width:max-content; max-width:100%; overflow-x:auto}
+  nav.tabs button{
+    appearance:none; border:0; background:transparent; color:var(--ink2); font:600 15px 'Figtree',sans-serif;
+    padding:9px 16px; border-radius:9px; cursor:pointer; white-space:nowrap;
+  }
+  nav.tabs button[aria-selected="true"]{background:var(--morado); color:#fff}
+  :root[data-theme="dark"] nav.tabs button[aria-selected="true"]{color:#161013}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) nav.tabs button[aria-selected="true"]{color:#161013} }
+  nav.tabs button:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible{outline:2px solid var(--morado); outline-offset:2px}
+  main section.pane{display:none; margin-top:26px}
+  main section.pane.activa{display:block}
+  .panel{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:24px; box-shadow:var(--shadow)}
+  .panel + .panel{margin-top:18px}
+  .panel h2{font-size:21px; font-weight:700; margin-bottom:4px; color:var(--ink)}
+  .panel .sub{color:var(--ink2); font-size:14.5px; margin:0 0 16px}
+  label.campo{display:block; font-size:12.5px; font-weight:800; color:var(--ink2); margin:14px 0 6px; letter-spacing:.05em; text-transform:uppercase}
+  input[type=text], select, textarea{
+    width:100%; background:var(--panel); color:var(--ink); border:1.5px solid var(--line); border-radius:10px;
+    padding:10px 12px; font:500 15px 'Figtree',sans-serif;
+  }
+  textarea{resize:vertical; min-height:74px; line-height:1.5}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:0 22px}
+  @media (max-width:720px){ .grid2{grid-template-columns:1fr} }
+  .controles{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:14px 16px; align-items:end}
+  .seg{display:flex; background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:4px; gap:4px}
+  .seg button{flex:1; border:0; background:transparent; color:var(--ink2); font:600 14px 'Figtree',sans-serif; padding:8px 6px; border-radius:7px; cursor:pointer}
+  .seg button[aria-pressed="true"]{background:var(--panel); color:var(--ink); box-shadow:0 1px 3px rgba(20,36,61,.15)}
+  .btn{
+    appearance:none; border:0; border-radius:11px; cursor:pointer; font:700 15px 'Figtree',sans-serif;
+    padding:12px 20px; background:var(--morado); color:#fff;
+  }
+  :root[data-theme="dark"] .btn{color:#161013}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .btn{color:#161013} }
+  .btn.sec{background:var(--negro); color:var(--negro-txt)}
+  .btn.mini{padding:7px 13px; font-size:13.5px; border-radius:9px}
+  .btn:active{transform:translateY(1px)}
+  .fila-botones{display:flex; flex-wrap:wrap; gap:10px; margin-top:16px}
+  .chip{display:inline-block; font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:3px 10px; border-radius:99px}
+  .chip.historia{background:var(--hist-bg); color:var(--hist)}
+  .chip.reel{background:var(--reel-bg); color:var(--reel)}
+  .chip.carrusel{background:var(--carr-bg); color:var(--carr)}
+  .chip.pilar{background:var(--morado-suave); color:var(--morado-fuerte)}
+  .resultado{margin-top:22px}
+  .resultado .cab{display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:6px}
+  .resultado h3{font-size:24px; font-weight:800; letter-spacing:-.01em; margin:2px 0 12px}
+  .tarjetas{display:grid; gap:12px}
+  .tarjeta{background:var(--panel2); border:1px solid var(--line); border-radius:12px; padding:15px 17px}
+  .tarjeta .num{font-size:11.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--amarillo); margin-bottom:4px}
+  .tarjeta .titulo{font-weight:700; font-size:16px}
+  .tarjeta p{margin:6px 0 0; font-size:15px}
+  .tarjeta .meta{margin-top:8px; font-size:13.5px; color:var(--ink2)}
+  .tarjeta .meta strong{color:var(--ink)}
+  .bloque-caption{background:var(--panel2); border-radius:12px; padding:14px 16px; margin-top:14px; font-size:14.5px; white-space:pre-wrap}
+  .bloque-caption .etq{font-size:11.5px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--ink2); margin-bottom:6px}
+  .aviso{font-size:13.5px; color:var(--ink2); margin-top:10px}
+  .toast{
+    position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(20px);
+    background:var(--ink); color:var(--bg); font:600 14px 'Figtree',sans-serif;
+    padding:10px 18px; border-radius:99px; opacity:0; pointer-events:none; transition:opacity .2s, transform .2s;
+  }
+  .toast.ver{opacity:1; transform:translateX(-50%) translateY(0)}
+  @media (prefers-reduced-motion: reduce){ .toast{transition:none} .btn:active{transform:none} }
+  table.cal{width:100%; border-collapse:collapse; font-size:14.5px}
+  table.cal th{font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink2); text-align:left; padding:8px 10px; border-bottom:1px solid var(--line)}
+  table.cal td{padding:9px 10px; border-bottom:1px solid var(--line); vertical-align:top}
+  table.cal td.dia{font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:600}
+  .scroll-x{overflow-x:auto}
+  .kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin-top:8px}
+  .kpi{background:var(--panel2); border:1px solid var(--line); border-radius:12px; padding:13px 15px; font-size:14px}
+  .kpi b{display:block; font-size:15px; margin-bottom:2px}
+  .semana{border-left:3px solid var(--amarillo); padding:2px 0 2px 14px; margin:14px 0}
+  .semana b{font-family:'Bricolage Grotesque',sans-serif; font-size:16px}
+  .semana p{margin:3px 0 0; color:var(--ink2); font-size:14.5px}
+  .fecha-esp{display:flex; gap:10px; align-items:baseline; background:var(--morado-suave); border-radius:10px; padding:10px 14px; margin-top:10px; font-size:14.5px}
+  .fecha-esp .d{font-weight:800; color:var(--morado-fuerte); white-space:nowrap}
+  .guardado-item{display:flex; gap:14px; align-items:flex-start; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--line)}
+  .guardado-item:last-child{border-bottom:0}
+  .guardado-item .t{font-weight:700}
+  .guardado-item .m{font-size:13px; color:var(--ink2); margin-top:2px}
+  .vacio{color:var(--ink2); text-align:center; padding:30px 10px; font-size:15px}
+  .dato-marca{display:flex; gap:8px; align-items:baseline; font-size:14.5px; padding:6px 0}
+  .dato-marca::before{content:"✓"; color:var(--ok); font-weight:800}
+  .pie{margin-top:44px; text-align:center; color:var(--ink2); font-size:13px}
+  .estado-guardado{font-size:13px; color:var(--ok); font-weight:600; margin-left:10px; opacity:0; transition:opacity .3s}
+  .estado-guardado.ver{opacity:1}
+  /* --- Estudio visual --- */
+  .logo-caja{background:var(--morado); border-radius:12px; padding:16px; display:flex; align-items:center; justify-content:center; min-height:82px}
+  .logo-caja img{max-height:60px; max-width:100%}
+  .logo-caja .sin-logo{color:#fff; font:600 14px 'Figtree',sans-serif; opacity:.85}
+  .thumbs{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+  .thumbs img{width:64px; height:64px; object-fit:cover; border-radius:9px; cursor:pointer; border:3px solid transparent}
+  .thumbs img.sel{border-color:var(--morado)}
+  input[type=file]{display:none}
+  input[type=color]{width:100%; height:42px; border:1px solid var(--line); border-radius:10px; background:var(--bg); padding:4px; cursor:pointer}
+  .lienzo-wrap{display:flex; justify-content:center}
+  .lienzo-wrap canvas{width:100%; max-width:380px; height:auto; border-radius:14px; border:1px solid var(--line); box-shadow:var(--shadow)}
+  .feed-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:5px; margin-top:12px; max-width:520px}
+  .feed-grid img{width:100%; aspect-ratio:4/5; object-fit:cover; border-radius:4px; border:1px solid var(--line)}
+  .reel-zona{display:grid; grid-template-columns:260px 1fr; gap:22px; align-items:start}
+  @media (max-width:720px){ .reel-zona{grid-template-columns:1fr} }
+  .reel-zona canvas{width:100%; max-width:260px; height:auto; border-radius:14px; border:1px solid var(--line); background:#000}
+  .barra{height:8px; background:var(--panel2); border-radius:99px; overflow:hidden; margin-top:12px}
+  .barra i{display:block; height:100%; width:0; background:var(--morado); transition:width .2s}
+  .voz-lista{display:flex; flex-direction:column; gap:8px; margin-top:10px}
+  .voz-op{display:flex; align-items:center; gap:12px; padding:12px 14px; border:1.5px solid var(--line);
+    border-radius:12px; cursor:pointer; background:var(--panel); text-align:left; width:100%; font:inherit; color:inherit}
+  .voz-op:hover{border-color:var(--morado)}
+  .voz-op[aria-checked="true"]{border-color:var(--morado); background:var(--morado-suave)}
+  .voz-op .punto{width:18px; height:18px; border-radius:50%; border:2px solid var(--line); flex:none}
+  .voz-op[aria-checked="true"] .punto{border-color:var(--morado); background:var(--morado); box-shadow:inset 0 0 0 3px var(--panel)}
+  .voz-op .n{font-weight:700}
+  .voz-op .d{font-size:13px; color:var(--ink2)}
+  .voz-op .ban{margin-left:auto; font-size:11.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase;
+    padding:3px 9px; border-radius:99px; background:var(--amarillo-bg); color:var(--amarillo)}
+  .modal-img{position:fixed; inset:0; background:rgba(22,16,19,.86); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; z-index:50; padding:20px}
+  .modal-img img{max-width:min(92vw,420px); max-height:70vh; border-radius:12px}
+  .modal-img p{color:#fff; font-size:14px; text-align:center; max-width:40ch}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="marca-head">
+      <div class="kicker">EncuentraVet · encuentravet.cl</div>
+      <h1>Estudio de Contenido</h1>
+      <p>Genera historias, reels, carruseles y tu estrategia mensual, con la voz y los datos de la marca siempre a mano.</p>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Secciones">
+      <button role="tab" aria-selected="true" data-pane="generador">✨ Generador</button>
+      <button role="tab" aria-selected="false" data-pane="visual">🎨 Visual</button>
+      <button role="tab" aria-selected="false" data-pane="estrategia">📅 Estrategia mensual</button>
+      <button role="tab" aria-selected="false" data-pane="marca">🐾 Marca</button>
+      <button role="tab" aria-selected="false" data-pane="guardados">💾 Guardados</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ============ GENERADOR ============ -->
+    <section class="pane activa" id="pane-generador" role="tabpanel">
+      <div class="panel">
+        <h2>Generador de contenido</h2>
+        <p class="sub">Elige formato y pilar, agrega un tema si quieres, y genera. Cada clic entrega una variante nueva lista para producir.</p>
+        <div class="controles">
+          <div>
+            <label class="campo" id="lbl-formato">Formato</label>
+            <div class="seg" role="group" aria-labelledby="lbl-formato" id="seg-formato">
+              <button aria-pressed="true" data-v="historia">Historia</button>
+              <button aria-pressed="false" data-v="reel">Reel</button>
+              <button aria-pressed="false" data-v="carrusel">Carrusel</button>
+            </div>
+          </div>
+          <div>
+            <label class="campo" for="sel-pilar">Pilar de contenido</label>
+            <select id="sel-pilar"></select>
+          </div>
+          <div>
+            <label class="campo" for="sel-objetivo">Objetivo</label>
+            <select id="sel-objetivo">
+              <option value="alcance">Alcance / descubrimiento</option>
+              <option value="interaccion">Interacción y guardados</option>
+              <option value="tutores">Llevar tutores a la web</option>
+              <option value="vets">Captar veterinarios</option>
+            </select>
+          </div>
+          <div>
+            <label class="campo" for="inp-tema">Tema específico (opcional)</label>
+            <input type="text" id="inp-tema" placeholder="Ej: alergias en primavera">
+          </div>
+        </div>
+        <div class="fila-botones">
+          <button class="btn" id="btn-generar">Generar contenido</button>
+        </div>
+      </div>
+      <div id="zona-resultado"></div>
+    </section>
+
+    <!-- ============ ESTUDIO VISUAL ============ -->
+    <section class="pane" id="pane-visual" role="tabpanel">
+      <div class="panel">
+        <h2>Identidad y fotos</h2>
+        <p class="sub">Sube el logo (idealmente la versión blanca en PNG con fondo transparente) y tus fotos de mascotas. Todo queda guardado en este navegador y las plantillas los usan automáticamente.</p>
+        <div class="grid2">
+          <div>
+            <label class="campo">Logo de la marca</label>
+            <div class="logo-caja" id="logo-caja"><span class="sin-logo">Sin logo: se usa el nombre de la marca</span></div>
+            <div class="fila-botones">
+              <label class="btn sec mini" for="inp-logo">Subir logo</label>
+              <input type="file" id="inp-logo" accept="image/png,image/jpeg,image/webp,image/svg+xml">
+              <button class="btn sec mini" id="btn-quitar-logo">Quitar</button>
+            </div>
+          </div>
+          <div>
+            <label class="campo">Biblioteca de fotos (haz clic para elegir la activa)</label>
+            <div class="thumbs" id="thumbs-fotos"></div>
+            <div class="fila-botones">
+              <label class="btn sec mini" for="inp-fotos">Subir fotos</label>
+              <input type="file" id="inp-fotos" accept="image/png,image/jpeg,image/webp" multiple>
+              <button class="btn sec mini" id="btn-borrar-foto">Borrar foto activa</button>
+            </div>
+            <p class="aviso">Se comprimen automáticamente. Fuentes gratis recomendadas: Unsplash, Pexels y Pixabay (busca «dog studio», «cat portrait»).</p>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Diseñador de posts</h2>
+        <p class="sub">Plantillas en morado y amarillo al estilo de tu referencia. Edita los textos, elige foto y exporta el PNG listo para publicar (1080 × 1350).</p>
+        <div class="grid2">
+          <div>
+            <label class="campo" for="v-plantilla">Plantilla</label>
+            <select id="v-plantilla">
+              <option value="t1">Número gigante (lila claro)</option>
+              <option value="t2">Foto protagonista (overlay morado)</option>
+              <option value="t3">Tarjeta central (tipo «polémica»)</option>
+              <option value="t4">Checklist morado</option>
+              <option value="t5">Anuncio amarillo</option>
+              <option value="t6">Portada de carrusel (blanca)</option>
+            </select>
+            <label class="campo" for="v-tag">Etiqueta</label>
+            <input type="text" id="v-tag" value="Tip EncuentraVet">
+            <label class="campo" for="v-destacado">Número o palabra destacada</label>
+            <input type="text" id="v-destacado" value="5">
+            <label class="campo" for="v-titulo">Título</label>
+            <textarea id="v-titulo" style="min-height:60px">5 señales de que tu gato necesita un veterinario</textarea>
+            <label class="campo" for="v-lineas">Líneas (para checklist, una por línea)</label>
+            <textarea id="v-lineas">Deja de comer o esconde su comida
+Se esconde más de lo habitual
+Cambios en el arenero</textarea>
+            <label class="campo" for="v-cta">Cierre / llamado a la acción</label>
+            <input type="text" id="v-cta" value="Guarda este post 🐾 encuentravet.cl">
+            <label class="campo" for="v-caption">Descripción del post (caption para Instagram)</label>
+            <textarea id="v-caption" style="min-height:110px">🐾 5 señales de que tu gato necesita un veterinario. Desliza y guarda este post para cuando lo necesites.
+
+Encuentra veterinarios verificados cerca tuyo en encuentravet.cl — gratis.
+
+#EncuentraVet #VeterinarioChile #GatosChile</textarea>
+            <div class="fila-botones"><button class="btn sec mini" id="btn-copiar-caption">Copiar descripción</button></div>
+          </div>
+          <div>
+            <div class="lienzo-wrap"><canvas id="lienzo" width="1080" height="1350" aria-label="Vista previa del post"></canvas></div>
+            <div class="fila-botones" style="justify-content:center">
+              <button class="btn" id="btn-export-png">Descargar PNG</button>
+              <button class="btn" id="btn-export-jpg">Descargar JPG</button>
+              <button class="btn sec" id="btn-add-feed">Agregar al feed</button>
+            </div>
+            <p class="aviso" style="text-align:center">Para publicar por la API de Instagram usa el JPG (es el único formato de imagen que acepta).</p>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Crear reel</h2>
+        <p class="sub">Convierte los textos de arriba en un reel vertical animado (1080 × 1920) y descárgalo listo para subir. Usa la foto que tengas seleccionada.</p>
+        <div class="reel-zona">
+          <div>
+            <canvas id="lienzo-reel" width="1080" height="1920" aria-label="Vista previa del reel"></canvas>
+            <div class="barra" id="reel-barra"><i></i></div>
+          </div>
+          <div>
+            <div class="controles">
+              <div>
+                <label class="campo" for="reel-seg">Segundos por línea</label>
+                <select id="reel-seg">
+                  <option value="2">2 s (ágil)</option>
+                  <option value="2.5" selected>2,5 s (equilibrado)</option>
+                  <option value="3">3 s (pausado)</option>
+                </select>
+              </div>
+              <div>
+                <label class="campo" for="reel-fondo">Fondo</label>
+                <select id="reel-fondo">
+                  <option value="degradado">Degradado de marca</option>
+                  <option value="foto">Foto con velo de marca</option>
+                  <option value="claro">Claro con acentos</option>
+                </select>
+              </div>
+            </div>
+            <div class="fila-botones">
+              <button class="btn sec" id="btn-reel-previa">▶ Ver previa</button>
+              <button class="btn" id="btn-reel-crear">🎬 Generar reel MP4</button>
+            </div>
+            <p class="aviso" id="reel-estado">La grabación ocurre en tu navegador: dura lo mismo que el reel y no sube nada a ningún servidor.</p>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Vista previa del feed</h2>
+        <p class="sub">Así se verá tu perfil: agrega diseños desde el botón «Agregar al feed» y revisa la armonía del conjunto.</p>
+        <div class="feed-grid" id="feed-grid"></div>
+        <div class="fila-botones"><button class="btn sec mini" id="btn-vaciar-feed">Vaciar feed</button></div>
+      </div>
+    </section>
+
+    <!-- ============ ESTRATEGIA ============ -->
+    <section class="pane" id="pane-estrategia" role="tabpanel">
+      <div class="panel">
+        <h2>Estrategia de marketing mensual</h2>
+        <p class="sub">Genera el plan del mes: tema central, focos semanales, calendario de publicaciones, fechas clave y KPIs. Desde el calendario puedes saltar directo al generador.</p>
+        <div class="controles">
+          <div>
+            <label class="campo" for="sel-mes">Mes</label>
+            <select id="sel-mes"></select>
+          </div>
+          <div>
+            <label class="campo" for="sel-obj-mes">Objetivo principal del mes</label>
+            <select id="sel-obj-mes">
+              <option value="alcance">Dar a conocer la marca (alcance)</option>
+              <option value="interaccion">Construir comunidad (interacción)</option>
+              <option value="tutores">Llevar tutores a la web (conversión)</option>
+              <option value="vets">Captar veterinarios (B2B)</option>
+            </select>
+          </div>
+          <div>
+            <label class="campo" for="sel-freq">Publicaciones por semana</label>
+            <select id="sel-freq">
+              <option value="3">3 (Lun · Mié · Vie)</option>
+              <option value="4" selected>4 (Lun · Mar · Jue · Vie)</option>
+              <option value="5">5 (Lun a Vie)</option>
+            </select>
+          </div>
+        </div>
+        <div class="fila-botones">
+          <button class="btn" id="btn-estrategia">Generar estrategia</button>
+        </div>
+      </div>
+      <div id="zona-estrategia"></div>
+    </section>
+
+    <!-- ============ MARCA ============ -->
+    <section class="pane" id="pane-marca" role="tabpanel">
+      <div class="panel">
+        <h2>Centro de marca <span class="estado-guardado" id="marca-ok">Guardado ✓</span></h2>
+        <p class="sub">Esta información alimenta todo lo que genera el estudio. Viene pre-cargada con lo recopilado de encuentravet.cl — edítala cuando la marca evolucione y se guarda sola.</p>
+        <div class="grid2">
+          <div>
+            <label class="campo" for="b-nombre">Nombre de la marca</label>
+            <input type="text" id="b-nombre">
+            <label class="campo" for="b-web">Sitio web</label>
+            <input type="text" id="b-web">
+            <label class="campo" for="b-ig">Instagram (usuario)</label>
+            <input type="text" id="b-ig">
+            <label class="campo" for="b-slogan">Slogan</label>
+            <input type="text" id="b-slogan">
+            <div class="grid2">
+              <div><label class="campo" for="b-c1">Color principal (morado)</label><input type="color" id="b-c1"></div>
+              <div><label class="campo" for="b-c2">Color acento (amarillo)</label><input type="color" id="b-c2"></div>
+            </div>
+            <label class="campo" for="b-bio">Bio de Instagram</label>
+            <textarea id="b-bio"></textarea>
+            <label class="campo" for="b-propuesta">Propuesta de valor</label>
+            <textarea id="b-propuesta"></textarea>
+          </div>
+          <div>
+            <label class="campo" for="b-tono">Tono de comunicación</label>
+            <textarea id="b-tono"></textarea>
+            <label class="campo" for="b-publico">Públicos</label>
+            <textarea id="b-publico"></textarea>
+            <label class="campo" for="b-hashtags">Hashtags base (separados por espacios)</label>
+            <textarea id="b-hashtags"></textarea>
+          </div>
+        </div>
+        <label class="campo">Voz de las narraciones</label>
+        <p class="aviso" style="margin:0 0 4px">Con esta voz se narran los cortometrajes. Son las voces guardadas en tu cuenta de ElevenLabs.</p>
+        <div class="voz-lista" id="voz-lista" role="radiogroup" aria-label="Voz de las narraciones"></div>
+        <p class="aviso" id="voz-elegida"></p>
+
+        <label class="campo" for="b-datos">Datos clave de la marca (uno por línea — el generador los usa como argumentos)</label>
+        <textarea id="b-datos" style="min-height:150px"></textarea>
+        <div id="lista-datos" style="margin-top:14px"></div>
+        <div class="fila-botones">
+          <button class="btn sec" id="btn-restaurar">Restaurar datos originales de encuentravet.cl</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ GUARDADOS ============ -->
+    <section class="pane" id="pane-guardados" role="tabpanel">
+      <div class="panel">
+        <h2>Contenido guardado</h2>
+        <p class="sub">Todo lo que marcaste con «Guardar». Queda almacenado en este navegador.</p>
+        <div id="lista-guardados"></div>
+        <div class="fila-botones">
+          <button class="btn sec" id="btn-export-guardados">Copiar todo</button>
+          <button class="btn sec" id="btn-descargar-guardados" hidden>Descargar .md</button>
+          <button class="btn sec" id="btn-vaciar">Vaciar guardados</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <p class="pie">Estudio de Contenido · EncuentraVet — hecho para crear con constancia, no con apuro.</p>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+'use strict';
+/* ============================================================
+   MARCA — información recopilada de www.encuentravet.cl
+   ============================================================ */
+const MARCA_ORIGINAL = {
+  nombre: 'EncuentraVet',
+  web: 'encuentravet.cl',
+  ig: '@encuentravet',
+  slogan: 'Veterinarios Certificados. Cerca de ti',
+  voz: 'ClNifCEVq1smkl4M3aTk',
+  c1: '#5B2E7E',
+  c2: '#FFD84D',
+  bio: '🐾 Veterinarios Certificados. Cerca de ti 🔵 Título y cédula verificados 📍 Busca por comuna y agenda con disponibilidad real 👇 Encuentra tu veterinario',
+  propuesta: 'Encuentra al veterinario ideal cerca de ti. Directorio de veterinarios certificados en Chile: busca por comuna o región, compara y agenda con disponibilidad real, sin llamar. Gratis para dueños de mascotas.',
+  tono: 'Cercano, claro y confiable. Chileno sin caricatura. Empático con los tutores de mascotas, profesional y directo con los veterinarios. Habla de «tu mascota» y «tu veterinario», evita jerga técnica innecesaria y nunca genera pánico: informa y acompaña.',
+  publico: 'Tutores de mascotas en Chile (buscan veterinario confiable cerca, sin perder tiempo llamando) y médicos veterinarios (buscan visibilidad, pacientes nuevos y una agenda ordenada).',
+  hashtags: '#EncuentraVet #VeterinarioChile #MascotasChile #PerrosChile #GatosChile #TenenciaResponsable #VeterinarioVerificado #SaludAnimal',
+  datos: [
+    'Verificamos cédula de identidad y certificado de título universitario con código de verificación: solo entonces se entrega la insignia azul.',
+    'Cobertura de búsqueda en las 346 comunas de Chile.',
+    'Las horas que ves están libres de verdad: salen del calendario del propio profesional, sin llamar.',
+    'Videoconsulta para cuando no puedes salir de casa.',
+    'Urgencias 24 horas, cuando más importa.',
+    'Para dueños de mascotas es gratis: la consulta se paga directo al profesional.',
+    'Cada profesional define sus propios precios.',
+    'Profesionales fundadores: plan Premium sin costo por un mes.',
+    'Un profesional puede publicar su perfil desde el primer día; la certificación entrega el sello y la prioridad.'
+  ].join('\n')
+};
+
+let marca = cargarMarca();
+function cargarMarca(){
+  try{
+    const raw = localStorage.getItem('evst_marca');
+    if(raw) return Object.assign({}, MARCA_ORIGINAL, JSON.parse(raw));
+  }catch(e){}
+  return Object.assign({}, MARCA_ORIGINAL);
+}
+function guardarMarca(){
+  try{ localStorage.setItem('evst_marca', JSON.stringify(marca)); }catch(e){}
+}
+function datosMarca(){ return marca.datos.split('\n').map(s=>s.trim()).filter(Boolean); }
+
+/* ============================================================
+   BANCOS DE CONTENIDO
+   ============================================================ */
+const PILARES = {
+  educacion:  { nombre:'Educación y bienestar',    publico:'tutores' },
+  confianza:  { nombre:'Confianza y verificación', publico:'tutores' },
+  producto:   { nombre:'Cómo funciona',            publico:'tutores' },
+  comunidad:  { nombre:'Comunidad y comunas',      publico:'tutores' },
+  b2b:        { nombre:'Para veterinarios',        publico:'vets'    },
+  tendencia:  { nombre:'Humor y tendencias',       publico:'tutores' }
+};
+
+const TOPICS = {
+educacion: [
+  { t:'Golpe de calor: actúa a tiempo', e:'🥵', puntos:[
+    'Señales de alerta: jadeo excesivo, encías muy rojas, saliva espesa, letargo o tambaleo.',
+    'Qué hacer al tiro: llévalo a la sombra, ofrece agua fresca (no helada) y moja patas, panza y cuello.',
+    'Qué NO hacer: nunca lo dejes en el auto, ni «por 5 minutos». La temperatura sube más rápido de lo que crees.',
+    'Si no mejora en minutos, es una urgencia: contacta a un veterinario de inmediato.' ],
+    cierre:'El golpe de calor puede ser fatal en menos de una hora. Ten a tu veterinario ubicado antes de necesitarlo.' },
+  { t:'6 alimentos que jamás debes darle a tu perro', e:'🚫', puntos:[
+    'Chocolate: la teobromina es tóxica incluso en cantidades pequeñas.',
+    'Cebolla y ajo: dañan los glóbulos rojos y pueden causar anemia.',
+    'Uvas y pasas: pueden provocar falla renal aguda.',
+    'Palta y huesos cocidos: la palta contiene persina y los huesos cocidos se astillan.',
+    'Endulzante xilitol (chicles, galletas «sin azúcar»): baja el azúcar de golpe y daña el hígado.' ],
+    cierre:'¿Comió algo de esta lista? No esperes síntomas: consulta de inmediato.' },
+  { t:'Señales de urgencia que no debes ignorar', e:'🚨', puntos:[
+    'No come ni toma agua hace más de 24 horas.',
+    'Vómitos o diarrea repetidos, sobre todo con sangre.',
+    'Dificultad para respirar, encías pálidas o azuladas.',
+    'Abdomen hinchado y duro, o intentos de vomitar sin lograrlo.',
+    'Convulsiones, cojera súbita intensa o no puede orinar.' ],
+    cierre:'Ante cualquiera de estas señales, no busques en foros: busca un veterinario. Hay urgencias 24 horas.' },
+  { t:'Calendario de vacunas del cachorro', e:'💉', puntos:[
+    '6–8 semanas: primera dosis de la vacuna múltiple (distemper, parvovirus y más).',
+    '10–12 semanas: refuerzo de la múltiple.',
+    '14–16 semanas: último refuerzo + antirrábica (obligatoria en Chile).',
+    'Después: refuerzo anual de múltiple y antirrábica, de por vida.' ],
+    cierre:'Ojo: hasta completar sus vacunas, tu cachorro no debería pasear por la calle ni juntarse con perros desconocidos.' },
+  { t:'Desparasitación: la rutina que casi todos olvidan', e:'🪱', puntos:[
+    'Interna (comprimido): cada 3 meses en adultos; los cachorros necesitan un esquema más frecuente.',
+    'Externa (pipeta, comprimido o collar): todos los meses, todo el año.',
+    '¿Gato que no sale de la casa? También: los parásitos entran en zapatos, plantas y otras mascotas.',
+    'El producto y la dosis correcta dependen del peso y la especie: confírmalo con tu veterinario.' ],
+    cierre:'Un recordatorio en el celular cada 3 meses te ahorra sustos (y platas) después.' },
+  { t:'Tu gato está estresado y lo está diciendo así', e:'🐱', puntos:[
+    'Se esconde más de lo normal o deja de comer.',
+    'Orina fuera del arenero (no es «maldad»: es una señal).',
+    'Se sobre-acicala hasta dejarse zonas sin pelo.',
+    'Cambios en la casa —mudanzas, visitas, otro animal— son los gatillantes más comunes.' ],
+    cierre:'El estrés sostenido enferma: si las señales no ceden, una videoconsulta es un buen primer paso.' },
+  { t:'Fuegos artificiales y ruidos fuertes: plan anti-pánico', e:'🎆', puntos:[
+    'Prepara un refugio: una pieza interior, con música suave y su cama o mantita.',
+    'Cierra ventanas y revisa cercos: la mayoría de los extravíos ocurren estas noches.',
+    'No lo retes ni lo fuerces a «enfrentar el miedo»: acompáñalo con calma.',
+    'Si el pánico es severo, existen manejos y fármacos: consúltalo ANTES de la fecha con tu veterinario.' ],
+    cierre:'El chip y una placa con tu teléfono son el seguro de vida de estas fechas.' },
+  { t:'Esterilización: mitos y realidades', e:'✂️', puntos:[
+    'Mito: «tiene que tener una camada primero». Realidad: no existe beneficio médico en ello.',
+    'Realidad: reduce el riesgo de tumores mamarios, piometra e incidentes por escape.',
+    'Mito: «quedará gordo y flojo». Realidad: el peso se maneja con dieta y juego.',
+    'La edad ideal varía según especie, raza y tamaño: defínela con tu veterinario.' ],
+    cierre:'Además, en Chile la tenencia responsable es ley: registro y microchip son obligatorios.' },
+  { t:'¿Videoconsulta o consulta presencial?', e:'💻', puntos:[
+    'Videoconsulta sirve para: dudas de conducta, manejo de dieta, seguimiento de tratamientos y orientación inicial.',
+    'Presencial siempre para: dolor evidente, heridas, decaimiento fuerte o cualquier urgencia.',
+    'La videoconsulta también baja el estrés de gatos y perros miedosos: sin traslado, sin jaula.',
+    'Ante la duda, parte por video: el profesional te dirá si necesita verlo en persona.' ],
+    cierre:'En EncuentraVet puedes filtrar por profesionales que atienden por videoconsulta.' },
+  { t:'Viajar por Chile con tu mascota', e:'🚗', puntos:[
+    'En auto: siempre con arnés de seguridad o caniles afirmados. Nunca suelto ni en la caja de la camioneta.',
+    'Paradas cada 2 horas: agua, sombra y un paseo corto.',
+    'En bus o avión necesitas certificado de salud al día emitido por un veterinario.',
+    'Lleva su alimento habitual: los cambios bruscos de dieta + estrés = panzas malas.' ],
+    cierre:'¿Viaje largo este verano? Agenda el chequeo y certificado con anticipación.' },
+  { t:'Sobrepeso: el problema de salud más común (y más ignorado)', e:'⚖️', puntos:[
+    'Prueba rápida: debes poder palpar sus costillas sin apretar. Si no, hay sobrepeso.',
+    'El sobrepeso acorta la vida y agrava problemas de articulaciones, corazón y diabetes.',
+    'Los premios no deberían superar el 10% de las calorías del día.',
+    '«Le doy de lo que como yo» es la causa número uno. La solución parte por la familia completa.' ],
+    cierre:'Un plan de dieta serio se hace con báscula y veterinario, no con dietas de internet.' },
+  { t:'Primer chequeo: qué esperar y qué preguntar', e:'🩺', puntos:[
+    'Lleva su carnet de vacunas (o lo que tengas) y anota sus mañas: todo dato sirve.',
+    'Pregunta por: plan de vacunas, desparasitación, dieta y esterilización.',
+    'Aprovecha de consultar costos de urgencia y horarios: mejor saberlo antes.',
+    'Un buen chequeo anual detecta problemas cuando aún son baratos y tratables.' ],
+    cierre:'¿Aún no tienes veterinario de cabecera? Busca uno verificado cerca tuyo.' }
+],
+confianza: [
+  { t:'La insignia azul no se compra: se verifica', e:'🔵', puntos:[
+    'Revisamos la cédula de identidad del profesional.',
+    'Contrastamos el certificado de título universitario con su código de verificación.',
+    'Solo cuando todo calza, el perfil recibe la insignia azul de verificado.',
+    'Así, cuando eliges en EncuentraVet, eliges entre profesionales reales.' ],
+    cierre:'Tu mascota no puede elegir a su veterinario. Tú sí, y mereces elegir con confianza.' },
+  { t:'¿Cómo sabes que ese «veterinario» de internet es veterinario?', e:'🕵️', puntos:[
+    'Cualquiera puede abrir una cuenta, poner «Dr.» en la bio y vender consultas.',
+    'En Chile la colegiatura es voluntaria: no basta con mirar si está en el Colegio.',
+    'La única forma seria: verificar cédula y título universitario, uno por uno.',
+    'Eso es exactamente lo que hace EncuentraVet antes de entregar la insignia azul.' ],
+    cierre:'Verificado no es un adorno: es la diferencia entre confiar y cruzar los dedos.' },
+  { t:'Qué significa (de verdad) elegir un verificado', e:'✅', puntos:[
+    'Sabes que la persona que atiende a tu mascota tiene título de médico veterinario.',
+    'Ves sus servicios, valores de referencia y disponibilidad real antes de decidir.',
+    'Comparas opciones cerca de tu comuna sin llamar a nadie.',
+    'Y si algo no te calza, eliges otro: la decisión siempre es tuya.' ],
+    cierre:'Elegir informado toma 2 minutos. Elegir a ciegas puede costar caro.' },
+  { t:'Por qué verificamos, aunque sea más lento', e:'🧾', puntos:[
+    'Un directorio sin filtro es solo una guía telefónica: no protege a nadie.',
+    'Un profesional puede publicar su perfil desde el día uno, pero el sello se gana con documentos.',
+    'La insignia azul da prioridad en los resultados: la confianza se premia.',
+    'Preferimos crecer más lento y que cada insignia signifique algo.' ],
+    cierre:'La salud de tu mascota merece más que un pantallazo bonito.' }
+],
+producto: [
+  { t:'Encuentra veterinario en 3 pasos', e:'🔎', puntos:[
+    'Paso 1: escribe dónde estás y qué necesitas. Cubrimos las 346 comunas de Chile.',
+    'Paso 2: mira quién atiende cerca, con su insignia de verificado a la vista.',
+    'Paso 3: elige la hora. Las horas que ves están libres de verdad: salen del calendario del propio profesional.',
+    'Sin llamadas, sin «déjeme consultar», sin esperar el WhatsApp de vuelta.' ],
+    cierre:'Y para ti es gratis: la consulta se paga directo al profesional.' },
+  { t:'Deja de llamar a 5 clínicas para pedir una hora', e:'📵', puntos:[
+    'El método antiguo: llamar, esperar, que te dejen en visto, volver a llamar.',
+    'El método EncuentraVet: buscas por comuna y ves disponibilidad real al instante.',
+    'Cada perfil muestra servicios y verificación antes de que decidas.',
+    'Agendas en un par de clics, a la hora que a ti te sirva. Incluso a las 2 AM.' ],
+    cierre:'Tu tiempo también vale. Y el de tu mascota, más.' },
+  { t:'¿Urgencia a las 3 de la mañana? Esto es lo que haces', e:'🌙', puntos:[
+    'Respira: entrar en pánico no ayuda a tu mascota.',
+    'En EncuentraVet filtra por urgencias 24 horas y encuentra quién está atendiendo ahora.',
+    'Si dudas de si es urgencia, una videoconsulta puede orientarte en minutos.',
+    'Guarda la app del sitio en tu celular HOY: en la urgencia no hay tiempo para buscar.' ],
+    cierre:'Las urgencias no avisan. Estar preparado sí se puede.' },
+  { t:'Videoconsulta: el veterinario en tu living', e:'🛋️', puntos:[
+    '¿Sin auto, sin tiempo, o un gato que odia la jaula? Hay videoconsulta.',
+    'Ideal para orientación inicial, conducta, dietas y seguimiento de tratamientos.',
+    'Eliges un profesional verificado que atienda por video y agendas igual que una hora normal.',
+    'Si el profesional detecta algo que requiere examen, te lo dirá de inmediato.' ],
+    cierre:'A veces la mejor consulta es la que efectivamente puedes tomar.' }
+],
+comunidad: [
+  { t:'Tu comuna también tiene veterinarios verificados', e:'📍', puntos:[
+    'La búsqueda cubre las 346 comunas de Chile, de Arica a Magallanes.',
+    'Cada semana se suman nuevos profesionales verificados con su insignia azul.',
+    'Buscar cerca importa: en una urgencia, los minutos de traslado cuentan.',
+    'Y conocer al veterinario del barrio crea un historial que mejora la atención.' ],
+    cierre:'Etiqueta a alguien de tu comuna que todavía no tiene veterinario de cabecera.' },
+  { t:'Detrás de cada insignia azul hay una historia', e:'💙', puntos:[
+    'Años de universidad, turnos de urgencia y formación continua.',
+    'Profesionales que eligieron mostrar su título y cédula para darte tranquilidad.',
+    'Reconocer ese esfuerzo también es parte de la tenencia responsable.',
+    '¿Tu veterinario es de los buenos? Nómbralo en los comentarios y dale las gracias.' ],
+    cierre:'La confianza se construye de a dos: profesionales serios y tutores informados.' },
+  { t:'Chile es país de mascotas (y los números lo demuestran)', e:'🇨🇱', puntos:[
+    'En la mayoría de los hogares chilenos vive al menos una mascota.',
+    'Cada vez más tutores tratan a sus animales como un miembro más de la familia.',
+    'Esa dedicación merece profesionales a la altura, fáciles de encontrar y verificados.',
+    'Por eso existe EncuentraVet: para que el cariño venga con respaldo.' ],
+    cierre:'Cuéntanos: ¿cómo se llama el regalón de tu casa? 👇' }
+],
+b2b: [
+  { t:'Si eres veterinario/a en Chile, esto te interesa', e:'👩‍⚕️', puntos:[
+    'Tus futuros pacientes te buscan en internet. La pregunta es si te encuentran.',
+    'En EncuentraVet creas tu perfil profesional y apareces en las búsquedas de tu comuna.',
+    'Publicas tus servicios y tus precios: tú defines cuánto cobras, siempre.',
+    'Tu agenda se muestra con disponibilidad real: menos llamadas, menos horas perdidas.' ],
+    cierre:'Crea tu perfil hoy y empieza a construir tu presencia.' },
+  { t:'La insignia azul: tu título, trabajando por ti', e:'🎓', puntos:[
+    'Verificamos tu cédula y tu certificado de título con código de verificación.',
+    'Con la insignia azul, tu perfil gana el sello y la prioridad en los resultados.',
+    'Los tutores eligen verificados: la confianza convierte más que cualquier aviso.',
+    'Puedes publicar desde el día uno y certificarte en el camino.' ],
+    cierre:'Estudiaste años para este título. Deja que también te traiga pacientes.' },
+  { t:'Profesionales fundadores: Premium gratis el primer mes', e:'🚀', puntos:[
+    'Los primeros profesionales en sumarse reciben el plan Premium sin costo por un mes.',
+    'Posiciónate antes del despegue: los perfiles antiguos acumulan historial y reseñas.',
+    'Sin letra chica: pruebas todas las herramientas y decides después.',
+    'El registro toma minutos; la verificación, la hacemos nosotros.' ],
+    cierre:'Ser fundador es una ventaja que solo existe una vez.' },
+  { t:'Tu agenda, sin teléfono sonando', e:'📅', puntos:[
+    'Conectas tu calendario y los tutores ven solo tus horas realmente libres.',
+    'Se acabó el ping-pong de llamadas y WhatsApp para cuadrar una hora.',
+    '¿Atiendes videoconsulta o urgencias? Destácalo y aparece en esos filtros.',
+    'Más tiempo con pacientes, menos tiempo de secretariado.' ],
+    cierre:'La tecnología no reemplaza tu ojo clínico: te libera para usarlo.' }
+],
+tendencia: [
+  { t:'POV: tu gato a las 4 AM', e:'😹', puntos:[
+    'Escena: el gato corriendo por el pasillo como si lo persiguieran (zoomies nocturnos).',
+    'Texto en pantalla: «Él: energía al 3000%. Yo: mañana trabajo».',
+    'Remate: gato durmiendo plácido a las 9 AM cuando tú te levantas.',
+    'Dato serio al cierre: los zoomies son normales; si hay maullido nocturno excesivo en gatos mayores, consúltalo.' ],
+    cierre:'El humor conecta, el dato educa: cierra siempre con la marca.' },
+  { t:'Cosas que hace tu perro y significan más de lo que crees', e:'🐕', puntos:[
+    'Te sigue al baño: eres su persona (y su misión es supervisarte).',
+    'Suspira profundo al acostarse: puro relajo y comodidad.',
+    'Inclina la cabeza cuando le hablas: intenta ubicar el sonido y entenderte.',
+    'Te trae su juguete favorito: confianza máxima. Felicitaciones.' ],
+    cierre:'¿Cuál hace el tuyo? Cuéntanos en los comentarios 👇' },
+  { t:'Tipos de tutores en la sala de espera', e:'🪑', puntos:[
+    'El que le habla en diminutivo a un mastín de 60 kilos.',
+    'La que trae al gato en un canil con más accesorios que un depto piloto.',
+    'El que «venía solo a control» y sale con tres productos y una hora agendada.',
+    'Todos distintos, todos iguales: harían cualquier cosa por su animal.' ],
+    cierre:'Etiqueta al amigo que es ESE tutor.' },
+  { t:'Expectativa vs. realidad: vida con mascotas', e:'🎭', puntos:[
+    'Expectativa: paseos de revista al atardecer. Realidad: tironeos porque olió algo glorioso.',
+    'Expectativa: el gato duerme en su camita nueva. Realidad: duerme en la caja de la camita.',
+    'Expectativa: baño rápido de 10 minutos. Realidad: los dos empapados y el baño inundado.',
+    'Y aun así, lo volverías a elegir mil veces.' ],
+    cierre:'Comparte con alguien que viva esta realidad.' }
+]
+};
+
+const HOOKS = {
+  educacion: [
+    'Esto tu mascota no te lo puede decir. Nosotros sí.',
+    'Guarda este post: puede salvarle la vida a tu mascota.',
+    'El error que casi todos los tutores cometen sin saberlo.',
+    'Si tu mascota hace esto, no lo dejes pasar.',
+    'Lo que todo tutor debería saber (y casi nadie cuenta).'
+  ],
+  confianza: [
+    '¿Cómo sabes que ese «veterinario» de internet es veterinario de verdad?',
+    'La insignia azul no se compra. Se verifica.',
+    'Antes de confiarle tu mascota a alguien, mira esto.',
+    'Verificado no es un adorno: es tu tranquilidad.'
+  ],
+  producto: [
+    'Encontrar veterinario en Chile era así 👇 (hasta ahora).',
+    'Deja de llamar a 5 clínicas para pedir una hora.',
+    '¿Tu mascota se enfermó un domingo a las 3 AM? Lee esto.',
+    'Buscar veterinario ya no es una tarea: son 3 pasos.'
+  ],
+  comunidad: [
+    'En tu comuna también hay veterinarios verificados.',
+    'Detrás de cada insignia azul hay una historia.',
+    'Chile es país de mascotas, y esto lo demuestra.'
+  ],
+  b2b: [
+    'Si eres veterinario/a en Chile, esto te interesa.',
+    '¿Dónde te buscan tus futuros pacientes? En internet. ¿Te encuentran?',
+    'Tu título ya te costó años. Que te encuentren debería ser fácil.',
+    'Menos teléfono, más pacientes: así funciona.'
+  ],
+  tendencia: [
+    'Nadie: … Tu mascota:',
+    'POV: vives con un animal que manda en tu casa.',
+    'Si tienes mascota, esto te va a doler de lo real que es.',
+    'Míralo hasta el final, vale la pena.'
+  ]
+};
+
+const CTAS = {
+  tutores: [
+    'Busca veterinarios verificados cerca tuyo en {web} — es gratis.',
+    'Encuentra tu veterinario por comuna en {web} (link en la bio).',
+    'Tu veterinario ideal está a una búsqueda: {web}.',
+    'Guarda este post y comparte con otro tutor que lo necesite. Más en {web}.'
+  ],
+  vets: [
+    '¿Eres veterinario/a? Crea tu perfil gratis en {web} y hazte encontrar.',
+    'Crea tu perfil en {web}: los fundadores tienen Premium gratis el primer mes.',
+    'Súmate a los profesionales verificados de {web}. Tu título lo vale.'
+  ],
+  interaccion: [
+    'Cuéntanos en los comentarios 👇 y guarda este post para después.',
+    '¿Te sirvió? Guárdalo y compártelo con alguien que tenga mascota.',
+    'Etiqueta a esa persona que necesita ver esto.'
+  ]
+};
+
+const STICKERS = [
+  { s:'Encuesta (sí / no)', uso:'pregunta directa sobre el tema para abrir participación' },
+  { s:'Quiz de 3 alternativas', uso:'pon a prueba lo que la audiencia cree saber' },
+  { s:'Slider de emoji', uso:'medición liviana: «¿qué tanto te pasa esto?»' },
+  { s:'Caja de preguntas', uso:'recolecta dudas reales para futuros contenidos' },
+  { s:'Sticker de link', uso:'directo a {web}' }
+];
+
+const AUDIOS = [
+  'Audio en tendencia (revisa la pestaña Reels hoy; elige uno de +10K usos recientes)',
+  'Voz en off propia + música suave de fondo (mejor para temas de salud)',
+  'Música instrumental ascendente, corte en cada cambio de escena',
+  'Sonido original: audio real de consulta/mascotas + subtítulos grandes'
+];
+
+const HASHTAGS_PILAR = {
+  educacion: '#TipsMascotas #SaludMascotas #CuidadoAnimal #PerritosChile #GatitosChile',
+  confianza: '#VeterinarioVerificado #ConfianzaAnimal #TenenciaResponsableChile',
+  producto:  '#VeterinarioCercaDeMi #UrgenciaVeterinaria #VideoconsultaVeterinaria',
+  comunidad: '#ComunidadPetLover #MascotasSantiago #PetLoversChile',
+  b2b:       '#MedicoVeterinario #VeterinariosChile #EmprendimientoVeterinario',
+  tendencia: '#HumorDeMascotas #PetsOfInstagram #PerrosYGatos'
+};
+
+/* ============================================================
+   VOCES — las guardadas en la cuenta de ElevenLabs de la marca
+   ============================================================ */
+const VOCES = [
+  { id:'ClNifCEVq1smkl4M3aTk', nombre:'Cristian Cornejo', acento:'Chileno', perfil:'Seguro, redes sociales, mediana edad', destaca:true },
+  { id:'s8WAhMSU6uxtDpE0pBPw', nombre:'Eigam Chile',      acento:'Chileno', perfil:'Casual, narrativo, joven', destaca:true },
+  { id:'nmvA11Y688M5reLqDsVm', nombre:'Samuel Rosales',   acento:'Mexicano', perfil:'Cálido y conversacional' },
+  { id:'P6PQtQGB3yM21Aj1vGJ2', nombre:'Luis',             acento:'Argentino', perfil:'Expresivo, narrativo' },
+  { id:'EXAVITQu4vr4xnSDxMaL', nombre:'Sarah',            acento:'Neutro (inglés)', perfil:'Femenina, profesional' }
+];
+const VOZ_POR_DEFECTO = 'ClNifCEVq1smkl4M3aTk';
+
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+const memRotacion = {};
+function pickRotado(clave, arr){
+  if(!memRotacion[clave] || !memRotacion[clave].length){
+    memRotacion[clave] = arr.map((_,i)=>i).sort(()=>Math.random()-0.5);
+  }
+  return arr[memRotacion[clave].pop()];
+}
+
+function conMarca(txt){
+  return txt.replace(/\{web\}/g, marca.web).replace(/\{ig\}/g, marca.ig).replace(/\{nombre\}/g, marca.nombre);
+}
+function ctaPara(pilar, objetivo){
+  let banco;
+  if(pilar==='b2b' || objetivo==='vets') banco = CTAS.vets;
+  else if(objetivo==='interaccion' || pilar==='tendencia') banco = CTAS.interaccion.concat(CTAS.tutores);
+  else banco = CTAS.tutores;
+  return conMarca(pick(banco));
+}
+function hashtagsPara(pilar){
+  const base = (marca.hashtags + ' ' + (HASHTAGS_PILAR[pilar]||'')).split(/\s+/).filter(h=>h.startsWith('#'));
+  const unicos = Array.from(new Set(base)).sort(()=>Math.random()-0.5);
+  return unicos.slice(0, Math.min(10, unicos.length)).join(' ');
+}
+function topicPara(pilar, temaLibre, forzarIdx){
+  const banco = TOPICS[pilar];
+  if(typeof forzarIdx === 'number' && banco[forzarIdx]) return banco[forzarIdx];
+  if(temaLibre && temaLibre.trim()){
+    const t = temaLibre.trim();
+    return { t: t.charAt(0).toUpperCase()+t.slice(1), e:'📝', libre:true, puntos:[
+      `Abre con el problema o la duda más común sobre «${t}» (una frase, sin rodeos).`,
+      `Entrega el dato o consejo principal sobre «${t}»: concreto y accionable.`,
+      `Suma un segundo consejo o un error frecuente relacionado con «${t}».`,
+      `Indica cuándo este tema amerita consultar con un veterinario.`
+    ], cierre:`Cierra conectando «${t}» con la marca: en ${marca.web} hay profesionales verificados que pueden ayudar.` };
+  }
+  return pickRotado('t_'+pilar, banco);
+}
+
+/* ============================================================
+   GENERADORES
+   ============================================================ */
+function genHistoria(pilar, objetivo, temaLibre, forzarIdx){
+  const topic = topicPara(pilar, temaLibre, forzarIdx);
+  const hook = pick(HOOKS[pilar]);
+  const frames = [];
+  frames.push({ num:'Frame 1 · Gancho', titulo: topic.e+' '+hook,
+    visual:'Foto o video vertical llamativo del tema (primer plano de la mascota). Texto grande arriba.',
+    sticker: pick(STICKERS.slice(0,3)) });
+  topic.puntos.slice(0,3).forEach((p,i)=>{
+    frames.push({ num:'Frame '+(i+2), titulo: (i+1)+'. '+p,
+      visual: i===0 ? 'Fondo de color de marca + texto centrado, máximo 2 líneas por idea.' : 'Alterna foto real y fondo plano para mantener ritmo.',
+      sticker: i===1 ? STICKERS[2] : null });
+  });
+  frames.push({ num:'Frame '+(frames.length+1)+' · Participación',
+    titulo:'«¿Qué duda tienes sobre '+topic.t.toLowerCase()+'?» — responde las mejores en la próxima historia.',
+    visual:'Fondo simple, caja de preguntas centrada.', sticker: STICKERS[3] });
+  frames.push({ num:'Frame '+(frames.length+1)+' · Cierre',
+    titulo: ctaPara(pilar, objetivo),
+    visual:'Cierre con logo/nombre de la marca y flecha hacia el sticker de link.',
+    sticker: Object.assign({}, STICKERS[4], {uso: conMarca(STICKERS[4].uso)}) });
+  return { formato:'historia', pilar, titulo: topic.t, frames, puntos: topic.puntos, emoji: topic.e,
+    caption: topic.e+' '+topic.t+'\n\n'+ctaPara(pilar,objetivo)+'\n\n'+hashtagsPara(pilar),
+    nota: topic.cierre ? 'Idea de refuerzo: '+conMarca(topic.cierre) : '' };
+}
+
+function genReel(pilar, objetivo, temaLibre, forzarIdx){
+  const topic = topicPara(pilar, temaLibre, forzarIdx);
+  const hook = pick(HOOKS[pilar]);
+  const puntos = topic.puntos.slice(0,4);
+  const dur = 6 + puntos.length*5 + 5;
+  const escenas = [];
+  escenas.push({ t:'0–3 s', accion:'Gancho visual: la imagen más fuerte del tema. Nada de logos todavía.', texto: hook });
+  escenas.push({ t:'3–6 s', accion:'Presenta el tema en una frase.', texto: topic.e+' '+topic.t });
+  let ini = 6;
+  puntos.forEach((p,i)=>{
+    escenas.push({ t: ini+'–'+(ini+5)+' s', accion:'Corte de escena '+(i+1)+': ilustra la idea con plano corto o b-roll.', texto: p });
+    ini += 5;
+  });
+  escenas.push({ t: ini+'–'+dur+' s', accion:'Cierre a cámara o texto final con la marca en pantalla.', texto: ctaPara(pilar, objetivo) });
+  const caption = hook+'\n\n'+topic.e+' '+topic.t+'. '+(topic.cierre?conMarca(topic.cierre)+' ':'')+'\n\n'+ctaPara(pilar,objetivo)+'\n\n'+hashtagsPara(pilar);
+  const esGato = /gato|felin/i.test(topic.t), esPerro = /perro|cachorro|canin/i.test(topic.t);
+  const sujeto = esGato ? 'a domestic cat' : esPerro ? 'a friendly dog' : 'a friendly dog and a domestic cat';
+  const promptIA = 'Vertical 9:16 video for Instagram Reels, '+dur+' seconds total, photorealistic footage of '+sujeto+
+    ' in a bright modern home and a clean veterinary clinic in Chile. Warm natural light, shallow depth of field, smooth gimbal camera, one cut every ~5 seconds. '+
+    'Purple ('+(marca.c1||'#5B2E7E')+') and yellow ('+(marca.c2||'#FFD84D')+') accents in props and background details. '+
+    'Scene list (visuals only, NO on-screen text, captions are added later): '+
+    escenas.map((e,i)=>'Scene '+(i+1)+' ['+e.t+']: '+e.accion+' Theme: "'+e.texto.replace(/"/g,"'")+'".').join(' ')+
+    ' No watermarks, no logos, no text overlays, no human faces in close-up. High detail, realistic animal anatomy and movement.';
+  return { formato:'reel', pilar, titulo: topic.t, duracion: '~'+dur+' segundos', audio: pick(AUDIOS), escenas, caption, promptIA,
+    puntos: topic.puntos, emoji: topic.e,
+    nota:'Genera los clips con el prompt de IA (Seedance, Kling, Runway o Pika), edítalos con los textos en pantalla del guion y sube con subtítulos activados.' };
+}
+
+function genCarrusel(pilar, objetivo, temaLibre, forzarIdx){
+  const topic = topicPara(pilar, temaLibre, forzarIdx);
+  const hook = pick(HOOKS[pilar]);
+  const cards = [];
+  cards.push({ num:'Card 1 · Portada', titulo: topic.e+' '+topic.t, cuerpo: hook+' →' });
+  topic.puntos.forEach((p,i)=>{
+    const [cabeza, ...resto] = p.split(':');
+    cards.push({ num:'Card '+(i+2), titulo: resto.length? cabeza : 'Punto '+(i+1), cuerpo: resto.length? resto.join(':').trim() : p });
+  });
+  if(topic.cierre) cards.push({ num:'Card '+(cards.length+1)+' · Clave', titulo:'Lo importante', cuerpo: conMarca(topic.cierre) });
+  cards.push({ num:'Card '+(cards.length+1)+' · Cierre', titulo: marca.nombre, cuerpo: ctaPara(pilar,objetivo)+' — '+marca.ig });
+  const caption = topic.e+' '+topic.t+'\n\n'+hook+' Desliza para verlo completo. 👉\n\n'+ctaPara(pilar,objetivo)+'\n\n'+hashtagsPara(pilar);
+  return { formato:'carrusel', pilar, titulo: topic.t, cards, caption,
+    puntos: topic.puntos, emoji: topic.e,
+    nota:'Diseño: una idea por card, texto grande (mínimo 24 pt), colores de marca y número de card visible.' };
+}
+
+/* ============================================================
+   RENDER DEL GENERADOR
+   ============================================================ */
+let ultimoGenerado = null;
+
+function textoPlano(g){
+  const L = [];
+  L.push('['+g.formato.toUpperCase()+'] '+g.titulo+' — pilar: '+PILARES[g.pilar].nombre);
+  L.push('Marca: '+marca.nombre+' · '+marca.web+' · '+marca.ig);
+  L.push('');
+  if(g.formato==='historia'){
+    g.frames.forEach(f=>{
+      L.push(f.num);
+      L.push('  Texto: '+f.titulo);
+      L.push('  Visual: '+f.visual);
+      if(f.sticker) L.push('  Sticker: '+f.sticker.s+' — '+f.sticker.uso);
+      L.push('');
+    });
+  } else if(g.formato==='reel'){
+    L.push('Duración: '+g.duracion+' · Audio: '+g.audio); L.push('');
+    g.escenas.forEach(e=>{ L.push('['+e.t+'] '+e.accion); L.push('  Texto en pantalla: '+e.texto); L.push(''); });
+    L.push('PROMPT PARA IA DE VIDEO (Seedance/Kling/Runway/Pika):'); L.push(g.promptIA); L.push('');
+    L.push('CAPTION:'); L.push(g.caption); L.push('');
+  } else {
+    g.cards.forEach(c=>{ L.push(c.num+' — '+c.titulo); L.push('  '+c.cuerpo); L.push(''); });
+    L.push('CAPTION:'); L.push(g.caption); L.push('');
+  }
+  if(g.nota) L.push('Nota: '+g.nota);
+  return L.join('\n');
+}
+
+function renderResultado(g){
+  ultimoGenerado = g;
+  const chip = '<span class="chip '+g.formato+'">'+g.formato+'</span> <span class="chip pilar">'+esc(PILARES[g.pilar].nombre)+'</span>';
+  let cuerpo = '';
+  if(g.formato==='historia'){
+    cuerpo = '<div class="tarjetas">'+g.frames.map(f=>
+      '<div class="tarjeta"><div class="num">'+esc(f.num)+'</div><div class="titulo">'+esc(f.titulo)+'</div>'+
+      '<div class="meta"><strong>Visual:</strong> '+esc(f.visual)+'</div>'+
+      (f.sticker?'<div class="meta"><strong>Sticker:</strong> '+esc(f.sticker.s)+' — '+esc(f.sticker.uso)+'</div>':'')+
+      '</div>').join('')+'</div>';
+  } else if(g.formato==='reel'){
+    cuerpo = '<div class="tarjeta" style="margin-bottom:12px"><div class="meta"><strong>Duración:</strong> '+esc(g.duracion)+' &nbsp;·&nbsp; <strong>Audio:</strong> '+esc(g.audio)+'</div></div>'+
+      '<div class="tarjetas">'+g.escenas.map(e=>
+      '<div class="tarjeta"><div class="num">'+esc(e.t)+'</div><p>'+esc(e.accion)+'</p>'+
+      '<div class="meta"><strong>Texto en pantalla:</strong> '+esc(e.texto)+'</div></div>').join('')+'</div>'+
+      '<div class="bloque-caption"><div class="etq">Prompt para IA de video (Seedance · Kling · Runway · Pika)</div>'+esc(g.promptIA)+
+      '<div class="fila-botones"><button class="btn sec mini" id="btn-copiar-prompt-ia">Copiar prompt de video</button></div></div>'+
+      '<div class="bloque-caption"><div class="etq">Caption + hashtags</div>'+esc(g.caption)+'</div>';
+  } else {
+    cuerpo = '<div class="tarjetas">'+g.cards.map(c=>
+      '<div class="tarjeta"><div class="num">'+esc(c.num)+'</div><div class="titulo">'+esc(c.titulo)+'</div><p>'+esc(c.cuerpo)+'</p></div>').join('')+'</div>'+
+      '<div class="bloque-caption"><div class="etq">Caption + hashtags</div>'+esc(g.caption)+'</div>';
+  }
+  $('#zona-resultado').innerHTML =
+    '<div class="panel resultado"><div class="cab">'+chip+'</div><h3>'+esc(g.titulo)+'</h3>'+cuerpo+
+    (g.nota?'<p class="aviso">💡 '+esc(g.nota)+'</p>':'')+
+    '<div class="fila-botones">'+
+      '<button class="btn sec" id="btn-regenerar">↻ Otra variante</button>'+
+      '<button class="btn sec" id="btn-copiar">Copiar todo</button>'+
+      '<button class="btn sec" id="btn-a-visual">Crear la imagen →</button>'+
+      '<button class="btn" id="btn-guardar">Guardar</button>'+
+    '</div></div>';
+  $('#btn-regenerar').addEventListener('click', generarDesdeControles);
+  $('#btn-a-visual').addEventListener('click', ()=> enviarAVisual(g));
+  const bPrompt = $('#btn-copiar-prompt-ia');
+  if(bPrompt) bPrompt.addEventListener('click', ()=> copiar(g.promptIA));
+  $('#btn-copiar').addEventListener('click', ()=> copiar(textoPlano(g)));
+  $('#btn-guardar').addEventListener('click', ()=>{
+    agregarGuardado({ fecha:new Date().toLocaleDateString('es-CL'), formato:g.formato, pilar:PILARES[g.pilar].nombre, titulo:g.titulo, texto:textoPlano(g) });
+    toast('Guardado en tu biblioteca ✓');
+  });
+  $('#zona-resultado').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function generarDesdeControles(forzar){
+  const formato = $('#seg-formato button[aria-pressed="true"]').dataset.v;
+  const pilar = $('#sel-pilar').value;
+  const objetivo = $('#sel-objetivo').value;
+  const tema = $('#inp-tema').value;
+  const fIdx = (forzar && typeof forzar.idx==='number') ? forzar.idx : undefined;
+  const g = formato==='historia' ? genHistoria(pilar,objetivo,tema,fIdx)
+          : formato==='reel'     ? genReel(pilar,objetivo,tema,fIdx)
+          :                        genCarrusel(pilar,objetivo,tema,fIdx);
+  renderResultado(g);
+}
+
+/* ============================================================
+   ESTRATEGIA MENSUAL
+   ============================================================ */
+const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const FECHAS_MES = {
+  0:[{d:'Todo el mes', n:'Temporada de calor y vacaciones', idea:'Serie: viajar con mascotas + golpe de calor'}],
+  1:[{d:'20 feb', n:'Día Internacional del Gato', idea:'Semana temática felina: estrés, arenero, videoconsulta para gatos'}],
+  2:[{d:'Todo el mes', n:'Vuelta a la rutina', idea:'Chequeo anual + calendario de vacunas y desparasitación'}],
+  3:[{d:'Último sábado', n:'Día Mundial del Veterinario', idea:'Homenaje a los profesionales verificados + empuje B2B'}],
+  4:[{d:'Todo el mes', n:'Mes de la prevención', idea:'Desparasitación y control de peso antes del invierno'}],
+  5:[{d:'Todo el mes', n:'Inicio del invierno', idea:'Enfermedades respiratorias y cuándo consultar'}],
+  6:[{d:'21 jul', n:'Día Mundial del Perro', idea:'Celebración + contenido educativo canino y UGC de la comunidad'}],
+  7:[{d:'8 ago', n:'Día Internacional del Gato', idea:'Especial felino: mitos, señales de estrés y verificados con atención felina'}],
+  8:[{d:'18–19 sep', n:'Fiestas Patrias', idea:'Asados y mascotas: alimentos prohibidos + plan anti-ruidos'}],
+  9:[{d:'4 oct', n:'Día Mundial de los Animales', idea:'Campaña de tenencia responsable + historias de la comunidad'}],
+  10:[{d:'Todo el mes', n:'Antesala del verano', idea:'Esterilización, chip y preparación de viajes'}],
+  11:[{d:'31 dic', n:'Fuegos artificiales de Año Nuevo', idea:'Plan anti-pánico + campaña de chip y placa (extravíos)'}]
+};
+
+const OBJETIVOS = {
+  alcance: {
+    nombre:'Dar a conocer la marca (alcance)',
+    mix:['tendencia','educacion','producto','educacion','confianza','comunidad'],
+    formatos:['reel','reel','carrusel','historia'],
+    kpis:[['Alcance de cuentas','Meta: crecer 20–30% vs. mes anterior'],['Reproducciones de reels','Los reels son el motor: mira retención a los 3 s'],['Seguidores nuevos','Revisa de qué contenido vienen'],['Visitas al perfil','El puente entre ver un reel y conocer la marca']],
+    semanas:['Ganar atención: humor y educación de alto impacto compartible.','Presentar la marca: qué es y cómo funciona, sin vender duro.','Diferenciarse: la verificación y la insignia azul como bandera.','Consolidar: mezcla de lo que mejor funcionó + comunidad.']
+  },
+  interaccion: {
+    nombre:'Construir comunidad (interacción)',
+    mix:['comunidad','educacion','tendencia','educacion','confianza','producto'],
+    formatos:['carrusel','historia','reel','carrusel'],
+    kpis:[['Guardados y compartidos','La métrica reina del contenido útil'],['Comentarios por publicación','Haz una pregunta directa en cada caption'],['Respuestas a historias','Encuestas y cajas de preguntas todas las semanas'],['Tasa de interacción','Interacciones ÷ alcance: apunta a subir sostenido']],
+    semanas:['Preguntar y escuchar: encuestas, cajas de preguntas, contenido que invita a responder.','Contenido guardable: guías y checklists educativos.','Comunidad al frente: historias de tutores y veterinarios reales.','Responder lo recolectado: contenido hecho desde las preguntas de la audiencia.']
+  },
+  tutores: {
+    nombre:'Llevar tutores a la web (conversión)',
+    mix:['producto','educacion','confianza','producto','educacion','comunidad'],
+    formatos:['reel','carrusel','historia','reel'],
+    kpis:[['Clics al link de la bio','Cada pieza cierra con el CTA a la web'],['Visitas a encuentravet.cl','Compara con el mes anterior'],['Búsquedas realizadas en el sitio','La conversión real: gente buscando veterinario'],['Alcance en publicaciones de producto','Que el «cómo funciona» le llegue a gente nueva']],
+    semanas:['El problema: lo tedioso que era encontrar veterinario (dolor reconocible).','La solución: los 3 pasos, disponibilidad real y urgencias 24 h.','La confianza: por qué la insignia azul cambia la decisión.','El empujón: casos de uso concretos (urgencia, videoconsulta, viaje) con CTA directo.']
+  },
+  vets: {
+    nombre:'Captar veterinarios (B2B)',
+    mix:['b2b','confianza','b2b','educacion','producto','b2b'],
+    formatos:['carrusel','reel','historia','carrusel'],
+    kpis:[['Registros de profesionales','La métrica que define el mes'],['Clics al link de registro','CTA específico para veterinarios en bio y historias'],['Alcance en cuentas del rubro','Usa hashtags profesionales del sector'],['Mensajes directos de profesionales','Responde el mismo día: son leads']],
+    semanas:['El dolor profesional: pacientes que no llegan, agenda desordenada, teléfono que no para.','La propuesta: perfil verificado, insignia azul y agenda con disponibilidad real.','La oferta fundadores: Premium gratis el primer mes, ventaja de llegar primero.','Prueba social y cierre: perfiles ya verificados + llamado directo a registrarse.']
+  }
+};
+
+const DIAS_FREQ = { 3:['Lunes','Miércoles','Viernes'], 4:['Lunes','Martes','Jueves','Viernes'], 5:['Lunes','Martes','Miércoles','Jueves','Viernes'] };
+let ultimaEstrategia = null;
+
+function generarEstrategia(){
+  const mesIdx = parseInt($('#sel-mes').value,10);
+  const objKey = $('#sel-obj-mes').value;
+  const freq = parseInt($('#sel-freq').value,10);
+  const obj = OBJETIVOS[objKey];
+  const dias = DIAS_FREQ[freq];
+  const filas = [];
+  let iPilar = 0, iFormato = 0;
+  const usoTopic = {};
+  for(let sem=1; sem<=4; sem++){
+    dias.forEach(dia=>{
+      const pilar = obj.mix[iPilar % obj.mix.length]; iPilar++;
+      const formato = obj.formatos[iFormato % obj.formatos.length]; iFormato++;
+      const banco = TOPICS[pilar];
+      usoTopic[pilar] = (usoTopic[pilar]||0);
+      const idx = usoTopic[pilar] % banco.length; usoTopic[pilar]++;
+      filas.push({ sem, dia, pilar, formato, idx, idea: banco[idx].e+' '+banco[idx].t });
+    });
+  }
+  ultimaEstrategia = { mesIdx, objKey, freq, filas };
+  renderEstrategia();
+}
+
+function estrategiaMarkdown(){
+  const e = ultimaEstrategia; if(!e) return '';
+  const obj = OBJETIVOS[e.objKey];
+  const L = [];
+  L.push('# Estrategia de contenido — '+MESES[e.mesIdx]+' · '+marca.nombre);
+  L.push('');
+  L.push('**Objetivo del mes:** '+obj.nombre);
+  L.push('**Frecuencia:** '+e.freq+' publicaciones por semana (+ historias diarias de apoyo)');
+  L.push('**Web:** '+marca.web+' · **Instagram:** '+marca.ig);
+  L.push('');
+  L.push('## Fechas clave del mes');
+  (FECHAS_MES[e.mesIdx]||[]).forEach(f=> L.push('- **'+f.d+' — '+f.n+':** '+f.idea));
+  L.push('');
+  L.push('## Focos semanales');
+  obj.semanas.forEach((s,i)=> L.push('- **Semana '+(i+1)+':** '+s));
+  L.push('');
+  L.push('## Calendario de publicaciones');
+  L.push('');
+  L.push('| Semana | Día | Formato | Pilar | Idea |');
+  L.push('|---|---|---|---|---|');
+  e.filas.forEach(f=> L.push('| '+f.sem+' | '+f.dia+' | '+f.formato+' | '+PILARES[f.pilar].nombre+' | '+f.idea+' |'));
+  L.push('');
+  L.push('## KPIs del mes');
+  obj.kpis.forEach(k=> L.push('- **'+k[0]+':** '+k[1]));
+  L.push('');
+  L.push('## Reglas de la casa');
+  L.push('- Historias de apoyo todos los días hábiles: reutiliza cada post del calendario como mínimo en una historia.');
+  L.push('- Responde comentarios y mensajes el mismo día: la conversación también es contenido.');
+  L.push('- Revisa métricas cada viernes y duplica lo que funcionó la semana siguiente.');
+  return L.join('\n');
+}
+
+function renderEstrategia(){
+  const e = ultimaEstrategia;
+  const obj = OBJETIVOS[e.objKey];
+  const fechas = (FECHAS_MES[e.mesIdx]||[]).map(f=>
+    '<div class="fecha-esp"><span class="d">'+esc(f.d)+'</span><span><strong>'+esc(f.n)+':</strong> '+esc(f.idea)+'</span></div>').join('');
+  const semanas = obj.semanas.map((s,i)=>'<div class="semana"><b>Semana '+(i+1)+'</b><p>'+esc(s)+'</p></div>').join('');
+  const filasHtml = e.filas.map((f,i)=>
+    '<tr><td class="dia">S'+f.sem+' · '+esc(f.dia)+'</td>'+
+    '<td><span class="chip '+f.formato+'">'+f.formato+'</span></td>'+
+    '<td>'+esc(PILARES[f.pilar].nombre)+'</td><td>'+esc(f.idea)+'</td>'+
+    '<td><button class="btn mini sec" data-gen="'+i+'">Generar →</button></td></tr>').join('');
+  const kpis = obj.kpis.map(k=>'<div class="kpi"><b>'+esc(k[0])+'</b>'+esc(k[1])+'</div>').join('');
+  $('#zona-estrategia').innerHTML =
+    '<div class="panel resultado"><div class="cab"><span class="chip pilar">'+esc(MESES[e.mesIdx])+'</span><span class="chip pilar">'+esc(obj.nombre)+'</span></div>'+
+    '<h3>Plan de '+esc(MESES[e.mesIdx])+'</h3>'+
+    '<h4 style="margin-top:6px">Fechas clave</h4>'+fechas+
+    '<h4 style="margin-top:20px">Focos semanales</h4>'+semanas+
+    '<h4 style="margin-top:20px">Calendario de publicaciones</h4>'+
+    '<p class="aviso" style="margin-top:4px">Además del calendario: historias de apoyo todos los días hábiles reutilizando cada post.</p>'+
+    '<div class="scroll-x"><table class="cal"><thead><tr><th>Día</th><th>Formato</th><th>Pilar</th><th>Idea</th><th></th></tr></thead><tbody>'+filasHtml+'</tbody></table></div>'+
+    '<h4 style="margin-top:20px">KPIs del mes</h4><div class="kpis">'+kpis+'</div>'+
+    '<div class="fila-botones">'+
+      '<button class="btn sec" id="btn-copiar-estrategia">Copiar plan completo</button>'+
+      '<button class="btn sec" id="btn-descargar-estrategia" hidden>Descargar .md</button>'+
+      '<button class="btn" id="btn-guardar-estrategia">Guardar plan</button>'+
+    '</div></div>';
+  $('#btn-copiar-estrategia').addEventListener('click', ()=> copiar(estrategiaMarkdown()));
+  $('#btn-guardar-estrategia').addEventListener('click', ()=>{
+    agregarGuardado({ fecha:new Date().toLocaleDateString('es-CL'), formato:'estrategia', pilar:OBJETIVOS[e.objKey].nombre, titulo:'Plan de '+MESES[e.mesIdx], texto:estrategiaMarkdown() });
+    toast('Plan guardado ✓');
+  });
+  const btnDesc = $('#btn-descargar-estrategia');
+  btnDesc.hidden = !descargas;
+  btnDesc.addEventListener('click', async ()=>{
+    if(!descargas){ toast('Descarga no disponible; usa «Copiar plan completo»'); return; }
+    try{ await descargas.save({ filename:'estrategia-'+MESES[e.mesIdx].toLowerCase()+'.md', data: estrategiaMarkdown() }); toast('Archivo descargado ✓'); }
+    catch(err){ if(err && err.code!=='declined') toast('No se pudo descargar; usa «Copiar plan completo»'); }
+  });
+  $$('#zona-estrategia [data-gen]').forEach(b=> b.addEventListener('click', ()=>{
+    const f = e.filas[parseInt(b.dataset.gen,10)];
+    $('#sel-pilar').value = f.pilar;
+    $('#inp-tema').value = '';
+    $('#sel-objetivo').value = e.objKey==='interaccion' ? 'interaccion' : (e.objKey==='vets'?'vets':(e.objKey==='tutores'?'tutores':'alcance'));
+    $$('#seg-formato button').forEach(x=> x.setAttribute('aria-pressed', String(x.dataset.v===f.formato)));
+    activarPane('generador');
+    generarDesdeControles({idx:f.idx});
+  }));
+  $('#zona-estrategia').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* ============================================================
+   GUARDADOS
+   ============================================================ */
+function leerGuardados(){ try{ return JSON.parse(localStorage.getItem('evst_guardados')||'[]'); }catch(e){ return []; } }
+function escribirGuardados(a){ try{ localStorage.setItem('evst_guardados', JSON.stringify(a)); }catch(e){} }
+function agregarGuardado(item){ const a = leerGuardados(); item.id = Date.now(); a.unshift(item); escribirGuardados(a); renderGuardados(); }
+
+function renderGuardados(){
+  const a = leerGuardados();
+  const zona = $('#lista-guardados');
+  if(!a.length){ zona.innerHTML = '<div class="vacio">Aún no guardas contenido. Genera algo y presiona «Guardar»: aparecerá aquí.</div>'; return; }
+  zona.innerHTML = a.map(it=>
+    '<div class="guardado-item"><div>'+
+    '<span class="chip '+(it.formato==='estrategia'?'pilar':it.formato)+'">'+esc(it.formato)+'</span> '+
+    '<span class="t">'+esc(it.titulo)+'</span><div class="m">'+esc(it.pilar)+' · '+esc(it.fecha)+'</div></div>'+
+    '<div style="display:flex; gap:8px; flex-shrink:0">'+
+    '<button class="btn mini sec" data-copy="'+it.id+'">Copiar</button>'+
+    '<button class="btn mini sec" data-del="'+it.id+'">Borrar</button>'+
+    '</div></div>').join('');
+  $$('#lista-guardados [data-copy]').forEach(b=> b.addEventListener('click', ()=>{
+    const it = leerGuardados().find(x=> String(x.id)===b.dataset.copy);
+    if(it) copiar(it.texto);
+  }));
+  $$('#lista-guardados [data-del]').forEach(b=> b.addEventListener('click', ()=>{
+    escribirGuardados(leerGuardados().filter(x=> String(x.id)!==b.dataset.del));
+    renderGuardados(); toast('Borrado');
+  }));
+}
+function guardadosMarkdown(){
+  return leerGuardados().map(it=> '## ['+it.formato+'] '+it.titulo+' ('+it.fecha+')\n\n'+it.texto).join('\n\n---\n\n') || 'Sin contenido guardado.';
+}
+
+/* ============================================================
+   MARCA — UI
+   ============================================================ */
+const CAMPOS_MARCA = [['b-nombre','nombre'],['b-web','web'],['b-ig','ig'],['b-slogan','slogan'],['b-c1','c1'],['b-c2','c2'],['b-bio','bio'],['b-propuesta','propuesta'],['b-tono','tono'],['b-publico','publico'],['b-hashtags','hashtags'],['b-datos','datos']];
+function pintarMarca(){
+  CAMPOS_MARCA.forEach(([id,k])=>{ $('#'+id).value = marca[k]; });
+  $('#lista-datos').innerHTML = datosMarca().map(d=>'<div class="dato-marca">'+esc(d)+'</div>').join('');
+}
+let tGuardado;
+function marcaCambiada(){
+  CAMPOS_MARCA.forEach(([id,k])=>{ marca[k] = $('#'+id).value; });
+  guardarMarca();
+  $('#lista-datos').innerHTML = datosMarca().map(d=>'<div class="dato-marca">'+esc(d)+'</div>').join('');
+  clearTimeout(tGuardado);
+  $('#marca-ok').classList.add('ver');
+  tGuardado = setTimeout(()=> $('#marca-ok').classList.remove('ver'), 1600);
+  pedirRender();
+}
+
+/* ============================================================
+   ESTUDIO VISUAL — plantillas canvas 1080×1350
+   ============================================================ */
+const LZ = { logo:'evst_logo', fotos:'evst_fotos', feed:'evst_disenos' };
+function lzGet(k, def){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; }catch(e){ return def; } }
+function lzSet(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); return true; }catch(e){ toast('Memoria del navegador llena: borra fotos o diseños'); return false; } }
+
+let logoData = lzGet(LZ.logo, null);
+let fotosData = lzGet(LZ.fotos, []);
+let feedData = lzGet(LZ.feed, []);
+let fotoSel = 0;
+let logoImg = null;
+const fotoCache = {};
+
+function cargarImg(src){
+  return new Promise((res, rej)=>{ const im = new Image(); im.onload = ()=>res(im); im.onerror = rej; im.src = src; });
+}
+
+/* --- color helpers --- */
+function hex2rgb(h){ h = h.replace('#',''); if(h.length===3) h = h.split('').map(c=>c+c).join(''); return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)]; }
+function rgb2css(r){ return 'rgb('+r.map(Math.round).join(',')+')'; }
+function mezcla(hex, objetivo, f){ const a = hex2rgb(hex); return rgb2css(a.map((c,i)=> c + (objetivo[i]-c)*f)); }
+function tinte(hex, f){ return mezcla(hex, [255,255,255], f); }
+function sombra(hex, f){ return mezcla(hex, [10,6,24], f); }
+function rgba(hex, al){ const a = hex2rgb(hex); return 'rgba('+a.join(',')+','+al+')'; }
+
+/* --- draw helpers --- */
+function rr(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+function drawCover(ctx, img, x, y, w, h){
+  const s = Math.max(w/img.width, h/img.height);
+  const iw = img.width*s, ih = img.height*s;
+  ctx.drawImage(img, x+(w-iw)/2, y+(h-ih)/2, iw, ih);
+}
+function pata(ctx, x, y, s, color, alpha, rot){
+  ctx.save(); ctx.translate(x,y); ctx.rotate(rot||0); ctx.globalAlpha = alpha;
+  ctx.fillStyle = color;
+  ctx.beginPath(); ctx.ellipse(0, s*0.35, s*0.62, s*0.5, 0, 0, Math.PI*2); ctx.fill();
+  [[-s*0.55,-s*0.25],[0,-s*0.5],[s*0.55,-s*0.25]].forEach(p=>{
+    ctx.beginPath(); ctx.arc(p[0], p[1], s*0.26, 0, Math.PI*2); ctx.fill();
+  });
+  ctx.restore(); ctx.globalAlpha = 1;
+}
+function patronPatas(ctx, color, alpha){
+  const pos = [[120,180,-0.4],[940,140,0.5],[180,1180,0.3],[930,1230,-0.3],[540,90,0.1],[80,660,0.6],[1000,700,-0.6]];
+  pos.forEach(p=> pata(ctx, p[0], p[1], 46, color, alpha, p[2]));
+}
+function wrapLineas(ctx, texto, maxW){
+  const palabras = String(texto).split(/\s+/).filter(Boolean);
+  const lineas = []; let actual = '';
+  palabras.forEach(p=>{
+    const prueba = actual ? actual+' '+p : p;
+    if(ctx.measureText(prueba).width <= maxW) actual = prueba;
+    else { if(actual) lineas.push(actual); actual = p; }
+  });
+  if(actual) lineas.push(actual);
+  return lineas;
+}
+function pill(ctx, texto, x, y, opts){
+  const o = Object.assign({px:34, padX:30, padY:18, bg:'#000', color:'#fff', font:'Figtree', peso:700, centrar:false}, opts);
+  ctx.font = o.peso+' '+o.px+"px '"+o.font+"', sans-serif";
+  const w = ctx.measureText(texto).width + o.padX*2;
+  const h = o.px + o.padY*2;
+  const x0 = o.centrar ? x - w/2 : x;
+  ctx.fillStyle = o.bg; rr(ctx, x0, y, w, h, h/2); ctx.fill();
+  ctx.fillStyle = o.color; ctx.textBaseline = 'middle';
+  ctx.fillText(texto, x0 + o.padX, y + h/2 + o.px*0.06);
+  ctx.textBaseline = 'alphabetic';
+  return {w, h};
+}
+function fotoPlaceholder(ctx, x, y, w, h, c1, c2, radio){
+  ctx.save(); rr(ctx, x, y, w, h, radio==null? 24 : radio); ctx.clip();
+  ctx.fillStyle = tinte(c1, 0.82); ctx.fillRect(x,y,w,h);
+  pata(ctx, x+w/2, y+h/2 - h*0.05, Math.min(w,h)*0.24, c1, 0.85, -0.15);
+  pata(ctx, x+w*0.24, y+h*0.78, Math.min(w,h)*0.1, c2, 0.9, 0.4);
+  pata(ctx, x+w*0.78, y+h*0.24, Math.min(w,h)*0.08, c2, 0.9, -0.5);
+  ctx.restore();
+}
+function dibujaFoto(ctx, x, y, w, h, radio, c1, c2){
+  const img = fotoCache[fotoSel];
+  if(img){ ctx.save(); rr(ctx, x, y, w, h, radio); ctx.clip(); drawCover(ctx, img, x, y, w, h); ctx.restore(); }
+  else fotoPlaceholder(ctx, x, y, w, h, c1, c2, radio);
+}
+function fotoCirculo(ctx, cx, cy, r, c1, c2, borde){
+  const img = fotoCache[fotoSel];
+  ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.clip();
+  if(img) drawCover(ctx, img, cx-r, cy-r, r*2, r*2);
+  else { ctx.fillStyle = tinte(c1,0.82); ctx.fillRect(cx-r,cy-r,r*2,r*2); pata(ctx,cx,cy,r*0.5,c1,0.85,-0.15); }
+  ctx.restore();
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2);
+  ctx.lineWidth = 14; ctx.strokeStyle = borde; ctx.stroke();
+}
+function dibujaLogo(ctx, cx, y, alto, modo, c1, c2){
+  /* modo 'claro': sobre fondo oscuro/morado (logo directo o wordmark blanco).
+     modo 'chip': sobre fondo claro — logo blanco dentro de un chip morado.
+     modo 'oscuro': wordmark en morado sobre fondo claro (si no hay logo). */
+  if(logoImg){
+    let w = logoImg.width * (alto / logoImg.height);
+    if(modo === 'chip'){
+      const padX = 34, padY = 20;
+      ctx.fillStyle = c1; rr(ctx, cx - w/2 - padX, y - padY, w + padX*2, alto + padY*2, 22); ctx.fill();
+    }
+    ctx.drawImage(logoImg, cx - w/2, y, w, alto);
+    return alto + (modo==='chip' ? 40 : 0);
+  }
+  const px = alto * 0.62;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.font = "800 "+px+"px 'Bricolage Grotesque', sans-serif";
+  const color = (modo === 'oscuro') ? c1 : '#FFFFFF';
+  if(modo === 'chip'){
+    const w = ctx.measureText(marca.nombre).width + 70;
+    ctx.fillStyle = c1; rr(ctx, cx - w/2, y - 14, w, alto + 28, 20); ctx.fill();
+    ctx.fillStyle = '#FFFFFF';
+  } else ctx.fillStyle = color;
+  ctx.fillText(marca.nombre, cx, y + alto/2);
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  return alto + (modo==='chip' ? 28 : 0);
+}
+
+/* --- plantillas --- */
+const W = 1080, H = 1350;
+const PLANTILLAS = {
+t1(ctx, o){ // Número gigante, fondo lila claro
+  ctx.fillStyle = tinte(o.c1, 0.92); ctx.fillRect(0,0,W,H);
+  patronPatas(ctx, o.c1, 0.05);
+  ctx.fillStyle = rgba(o.c1, 0.16);
+  ctx.font = "800 640px 'Bricolage Grotesque', sans-serif";
+  ctx.textAlign = 'left';
+  ctx.fillText(o.destacado.slice(0,3), 40, 760);
+  pill(ctx, o.tag, 70, 80, {bg:o.c2, color:'#221740', px:34});
+  dibujaLogo(ctx, W-190, 84, 72, 'chip', o.c1, o.c2);
+  fotoCirculo(ctx, 790, 500, 250, o.c1, o.c2, '#FFFFFF');
+  ctx.fillStyle = sombra(o.c1, 0.25);
+  ctx.font = "800 88px 'Bricolage Grotesque', sans-serif";
+  let y = 880;
+  wrapLineas(ctx, o.titulo, 900).slice(0,3).forEach(l=>{ ctx.fillText(l, 70, y); y += 100; });
+  pill(ctx, o.cta, 70, 1170, {bg:o.c1, color:'#FFFFFF', px:36});
+},
+t2(ctx, o){ // Foto protagonista con overlay morado
+  const img = fotoCache[fotoSel];
+  if(img) drawCover(ctx, img, 0, 0, W, H);
+  else fotoPlaceholder(ctx, 0, 0, W, H, o.c1, o.c2, 0);
+  const gr = ctx.createLinearGradient(0, 380, 0, H);
+  gr.addColorStop(0, rgba(o.c1, 0));
+  gr.addColorStop(0.55, rgba(o.c1, 0.55));
+  gr.addColorStop(1, sombra(o.c1, 0.35));
+  ctx.fillStyle = gr; ctx.fillRect(0,0,W,H);
+  dibujaLogo(ctx, 200, 70, 92, 'claro', o.c1, o.c2);
+  pill(ctx, o.tag, 70, 210, {bg:'rgba(255,255,255,.22)', color:'#FFFFFF', px:30});
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = "800 92px 'Bricolage Grotesque', sans-serif";
+  const lineas = wrapLineas(ctx, o.titulo, 940).slice(0,4);
+  let y = H - 150 - (lineas.length-1)*104;
+  lineas.forEach(l=>{ ctx.fillText(l, 70, y); y += 104; });
+  ctx.fillStyle = o.c2; ctx.font = "700 42px 'Figtree', sans-serif";
+  ctx.fillText(o.cta, 70, H - 60);
+},
+t3(ctx, o){ // Tarjeta central estilo «polémica»
+  ctx.fillStyle = tinte(o.c1, 0.9); ctx.fillRect(0,0,W,H);
+  patronPatas(ctx, o.c1, 0.07);
+  dibujaLogo(ctx, W/2, 90, 92, 'chip', o.c1, o.c2);
+  const cw = 860, ch = 700, cx = (W-cw)/2, cy = 330;
+  ctx.save(); ctx.shadowColor = rgba(o.c1,0.35); ctx.shadowBlur = 60; ctx.shadowOffsetY = 24;
+  ctx.fillStyle = '#FFFFFF'; rr(ctx, cx, cy, cw, ch, 34); ctx.fill(); ctx.restore();
+  ctx.textAlign = 'center';
+  ctx.fillStyle = o.c1; ctx.font = "800 34px 'Figtree', sans-serif";
+  ctx.fillText(o.tag.toUpperCase(), W/2, cy+110);
+  ctx.fillStyle = '#221740'; ctx.font = "800 76px 'Bricolage Grotesque', sans-serif";
+  let y = cy + 240;
+  wrapLineas(ctx, o.titulo, cw-160).slice(0,4).forEach(l=>{ ctx.fillText(l, W/2, y); y += 90; });
+  ctx.textAlign = 'left';
+  pill(ctx, o.cta, W/2, cy+ch-130, {bg:o.c2, color:'#221740', px:34, centrar:true});
+  fotoCirculo(ctx, W/2, cy+ch+120, 150, o.c1, o.c2, '#FFFFFF');
+},
+t4(ctx, o){ // Checklist morado
+  ctx.fillStyle = o.c1; ctx.fillRect(0,0,W,H);
+  patronPatas(ctx, '#FFFFFF', 0.06);
+  dibujaLogo(ctx, W/2, 80, 96, 'claro', o.c1, o.c2);
+  ctx.fillStyle = '#FFFFFF'; ctx.font = "800 84px 'Bricolage Grotesque', sans-serif";
+  let y = 330;
+  wrapLineas(ctx, o.titulo, 940).slice(0,3).forEach(l=>{ ctx.fillText(l, 70, y); y += 96; });
+  y += 40;
+  o.lineas.slice(0,4).forEach(linea=>{
+    ctx.fillStyle = 'rgba(255,255,255,.12)'; rr(ctx, 70, y-58, 940, 118, 26); ctx.fill();
+    pata(ctx, 135, y-4, 26, o.c2, 1, 0);
+    ctx.fillStyle = '#FFFFFF'; ctx.font = "600 42px 'Figtree', sans-serif";
+    const ls = wrapLineas(ctx, linea, 760).slice(0,2);
+    if(ls.length === 1) ctx.fillText(ls[0], 200, y+12);
+    else { ctx.fillText(ls[0], 200, y-8); ctx.fillText(ls[1], 200, y+40); }
+    y += 150;
+  });
+  pill(ctx, o.cta, W/2, Math.min(y+16, 1210), {bg:'#FFFFFF', color:o.c1, px:36, centrar:true});
+},
+t5(ctx, o){ // Anuncio amarillo
+  ctx.fillStyle = o.c2; ctx.fillRect(0,0,W,H);
+  patronPatas(ctx, '#FFFFFF', 0.18);
+  dibujaLogo(ctx, W/2, 80, 100, 'chip', o.c1, o.c2);
+  ctx.fillStyle = sombra(o.c1, 0.1);
+  ctx.font = "800 100px 'Bricolage Grotesque', sans-serif";
+  ctx.textAlign = 'center';
+  let y = 340;
+  wrapLineas(ctx, o.titulo, 920).slice(0,3).forEach(l=>{ ctx.fillText(l, W/2, y); y += 112; });
+  ctx.textAlign = 'left';
+  dibujaFoto(ctx, 120, y+30, 840, 1180-y-30+90, 40, o.c1, o.c1);
+  pill(ctx, o.cta, W/2, 1230, {bg:o.c1, color:'#FFFFFF', px:38, centrar:true});
+},
+t6(ctx, o){ // Portada de carrusel blanca
+  ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0,0,W,H);
+  pata(ctx, 990, 120, 70, o.c2, 0.9, 0.4);
+  pata(ctx, 90, 1240, 55, o.c2, 0.9, -0.4);
+  pata(ctx, 1000, 1150, 40, tinte(o.c1,0.5), 0.5, 0.3);
+  pill(ctx, o.tag, 70, 90, {bg:tinte(o.c1,0.88), color:o.c1, px:32});
+  ctx.fillStyle = sombra(o.c1, 0.15);
+  ctx.font = "800 96px 'Bricolage Grotesque', sans-serif";
+  let y = 300;
+  wrapLineas(ctx, o.titulo, 620).slice(0,5).forEach(l=>{ ctx.fillText(l, 70, y); y += 108; });
+  dibujaFoto(ctx, 640, 560, 380, 500, 190, o.c1, o.c2);
+  pill(ctx, 'Desliza →', 70, 1090, {bg:o.c1, color:'#FFFFFF', px:38});
+  dibujaLogo(ctx, 260, 1210, 78, 'chip', o.c1, o.c2);
+  ctx.fillStyle = '#8A80A6'; ctx.font = "600 30px 'Figtree', sans-serif";
+  ctx.fillText(marca.ig+' · '+marca.web, 520, 1262);
+}
+};
+
+let renderPendiente = null;
+function pedirRender(){ clearTimeout(renderPendiente); renderPendiente = setTimeout(renderVisual, 120); }
+
+async function renderVisual(){
+  const canvas = $('#lienzo'); if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  try{
+    await document.fonts.load("800 100px 'Bricolage Grotesque'");
+    await document.fonts.load("700 42px 'Figtree'");
+  }catch(e){}
+  if(logoData && !logoImg){ try{ logoImg = await cargarImg(logoData); }catch(e){ logoImg = null; } }
+  if(fotosData[fotoSel] && !fotoCache[fotoSel]){ try{ fotoCache[fotoSel] = await cargarImg(fotosData[fotoSel]); }catch(e){} }
+  const o = {
+    c1: marca.c1 || '#5B2E7E', c2: marca.c2 || '#FFD84D',
+    tag: $('#v-tag').value || marca.nombre,
+    titulo: $('#v-titulo').value || marca.propuesta.split('.')[0],
+    destacado: $('#v-destacado').value || '🐾',
+    lineas: $('#v-lineas').value.split('\n').map(s=>s.trim()).filter(Boolean),
+    cta: $('#v-cta').value || marca.web
+  };
+  ctx.clearRect(0,0,W,H);
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  PLANTILLAS[$('#v-plantilla').value](ctx, o);
+}
+
+function renderVoces(){
+  const cont = $('#voz-lista'); if(!cont) return;
+  const actual = marca.voz || VOZ_POR_DEFECTO;
+  cont.innerHTML = VOCES.map(v=>
+    '<button type="button" class="voz-op" role="radio" data-voz="'+v.id+'" aria-checked="'+(v.id===actual)+'">'+
+      '<span class="punto"></span>'+
+      '<span><span class="n">'+esc(v.nombre)+'</span><br><span class="d">'+esc(v.acento)+' · '+esc(v.perfil)+'</span></span>'+
+      (v.destaca?'<span class="ban">Chilena</span>':'')+
+    '</button>').join('');
+  $$('#voz-lista [data-voz]').forEach(b=> b.addEventListener('click', ()=>{
+    marca.voz = b.dataset.voz; guardarMarca(); renderVoces(); toast('Voz seleccionada ✓');
+  }));
+  const v = VOCES.find(x=>x.id===actual);
+  $('#voz-elegida').textContent = v
+    ? 'Se narrará con «'+v.nombre+'» ('+v.acento+'). Avísame el nombre y la dejo activa en el generador.'
+    : '';
+}
+
+function renderThumbs(){
+  const cont = $('#thumbs-fotos');
+  if(!fotosData.length){ cont.innerHTML = '<span class="aviso">Sin fotos aún: las plantillas usan una ilustración de marca.</span>'; return; }
+  cont.innerHTML = fotosData.map((f,i)=>'<img src="'+f+'" alt="Foto '+(i+1)+'" data-i="'+i+'" class="'+(i===fotoSel?'sel':'')+'">').join('');
+  $$('#thumbs-fotos img').forEach(im=> im.addEventListener('click', ()=>{ fotoSel = parseInt(im.dataset.i,10); renderThumbs(); pedirRender(); }));
+}
+function renderLogoCaja(){
+  $('#logo-caja').innerHTML = logoData ? '<img src="'+logoData+'" alt="Logo">' : '<span class="sin-logo">Sin logo: se usa el nombre de la marca</span>';
+}
+function renderFeed(){
+  const g = $('#feed-grid');
+  g.innerHTML = feedData.length
+    ? feedData.map(d=>'<img src="'+d+'" alt="Diseño del feed">').join('')
+    : '<span class="aviso" style="grid-column:1/-1">Feed vacío: exporta o agrega diseños para previsualizar el conjunto.</span>';
+}
+
+function reducirImagen(file, maxLado, mime, calidad){
+  return new Promise((res, rej)=>{
+    const fr = new FileReader();
+    fr.onload = ()=>{
+      const im = new Image();
+      im.onload = ()=>{
+        const s = Math.min(1, maxLado / Math.max(im.width, im.height));
+        const c = document.createElement('canvas');
+        c.width = Math.round(im.width*s); c.height = Math.round(im.height*s);
+        c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+        res(c.toDataURL(mime, calidad));
+      };
+      im.onerror = rej; im.src = fr.result;
+    };
+    fr.onerror = rej; fr.readAsDataURL(file);
+  });
+}
+
+function enviarAVisual(g){
+  $('#v-tag').value = PILARES[g.pilar].nombre;
+  $('#v-titulo').value = g.titulo;
+  const num = (g.titulo.match(/\d+/)||[])[0];
+  $('#v-destacado').value = num || g.emoji || '🐾';
+  if(g.puntos) $('#v-lineas').value = g.puntos.slice(0,4).map(p=> p.split(':')[0]).join('\n');
+  $('#v-caption').value = g.caption || '';
+  $('#v-plantilla').value = g.formato==='carrusel' ? 't6' : (num ? 't1' : 't2');
+  activarPane('visual');
+  pedirRender();
+  toast('Contenido cargado en el estudio visual');
+}
+
+
+/* ============================================================
+   REEL — animación en canvas 1080×1920 y grabación en el navegador
+   ============================================================ */
+const RW = 1080, RH = 1920;
+
+function suavizar(t){ return t<0 ? 0 : t>1 ? 1 : 1-Math.pow(1-t, 3); }
+
+function guionReel(){
+  const o = {
+    c1: marca.c1 || '#5B2E7E', c2: marca.c2 || '#FFD84D',
+    etiqueta: $('#v-tag').value || marca.nombre,
+    titulo: $('#v-titulo').value || marca.propuesta.split('.')[0],
+    lineas: $('#v-lineas').value.split('\n').map(s=>s.trim()).filter(Boolean).slice(0,4),
+    cierre: $('#v-cta').value || marca.web,
+    fondo: $('#reel-fondo').value,
+    seg: parseFloat($('#reel-seg').value) || 2.5
+  };
+  const escenas = [{ tipo:'titulo', dur: Math.max(2.6, o.seg) }];
+  o.lineas.forEach((l,i)=> escenas.push({ tipo:'linea', texto:l, idx:i, dur:o.seg }));
+  escenas.push({ tipo:'cierre', dur: 3 });
+  let t = 0;
+  escenas.forEach(e=>{ e.desde = t; t += e.dur; });
+  return { o, escenas, total: t };
+}
+
+function fondoReel(ctx, o, t){
+  if(o.fondo === 'claro'){
+    ctx.fillStyle = tinte(o.c1, 0.93); ctx.fillRect(0,0,RW,RH);
+    patronPatasReel(ctx, o.c1, 0.06, t);
+    return { texto:sombra(o.c1,0.25), suave:'rgba(255,255,255,.85)', chipBg:o.c2, chipTxt:'#221740' };
+  }
+  const img = fotoCache[fotoSel];
+  if(o.fondo === 'foto' && img){
+    const z = 1 + t*0.012;                       // acercamiento lento
+    const w = RW*z, h = RH*z;
+    ctx.save(); ctx.beginPath(); ctx.rect(0,0,RW,RH); ctx.clip();
+    drawCover(ctx, img, (RW-w)/2, (RH-h)/2, w, h);
+    ctx.restore();
+    const g = ctx.createLinearGradient(0,0,0,RH);
+    g.addColorStop(0, rgba(o.c1,.75)); g.addColorStop(.5, rgba(o.c1,.55)); g.addColorStop(1, sombra(o.c1,.4));
+    ctx.fillStyle = g; ctx.fillRect(0,0,RW,RH);
+  } else {
+    const g = ctx.createLinearGradient(0,0,RW,RH);
+    g.addColorStop(0, sombra(o.c1,.28)); g.addColorStop(.55, o.c1); g.addColorStop(1, sombra(o.c1,.1));
+    ctx.fillStyle = g; ctx.fillRect(0,0,RW,RH);
+    patronPatasReel(ctx, '#FFFFFF', 0.05, t);
+  }
+  return { texto:'#FFFFFF', suave:'rgba(255,255,255,.75)', chipBg:o.c2, chipTxt:'#221740' };
+}
+
+function patronPatasReel(ctx, color, alpha, t){
+  const pos = [[130,240,-.4],[950,180,.5],[90,1000,.3],[980,1180,-.3],[540,1750,.15],[160,1620,.6]];
+  pos.forEach((p,i)=> pata(ctx, p[0], p[1] + Math.sin(t*0.7 + i)*10, 54, color, alpha, p[2]));
+}
+
+function textoCentrado(ctx, texto, y, maxW, px, peso, color, familia){
+  ctx.font = peso+' '+px+"px '"+(familia||'Bricolage Grotesque')+"', sans-serif";
+  ctx.fillStyle = color; ctx.textAlign = 'center';
+  const ls = wrapLineas(ctx, texto, maxW);
+  ls.forEach((l,i)=> ctx.fillText(l, RW/2, y + i*px*1.16));
+  ctx.textAlign = 'left';
+  return ls.length * px * 1.16;
+}
+
+function dibujarCuadroReel(ctx, guion, t){
+  const { o, escenas } = guion;
+  ctx.clearRect(0,0,RW,RH);
+  const pal = fondoReel(ctx, o, t);
+  const esc = escenas.find(e=> t >= e.desde && t < e.desde + e.dur) || escenas[escenas.length-1];
+  const local = (t - esc.desde) / esc.dur;
+  const entra = suavizar(local / 0.28);
+
+  // Marca arriba, siempre
+  ctx.globalAlpha = 1;
+  dibujaLogo(ctx, RW/2, 150, 92, o.fondo === 'claro' ? 'chip' : 'claro', o.c1, o.c2);
+
+  if(esc.tipo === 'titulo'){
+    ctx.globalAlpha = entra;
+    const dy = (1-entra) * 40;
+    pill(ctx, o.etiqueta, RW/2, 560 + dy, {bg:pal.chipBg, color:pal.chipTxt, px:42, centrar:true});
+    textoCentrado(ctx, o.titulo, 840 + dy, 880, 96, '800', pal.texto);
+  } else if(esc.tipo === 'linea'){
+    // Título reducido arriba
+    ctx.globalAlpha = 0.5;
+    textoCentrado(ctx, o.titulo, 400, 860, 52, '700', pal.texto);
+    ctx.globalAlpha = 1;
+    const n = o.lineas.length;
+    const alto = 210, hueco = 26;
+    const yIni = RH/2 - ((n*alto + (n-1)*hueco) / 2) + 60;
+    o.lineas.forEach((l,i)=>{
+      const visible = i < esc.idx ? 1 : i === esc.idx ? entra : 0;
+      if(visible <= 0) return;
+      const y = yIni + i*(alto+hueco);
+      const dx = (1-visible) * 60;
+      ctx.globalAlpha = visible;
+      ctx.fillStyle = o.fondo === 'claro' ? '#FFFFFF' : 'rgba(255,255,255,.14)';
+      rr(ctx, 80 + dx, y, RW-160, alto, 30); ctx.fill();
+      if(i === esc.idx){ ctx.strokeStyle = o.c2; ctx.lineWidth = 5; ctx.stroke(); }
+      pata(ctx, 165 + dx, y + alto/2, 30, o.c2, 1, 0);
+      ctx.font = "700 46px 'Figtree', sans-serif";
+      ctx.fillStyle = o.fondo === 'claro' ? sombra(o.c1,.2) : '#FFFFFF';
+      const ls = wrapLineas(ctx, l, RW-400).slice(0,3);
+      const y0 = y + alto/2 - (ls.length-1)*28;
+      ls.forEach((tx,j)=> ctx.fillText(tx, 250 + dx, y0 + j*56 + 16));
+    });
+    ctx.globalAlpha = 1;
+  } else {
+    ctx.globalAlpha = entra;
+    const dy = (1-entra) * 30;
+    textoCentrado(ctx, o.cierre, RH/2 - 120 + dy, 880, 78, '800', pal.texto);
+    pill(ctx, marca.web, RW/2, RH/2 + 120 + dy, {bg:pal.chipBg, color:pal.chipTxt, px:46, centrar:true});
+    ctx.globalAlpha = Math.min(1, entra);
+    ctx.font = "600 38px 'Figtree', sans-serif"; ctx.fillStyle = pal.suave; ctx.textAlign = 'center';
+    ctx.fillText(marca.ig, RW/2, RH/2 + 300 + dy); ctx.textAlign = 'left';
+  }
+  ctx.globalAlpha = 1;
+
+  // Barra de progreso del reel
+  ctx.fillStyle = 'rgba(255,255,255,.25)'; rr(ctx, 80, RH-120, RW-160, 10, 5); ctx.fill();
+  ctx.fillStyle = o.c2; rr(ctx, 80, RH-120, (RW-160) * (t/guion.total), 10, 5); ctx.fill();
+}
+
+async function prepararFuentesReel(){
+  try{
+    await document.fonts.load("800 96px 'Bricolage Grotesque'");
+    await document.fonts.load("700 46px 'Figtree'");
+    await document.fonts.ready;
+  }catch(e){}
+  if(logoData && !logoImg){ try{ logoImg = await cargarImg(logoData); }catch(e){} }
+  if(fotosData[fotoSel] && !fotoCache[fotoSel]){ try{ fotoCache[fotoSel] = await cargarImg(fotosData[fotoSel]); }catch(e){} }
+}
+
+let reelCorriendo = false;
+function animarReel(guion, ctx, alAvanzar){
+  return new Promise(res=>{
+    const t0 = performance.now();
+    (function paso(){
+      const t = (performance.now() - t0) / 1000;
+      dibujarCuadroReel(ctx, guion, Math.min(t, guion.total));
+      if(alAvanzar) alAvanzar(Math.min(1, t / guion.total));
+      if(t < guion.total) requestAnimationFrame(paso);
+      else res();
+    })();
+  });
+}
+
+/* --- Codificación MP4/H.264 con WebCodecs (formato que exige Instagram) --- */
+async function perfilH264(){
+  if(!('VideoEncoder' in window) || !window.Mp4Muxer) return null;
+  // Niveles que admiten 1080×1920; se prueba del más compatible al más alto.
+  for(const codec of ['avc1.42002A','avc1.4D002A','avc1.640028','avc1.42E028']){
+    try{
+      const r = await VideoEncoder.isConfigSupported({ codec, width:RW, height:RH, bitrate:8_000_000, framerate:30 });
+      if(r && r.supported) return codec;
+    }catch(e){}
+  }
+  return null;
+}
+
+/* Codifica cuadro a cuadro (más rápido que grabar en tiempo real) y devuelve un MP4 real. */
+async function generarMp4(guion, ctx, codec, alAvanzar){
+  const FPS = 30;
+  const total = Math.ceil(guion.total * FPS);
+  const muxer = new Mp4Muxer.Muxer({
+    target: new Mp4Muxer.ArrayBufferTarget(),
+    video: { codec:'avc', width:RW, height:RH, frameRate:FPS },
+    fastStart: 'in-memory'
+  });
+  let errorEnc = null;
+  const enc = new VideoEncoder({
+    output: (chunk, meta) => muxer.addVideoChunk(chunk, meta),
+    error: e => { errorEnc = e; }
+  });
+  enc.configure({ codec, width:RW, height:RH, bitrate:8_000_000, framerate:FPS, latencyMode:'quality' });
+
+  for(let i=0; i<total; i++){
+    if(errorEnc) throw errorEnc;
+    dibujarCuadroReel(ctx, guion, i / FPS);
+    const frame = new VideoFrame(ctx.canvas, { timestamp: Math.round(i * 1e6 / FPS), duration: Math.round(1e6/FPS) });
+    enc.encode(frame, { keyFrame: i % (FPS*2) === 0 });
+    frame.close();
+    if(i % 10 === 0){
+      if(alAvanzar) alAvanzar(i/total);
+      await new Promise(r => setTimeout(r, 0));   // deja respirar a la interfaz
+      if(enc.encodeQueueSize > 30) await new Promise(r => setTimeout(r, 30));
+    }
+  }
+  await enc.flush();
+  enc.close();
+  if(errorEnc) throw errorEnc;
+  muxer.finalize();
+  return new Blob([muxer.target.buffer], { type: 'video/mp4' });
+}
+
+function formatoVideoSoportado(){
+  // Instagram exige H.264 dentro de MP4: se pide explícitamente primero.
+  const opciones = [
+    'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
+    'video/mp4;codecs=avc1.4d002a',
+    'video/mp4;codecs=avc1.42E01E',
+    'video/mp4;codecs=h264',
+    'video/mp4',
+    'video/webm;codecs=vp9',
+    'video/webm'
+  ];
+  for(const mime of opciones){
+    if(window.MediaRecorder && MediaRecorder.isTypeSupported(mime)) return mime;
+  }
+  return null;
+}
+
+/* Lee el tipo REAL que negoció el grabador: un «video/mp4» puede traer VP9 dentro,
+   y en ese caso Instagram lo rechaza. */
+function analizarFormato(mimeReal){
+  const m = (mimeReal || '').toLowerCase();
+  const ext = m.includes('webm') ? 'webm' : 'mp4';
+  const h264 = /avc1|h264|avc3/.test(m);
+  return { ext, h264, apto: ext === 'mp4' && h264 };
+}
+
+async function crearReel(){
+  if(reelCorriendo) return;
+  const canvas = $('#lienzo-reel'), ctx = canvas.getContext('2d');
+  const estado = $('#reel-estado'), barra = $('#reel-barra').firstElementChild;
+  reelCorriendo = true;
+  estado.textContent = 'Preparando…';
+  await prepararFuentesReel();
+  const guion = guionReel();
+
+  let blob = null, aviso = '';
+  const codec = await perfilH264();
+
+  if(codec){
+    // Camino preferido: MP4 con H.264, listo para Instagram.
+    estado.textContent = 'Generando el MP4…';
+    try{
+      blob = await generarMp4(guion, ctx, codec, p => { barra.style.width = (p*100).toFixed(0)+'%'; });
+    }catch(e){
+      console.warn('WebCodecs falló, se usa el grabador del navegador:', e);
+      blob = null;
+    }
+  }
+
+  if(!blob){
+    // Respaldo: grabar en tiempo real con el grabador del navegador.
+    const mimePedido = formatoVideoSoportado();
+    if(!mimePedido){
+      estado.textContent = 'Este navegador no puede generar video. Prueba en Chrome, Edge o Safari de escritorio.';
+      reelCorriendo = false; barra.style.width = '0%';
+      return;
+    }
+    const stream = canvas.captureStream(30);
+    const trozos = [];
+    const rec = new MediaRecorder(stream, { mimeType: mimePedido, videoBitsPerSecond: 8_000_000 });
+    rec.ondataavailable = e => { if(e.data.size) trozos.push(e.data); };
+    const listo = new Promise(res => { rec.onstop = res; });
+    estado.textContent = 'Grabando el reel… (' + guion.total.toFixed(0) + ' s, no cierres la pestaña)';
+    rec.start();
+    await animarReel(guion, ctx, p => { barra.style.width = (p*100).toFixed(0)+'%'; });
+    rec.stop();
+    await listo;
+    stream.getTracks().forEach(t => t.stop());
+    const fmt = analizarFormato(rec.mimeType || mimePedido);
+    blob = new Blob(trozos, { type: rec.mimeType || mimePedido });
+    if(!fmt.apto){
+      aviso = ' Ojo: este navegador no pudo usar H.264, así que Instagram podría rechazarlo. Prueba en Chrome o Edge de escritorio.';
+    }
+    if(fmt.ext !== 'mp4') aviso = ' El archivo salió en WebM;' + aviso;
+  }
+
+  const nombre = 'encuentravet-reel.mp4';
+  const peso = (blob.size/1048576).toFixed(1) + ' MB';
+  estado.textContent = (aviso
+    ? 'Reel listo (' + peso + ').' + aviso
+    : 'Reel listo (' + peso + ', MP4 H.264): súbelo a Instagram tal cual.');
+  reelCorriendo = false;
+  barra.style.width = '0%';
+
+  if(descargas){
+    try{ await descargas.save({ filename: nombre, data: blob }); toast('Reel descargado ✓'); return; }
+    catch(err){ if(err && err.code === 'declined') return; }
+  }
+  const url = URL.createObjectURL(blob);
+  const modal = document.createElement('div');
+  modal.className = 'modal-img';
+  const v = document.createElement('video');
+  v.src = url; v.controls = true; v.playsInline = true; v.style.maxHeight = '70vh'; v.style.borderRadius = '12px';
+  const p = document.createElement('p');
+  p.textContent = 'Reel listo. Mantén presionado el video (o clic derecho) para guardarlo. Toca fuera para cerrar.';
+  modal.appendChild(v); modal.appendChild(p);
+  modal.addEventListener('click', ev => { if(ev.target !== v){ URL.revokeObjectURL(url); modal.remove(); } });
+  document.body.appendChild(modal);
+}
+
+async function previaReel(){
+  if(reelCorriendo) return;
+  reelCorriendo = true;
+  const ctx = $('#lienzo-reel').getContext('2d');
+  const barra = $('#reel-barra').firstElementChild;
+  await prepararFuentesReel();
+  await animarReel(guionReel(), ctx, p => { barra.style.width = (p*100).toFixed(0)+'%'; });
+  barra.style.width = '0%';
+  reelCorriendo = false;
+}
+
+async function pintarPrimerCuadroReel(){
+  const c = $('#lienzo-reel'); if(!c) return;
+  await prepararFuentesReel();
+  dibujarCuadroReel(c.getContext('2d'), guionReel(), 0.4);
+}
+
+/* ============================================================
+   INFRAESTRUCTURA UI
+   ============================================================ */
+function toast(msg){
+  const t = $('#toast'); t.textContent = msg; t.classList.add('ver');
+  clearTimeout(t._h); t._h = setTimeout(()=> t.classList.remove('ver'), 2200);
+}
+async function copiar(txt){
+  try{ await navigator.clipboard.writeText(txt); toast('Copiado al portapapeles ✓'); }
+  catch(e){
+    const ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta);
+    ta.select(); try{ document.execCommand('copy'); toast('Copiado ✓'); }catch(e2){ toast('No se pudo copiar automáticamente'); }
+    ta.remove();
+  }
+}
+function activarPane(nombre){
+  $$('nav.tabs button').forEach(b=> b.setAttribute('aria-selected', String(b.dataset.pane===nombre)));
+  $$('main .pane').forEach(p=> p.classList.toggle('activa', p.id==='pane-'+nombre));
+}
+
+let descargas = null;
+(async ()=>{
+  try{
+    if(window.claude && typeof window.claude.use === 'function'){
+      descargas = await window.claude.use('downloads');
+      if(descargas){
+        const b = $('#btn-descargar-guardados'); b.hidden = false;
+        b.addEventListener('click', async ()=>{
+          try{ await descargas.save({ filename:'contenido-encuentravet.md', data: guardadosMarkdown() }); toast('Archivo descargado ✓'); }
+          catch(err){ if(err && err.code!=='declined') toast('No se pudo descargar; usa «Copiar todo»'); }
+        });
+        const bE = $('#btn-descargar-estrategia'); if(bE) bE.hidden = false;
+      }
+    }
+  }catch(e){}
+})();
+
+/* ---- Inicialización ---- */
+(function init(){
+  const selPilar = $('#sel-pilar');
+  Object.entries(PILARES).forEach(([k,v])=>{
+    const o = document.createElement('option'); o.value = k; o.textContent = v.nombre; selPilar.appendChild(o);
+  });
+  const selMes = $('#sel-mes');
+  const mesActual = new Date().getMonth();
+  MESES.forEach((m,i)=>{
+    const o = document.createElement('option'); o.value = i; o.textContent = m;
+    if(i === (mesActual+1)%12) o.selected = true;
+    selMes.appendChild(o);
+  });
+  $$('nav.tabs button').forEach(b=> b.addEventListener('click', ()=> activarPane(b.dataset.pane)));
+  $$('#seg-formato button').forEach(b=> b.addEventListener('click', ()=>{
+    $$('#seg-formato button').forEach(x=> x.setAttribute('aria-pressed','false'));
+    b.setAttribute('aria-pressed','true');
+  }));
+  $('#btn-generar').addEventListener('click', ()=> generarDesdeControles());
+  $('#inp-tema').addEventListener('keydown', e=>{ if(e.key==='Enter') generarDesdeControles(); });
+  $('#btn-estrategia').addEventListener('click', generarEstrategia);
+  CAMPOS_MARCA.forEach(([id])=> $('#'+id).addEventListener('input', marcaCambiada));
+  $('#btn-restaurar').addEventListener('click', ()=>{
+    marca = Object.assign({}, MARCA_ORIGINAL); guardarMarca(); pintarMarca(); toast('Datos originales restaurados');
+  });
+  $('#btn-export-guardados').addEventListener('click', ()=> copiar(guardadosMarkdown()));
+  $('#btn-vaciar').addEventListener('click', ()=>{
+    if(leerGuardados().length && confirm('¿Vaciar todos los guardados? Esta acción no se puede deshacer.')){
+      escribirGuardados([]); renderGuardados(); toast('Guardados vaciados');
+    }
+  });
+  /* --- Estudio visual --- */
+  $('#inp-logo').addEventListener('change', async e=>{
+    const f = e.target.files[0]; if(!f) return;
+    try{
+      logoData = await reducirImagen(f, 900, 'image/png');
+      logoImg = null; lzSet(LZ.logo, logoData); renderLogoCaja(); pedirRender(); toast('Logo cargado ✓');
+    }catch(err){ toast('No se pudo leer el logo'); }
+    e.target.value = '';
+  });
+  $('#btn-quitar-logo').addEventListener('click', ()=>{
+    logoData = null; logoImg = null; try{ localStorage.removeItem(LZ.logo); }catch(e){}
+    renderLogoCaja(); pedirRender();
+  });
+  $('#inp-fotos').addEventListener('change', async e=>{
+    const files = Array.from(e.target.files).slice(0, 12);
+    for(const f of files){
+      try{
+        const d = await reducirImagen(f, 1200, 'image/jpeg', 0.82);
+        fotosData.push(d);
+      }catch(err){}
+    }
+    if(fotosData.length > 12) fotosData = fotosData.slice(-12);
+    Object.keys(fotoCache).forEach(k=> delete fotoCache[k]);
+    fotoSel = fotosData.length - 1;
+    lzSet(LZ.fotos, fotosData); renderThumbs(); pedirRender();
+    toast(files.length + (files.length===1?' foto agregada':' fotos agregadas'));
+    e.target.value = '';
+  });
+  $('#btn-borrar-foto').addEventListener('click', ()=>{
+    if(!fotosData.length) return;
+    fotosData.splice(fotoSel, 1);
+    Object.keys(fotoCache).forEach(k=> delete fotoCache[k]);
+    fotoSel = Math.max(0, fotoSel-1);
+    lzSet(LZ.fotos, fotosData); renderThumbs(); pedirRender();
+  });
+  ['v-plantilla','v-tag','v-destacado','v-titulo','v-lineas','v-cta'].forEach(id=>
+    $('#'+id).addEventListener('input', pedirRender));
+  $('#btn-copiar-caption').addEventListener('click', ()=> copiar($('#v-caption').value));
+  $('#btn-reel-crear').addEventListener('click', crearReel);
+  $('#btn-reel-previa').addEventListener('click', previaReel);
+  ['reel-seg','reel-fondo'].forEach(id=> $('#'+id).addEventListener('change', pintarPrimerCuadroReel));
+  function exportarLienzo(mime, nombre, calidad){
+    $('#lienzo').toBlob(async blob=>{
+      if(!blob){ toast('No se pudo generar la imagen'); return; }
+      if(descargas){
+        try{ await descargas.save({ filename:nombre, data: blob }); toast('Imagen descargada ✓ Copia también la descripción'); return; }
+        catch(err){ if(err && err.code==='declined') return; }
+      }
+      const modal = document.createElement('div');
+      modal.className = 'modal-img';
+      const img = document.createElement('img'); img.src = $('#lienzo').toDataURL(mime, calidad);
+      const p = document.createElement('p'); p.textContent = 'Mantén presionada la imagen (o clic derecho) para guardarla. Toca fuera para cerrar.';
+      modal.appendChild(img); modal.appendChild(p);
+      modal.addEventListener('click', ev=>{ if(ev.target!==img) modal.remove(); });
+      document.body.appendChild(modal);
+    }, mime, calidad);
+  }
+  $('#btn-export-png').addEventListener('click', ()=> exportarLienzo('image/png', 'encuentravet-post.png'));
+  $('#btn-export-jpg').addEventListener('click', ()=> exportarLienzo('image/jpeg', 'encuentravet-post.jpg', 0.92));
+  $('#btn-add-feed').addEventListener('click', ()=>{
+    const c = document.createElement('canvas'); c.width = 432; c.height = 540;
+    c.getContext('2d').drawImage($('#lienzo'), 0, 0, 432, 540);
+    feedData.unshift(c.toDataURL('image/jpeg', 0.8));
+    if(feedData.length > 12) feedData = feedData.slice(0, 12);
+    if(lzSet(LZ.feed, feedData)){ renderFeed(); toast('Agregado a la vista de feed ✓'); }
+  });
+  $('#btn-vaciar-feed').addEventListener('click', ()=>{
+    if(feedData.length && confirm('¿Vaciar la vista previa del feed?')){ feedData = []; lzSet(LZ.feed, feedData); renderFeed(); }
+  });
+
+  pintarMarca();
+  renderGuardados();
+  renderLogoCaja();
+  renderVoces();
+  renderThumbs();
+  renderFeed();
+  renderVisual();
+  pintarPrimerCuadroReel();
+})();
+</script>

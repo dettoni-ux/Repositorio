@@ -1,0 +1,46 @@
+name: Publicar piezas aprobadas
+
+# Revisa cada 15 minutos si hay piezas APROBADAS cuya fecha ya llegó.
+# Solo toca piezas en estado 'aprobada': nada se publica sin tu aprobación en el panel.
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+    inputs:
+      simulacion:
+        description: 'Simulación (muestra qué publicaría, sin publicar)'
+        required: false
+        default: true
+        type: boolean
+
+concurrency:
+  group: publicar-programadas
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Instalar dependencias
+        working-directory: rrss
+        run: npm install --omit=optional --no-audit --no-fund
+      - name: Publicar lo aprobado
+        working-directory: rrss
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          GRAPH_HOST: ${{ vars.GRAPH_HOST }}
+          DRY_RUN: ${{ (github.event_name == 'workflow_dispatch' && inputs.simulacion) && '1' || '' }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "Sin DATABASE_URL: el publicador espera a que la cola esté conectada."; exit 0
+          fi
+          node publicar.mjs

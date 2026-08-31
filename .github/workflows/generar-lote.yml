@@ -1,0 +1,89 @@
+name: Generar lote de piezas RRSS
+
+on:
+  workflow_dispatch:
+    inputs:
+      tipos:
+        description: 'Tipos de pieza (separados por comas): tip, hito, video'
+        required: false
+        default: 'tip,hito,video'
+        type: string
+      cantidad:
+        description: 'Cuántas piezas generar'
+        required: false
+        default: '4'
+        type: string
+      motor:
+        description: 'Motor de video para los cortometrajes'
+        required: false
+        default: 'animacion'
+        type: choice
+        options: [animacion, ia]
+      max_escenas:
+        description: 'Escenas por cortometraje con IA (cada una cuesta USD 2-3)'
+        required: false
+        default: '2'
+        type: string
+      demo:
+        description: 'Modo demo (sin BD: cifras de ejemplo y cola local)'
+        required: false
+        default: false
+        type: boolean
+  schedule:
+    # Lunes 13:00 UTC = 09:00 Chile (invierno, UTC-4) / 10:00 (verano, UTC-3)
+    - cron: '0 13 * * 1'
+
+# Una sola corrida a la vez: dos en paralelo chocarían al guardar los archivos
+concurrency:
+  group: generar-lote
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  generar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Instalar dependencias
+        working-directory: rrss
+        run: npm install --no-audit --no-fund
+      - name: Instalar Chromium
+        working-directory: rrss
+        run: npx playwright install --with-deps chromium
+      - name: Generar lote
+        working-directory: rrss
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          REPLICATE_API_TOKEN: ${{ secrets.REPLICATE_API_TOKEN }}
+          SEEDANCE_MODEL: ${{ vars.SEEDANCE_MODEL }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          ELEVENLABS_VOICE_ID: ${{ vars.ELEVENLABS_VOICE_ID }}
+          ELEVENLABS_MODEL: ${{ vars.ELEVENLABS_MODEL }}
+          RAMA: ${{ github.ref_name }}
+        run: |
+          node generar.mjs \
+            --tipos "${{ inputs.tipos || 'tip,hito,video' }}" \
+            --cantidad "${{ inputs.cantidad || '5' }}" \
+            --motor "${{ inputs.motor || 'animacion' }}" \
+            --max-escenas "${{ inputs.max_escenas || '2' }}" \
+            ${{ inputs.demo && '--demo' || '' }}
+      - name: Guardar piezas en el repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add piezas/
+          git diff --cached --quiet && exit 0
+          git commit -m "Agregar lote de piezas RRSS pendientes de aprobación"
+          for intento in 1 2 3; do
+            git push && exit 0
+            echo "Push rechazado (otra corrida escribió antes); integrando y reintentando…"
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+          done
+          echo "No se pudo guardar el lote tras 3 intentos." >&2
+          exit 1
