@@ -1,0 +1,25 @@
+name: Ver gasto en Replicate
+
+on:
+  workflow_dispatch:
+    inputs:
+      cuantas:
+        description: 'Cuántas predicciones recientes revisar'
+        required: false
+        default: '10'
+        type: string
+
+jobs:
+  costo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Consultar Replicate
+        working-directory: rrss
+        env:
+          REPLICATE_API_TOKEN: ${{ secrets.REPLICATE_API_TOKEN }}
+          REPLICATE_USD_POR_SEG: ${{ vars.REPLICATE_USD_POR_SEG }}
+        run: node costo.mjs "${{ inputs.cuantas || '10' }}"

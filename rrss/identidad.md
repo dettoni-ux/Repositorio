@@ -90,6 +90,10 @@ Es un CORTOMETRAJE, no un reel informativo: cuenta una historia con principio, n
     personajes y la acción de esa escena. Termina con "No text overlays, no logos, no
     watermarks." Acentos morado (#5B2E7E) y amarillo (#FFD84D) en la escenografía.
   · `duracion_s`: entre 5 y 10 segundos.
+  CONTINUIDAD: define la descripción física de cada personaje UNA vez (raza, color exacto del
+  pelaje, marcas, collar, ojos) y repítela PALABRA POR PALABRA en todas las escenas donde
+  aparezca. Nada de "the same cat": vuelve a escribir la descripción completa cada vez. La
+  escenografía también se repite igual. Es un solo cortometraje, no escenas sueltas.
   Menos escenas = corto más barato de producir; 3 escenas es el cortometraje completo.
 - `video.escenas`: el guion en español (tiempo, descripción, texto en pantalla que se agregará
   al editar). El texto en pantalla NO va en el prompt de IA.

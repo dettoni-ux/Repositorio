@@ -63,7 +63,7 @@ function ajustar(prop, valor) {
   return valor;
 }
 
-export async function generarVideo({ prompt, duracion = 10, salida }) {
+export async function generarVideo({ prompt, duracion = 10, salida, imagenInicial }) {
   const token = process.env.REPLICATE_API_TOKEN;
   if (!token) throw new Error('Falta REPLICATE_API_TOKEN');
   const modelo = (process.env.SEEDANCE_MODEL || MODELO_DEF).trim();
@@ -74,9 +74,14 @@ export async function generarVideo({ prompt, duracion = 10, salida }) {
   ponerSiExiste(entrada, esquema?.props, ['duration', 'duration_seconds', 'num_frames'], duracion);
   ponerSiExiste(entrada, esquema?.props, ['resolution', 'video_size', 'size'], (process.env.SEEDANCE_RES || RESOLUCION_DEF).trim());
   ponerSiExiste(entrada, esquema?.props, ['aspect_ratio', 'aspect'], '9:16');
+  // Arrancar desde el último cuadro de la escena anterior es lo que mantiene
+  // al mismo gato: el texto del prompt por sí solo no basta.
+  if (imagenInicial) ponerSiExiste(entrada, esquema?.props, ['image', 'first_frame_image', 'start_image', 'input_image'], imagenInicial);
   if (esquema) {
     console.log(`    parámetros aceptados por el modelo: ${Object.keys(esquema.props).join(', ')}`);
-    console.log(`    enviando: ${JSON.stringify(entrada).slice(0, 200)}`);
+    const resumen = { ...entrada };
+    if (resumen.image) resumen.image = `«último cuadro de la escena anterior» (${Math.round(imagenInicial.length / 1024)} KB)`;
+    console.log(`    enviando: ${JSON.stringify(resumen).slice(0, 260)}`);
   }
 
   let res = await fetch(`https://api.replicate.com/v1/models/${modelo}/predictions`, {
@@ -125,12 +130,20 @@ export async function generarVideo({ prompt, duracion = 10, salida }) {
  */
 export async function generarCortometraje({ escenas, salida, alAvanzar }) {
   const clips = [];
+  const puentes = [];
   try {
+    let imagenInicial = null;
     for (let i = 0; i < escenas.length; i++) {
       if (alAvanzar) alAvanzar(i, escenas.length);
       const parcial = salida.replace(/\.mp4$/, `.escena${i + 1}.mp4`);
-      await generarVideo({ prompt: escenas[i].prompt_ia, duracion: escenas[i].duracion_s, salida: parcial });
+      await generarVideo({ prompt: escenas[i].prompt_ia, duracion: escenas[i].duracion_s, salida: parcial, imagenInicial });
       clips.push(parcial);
+      if (i + 1 < escenas.length) {
+        const puente = salida.replace(/\.mp4$/, `.puente${i + 1}.jpg`);
+        imagenInicial = await ultimoCuadro(parcial, puente);
+        if (imagenInicial) puentes.push(puente);
+        else console.log('    (no se pudo extraer el último cuadro: la escena siguiente parte de cero)');
+      }
     }
     if (clips.length === 1) {
       const { renameSync } = await import('node:fs');
@@ -145,6 +158,21 @@ export async function generarCortometraje({ escenas, salida, alAvanzar }) {
       '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-preset', 'medium', '-crf', '20', salida]);
     return salida;
   } finally {
-    clips.forEach(c => { if (existsSync(c)) { try { unlinkSync(c); } catch (e) {} } });
+    [...clips, ...puentes].forEach(c => { if (existsSync(c)) { try { unlinkSync(c); } catch (e) {} } });
+  }
+}
+
+/**
+ * Último cuadro de un clip, como data URI, para encadenar la escena siguiente.
+ * Es lo que hace que el personaje no cambie de color entre escenas.
+ */
+async function ultimoCuadro(clip, destino) {
+  try {
+    await ejecutar(ffmpeg(), ['-y', '-sseof', '-0.5', '-i', clip, '-frames:v', '1', '-q:v', '3', destino]);
+    if (!existsSync(destino)) return null;
+    const { readFileSync } = await import('node:fs');
+    return `data:image/jpeg;base64,${readFileSync(destino).toString('base64')}`;
+  } catch (e) {
+    return null;
   }
 }
