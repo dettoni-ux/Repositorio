@@ -746,5 +746,123 @@
     "imagen": null,
     "imagen_url": null,
     "nota": "Video no generado: Generación en estado failed: The input was invalid. Please try again with different inputs. (E006) (uIJ6l3ruRD) — Using seed: 669758485 | helpers.exceptions.prediction.ModelError: The input was invalid. Please try again with different inputs. (E006) (uIJ6l3ruRD). El prompt queda en la pieza para regenerar."
+  },
+  {
+    "fecha_propuesta": "2026-09-02",
+    "hora_propuesta": "09:00",
+    "publico": "veterinarios",
+    "caption": "Un delantal blanco cuesta menos que un almuerzo. Un título, años. 🩺\n\nEste corto es ficción, pero el problema no: cualquiera puede abrir una cuenta, ponerse una bata y decir que es veterinario. Y cuando eso pasa, el que pierde credibilidad eres tú, que sí estudiaste.\n\nEn EncuentraVet verificamos la identidad y los antecedentes profesionales de cada colega antes de entregar la insignia azul. No se compra, no se declara, no se autoproclama: se verifica. Por eso el tutor que llega a tu perfil no llega dudando, llega decidido.\n\nYa somos 100 veterinarios verificados en 32 comunas. Certifícate y que nadie dude de ti.\n\nCrea tu perfil gratis en encuentravet.cl\n\n#EncuentraVet #VeterinariosVerificados #MédicoVeterinario #VeterinariosChile #InsigniaAzul #FalsosVeterinarios #ConfianzaProfesional",
+    "tipo": "video",
+    "formato": "reel",
+    "video": {
+      "actos": [
+        {
+          "escena": "espera",
+          "dur": 6,
+          "texto": "Un gato naranja espera su hora. Su tutora confía en quien va a atenderlo."
+        },
+        {
+          "escena": "impostor",
+          "dur": 8,
+          "texto": "Entra un señor con delantal gigante y un diploma dibujado a crayón."
+        },
+        {
+          "escena": "verificada",
+          "dur": 8,
+          "texto": "Llega la veterinaria con la insignia azul: identidad y antecedentes verificados."
+        }
+      ],
+      "cierre": "La insignia azul se verifica, no se compra.",
+      "escenas_ia": [
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A chubby orange tabby cat with a white chest patch, bright green eyes and a purple collar with a small yellow tag sits calmly on a waiting-room bench, tail curled. Beside the cat sits its tutor, a woman about thirty-five, medium brown skin, curly dark hair in a ponytail, mustard yellow sweater and jeans, gently petting the cat. Cozy veterinary waiting room with deep purple (#5B2E7E) walls, yellow (#FFD84D) chairs, a small window with warm afternoon light. Slow gentle camera push in. No text overlays, no logos, no watermarks.",
+          "duracion_s": 7
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A door swings open and in walks a man about fifty, light skin, bald on top with tufts of reddish hair on the sides, thick mustache, overly confident grin, wearing a huge oversized white coat whose sleeves swallow his hands and drag on the floor, a bright orange plastic toy stethoscope around his neck, holding up a diploma clearly scribbled in crayon with wobbly letters. He trips slightly on his own sleeve. On the bench, a chubby orange tabby cat with a white chest patch, bright green eyes and a purple collar with a small yellow tag flattens its ears and leans away; its tutor, a woman about thirty-five, medium brown skin, curly dark hair in a ponytail, mustard yellow sweater and jeans, raises one eyebrow in suspicion. Same cozy veterinary waiting room with deep purple (#5B2E7E) walls, yellow (#FFD84D) chairs, small window with warm afternoon light. Comedic timing, humorous and gentle. No text overlays, no logos, no watermarks.",
+          "duracion_s": 8
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A confident veterinarian, woman about forty, brown skin, black wavy hair tied in a low bun, well-fitted tailored white coat with a glowing blue verified check badge on her chest, calmly steps in with a real metal stethoscope and a warm smile. The man about fifty, light skin, bald on top with tufts of reddish hair on the sides, thick mustache, huge oversized white coat with sleeves dragging on the floor and orange plastic toy stethoscope, shrinks and shuffles out the door hiding his crayon diploma. A chubby orange tabby cat with a white chest patch, bright green eyes and a purple collar with a small yellow tag relaxes, purring, and stretches toward the veterinarian; its tutor, a woman about thirty-five, medium brown skin, curly dark hair in a ponytail, mustard yellow sweater and jeans, sighs with relief and smiles. Same cozy veterinary waiting room with deep purple (#5B2E7E) walls, yellow (#FFD84D) chairs, small window with warm afternoon light. No text overlays, no logos, no watermarks.",
+          "duracion_s": 8
+        }
+      ],
+      "narracion": "Cualquiera puede comprar un delantal blanco. Nadie puede comprar una verificación. En EncuentraVet verificamos la identidad y los antecedentes profesionales de cada colega antes de entregar la insignia azul. Tu título vale: que se vea. Crea tu perfil en encuentravet punto cl. La insignia azul se verifica, no se declara.",
+      "escenas": [
+        {
+          "tiempo": "0:00-0:07",
+          "descripcion": "Sala de espera cálida. Un gato naranja atigrado con collar morado espera junto a su tutora, que lo acaricia tranquila.",
+          "texto_pantalla": "Su tutora confía en quien lo va a atender"
+        },
+        {
+          "tiempo": "0:07-0:15",
+          "descripcion": "Entra un hombre con delantal blanco enorme, estetoscopio de plástico y un diploma dibujado a crayón. Se tropieza con su propia manga.",
+          "texto_pantalla": "Un delantal no es un título"
+        },
+        {
+          "tiempo": "0:15-0:23",
+          "descripcion": "Aparece la veterinaria con delantal entallado e insignia azul en el pecho. El impostor se retira; el gato se relaja y estira hacia ella.",
+          "texto_pantalla": "Identidad y antecedentes verificados"
+        }
+      ]
+    },
+    "visual": {
+      "actos": [
+        {
+          "escena": "espera",
+          "dur": 6,
+          "texto": "Un gato naranja espera su hora. Su tutora confía en quien va a atenderlo."
+        },
+        {
+          "escena": "impostor",
+          "dur": 8,
+          "texto": "Entra un señor con delantal gigante y un diploma dibujado a crayón."
+        },
+        {
+          "escena": "verificada",
+          "dur": 8,
+          "texto": "Llega la veterinaria con la insignia azul: identidad y antecedentes verificados."
+        }
+      ],
+      "cierre": "La insignia azul se verifica, no se compra.",
+      "escenas_ia": [
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A chubby orange tabby cat with a white chest patch, bright green eyes and a purple collar with a small yellow tag sits calmly on a waiting-room bench, tail curled. Beside the cat sits its tutor, a woman about thirty-five, medium brown skin, curly dark hair in a ponytail, mustard yellow sweater and jeans, gently petting the cat. Cozy veterinary waiting room with deep purple (#5B2E7E) walls, yellow (#FFD84D) chairs, a small window with warm afternoon light. Slow gentle camera push in. No text overlays, no logos, no watermarks.",
+          "duracion_s": 7
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A door swings open and in walks a man about fifty, light skin, bald on top with tufts of reddish hair on the sides, thick mustache, overly confident grin, wearing a huge oversized white coat whose sleeves swallow his hands and drag on the floor, a bright orange plastic toy stethoscope around his neck, holding up a diploma clearly scribbled in crayon with wobbly letters. He trips slightly on his own sleeve. On the bench, a chubby orange tabby cat with a white chest patch, bright green eyes and a purple collar with a small yellow tag flattens its ears and leans away; its tutor, a woman about thirty-five, medium brown skin, curly dark hair in a ponytail, mustard yellow sweater and jeans, raises one eyebrow in suspicion. Same cozy veterinary waiting room with deep purple (#5B2E7E) walls, yellow (#FFD84D) chairs, small window with warm afternoon light. Comedic timing, humorous and gentle. No text overlays, no logos, no watermarks.",
+          "duracion_s": 8
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A confident veterinarian, woman about forty, brown skin, black wavy hair tied in a low bun, well-fitted tailored white coat with a glowing blue verified check badge on her chest, calmly steps in with a real metal stethoscope and a warm smile. The man about fifty, light skin, bald on top with tufts of reddish hair on the sides, thick mustache, huge oversized white coat with sleeves dragging on the floor and orange plastic toy stethoscope, shrinks and shuffles out the door hiding his crayon diploma. A chubby orange tabby cat with a white chest patch, bright green eyes and a purple collar with a small yellow tag relaxes, purring, and stretches toward the veterinarian; its tutor, a woman about thirty-five, medium brown skin, curly dark hair in a ponytail, mustard yellow sweater and jeans, sighs with relief and smiles. Same cozy veterinary waiting room with deep purple (#5B2E7E) walls, yellow (#FFD84D) chairs, small window with warm afternoon light. No text overlays, no logos, no watermarks.",
+          "duracion_s": 8
+        }
+      ],
+      "narracion": "Cualquiera puede comprar un delantal blanco. Nadie puede comprar una verificación. En EncuentraVet verificamos la identidad y los antecedentes profesionales de cada colega antes de entregar la insignia azul. Tu título vale: que se vea. Crea tu perfil en encuentravet punto cl. La insignia azul se verifica, no se declara.",
+      "escenas": [
+        {
+          "tiempo": "0:00-0:07",
+          "descripcion": "Sala de espera cálida. Un gato naranja atigrado con collar morado espera junto a su tutora, que lo acaricia tranquila.",
+          "texto_pantalla": "Su tutora confía en quien lo va a atender"
+        },
+        {
+          "tiempo": "0:07-0:15",
+          "descripcion": "Entra un hombre con delantal blanco enorme, estetoscopio de plástico y un diploma dibujado a crayón. Se tropieza con su propia manga.",
+          "texto_pantalla": "Un delantal no es un título"
+        },
+        {
+          "tiempo": "0:15-0:23",
+          "descripcion": "Aparece la veterinaria con delantal entallado e insignia azul en el pecho. El impostor se retira; el gato se relaja y estira hacia ella.",
+          "texto_pantalla": "Identidad y antecedentes verificados"
+        }
+      ],
+      "nota": "Video no generado: Generación en estado failed: The input was invalid. Please try again with different inputs. (E006) (uIJ6l3ruRD) — Using seed: 553521232 | helpers.exceptions.prediction.ModelError: The input was invalid. Please try again with different inputs. (E006) (uIJ6l3ruRD). El prompt queda en la pieza para regenerar."
+    },
+    "estado": "pendiente",
+    "lote": "lote-2026-08-31-03-21",
+    "imagen": null,
+    "imagen_url": null,
+    "nota": "Video no generado: Generación en estado failed: The input was invalid. Please try again with different inputs. (E006) (uIJ6l3ruRD) — Using seed: 553521232 | helpers.exceptions.prediction.ModelError: The input was invalid. Please try again with different inputs. (E006) (uIJ6l3ruRD). El prompt queda en la pieza para regenerar."
   }
 ]
