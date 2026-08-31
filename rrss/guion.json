@@ -1,37 +1,45 @@
 {
-  "_comentario": "Guion del cortometraje. Manda por sobre lo que escriba el generador. Cada tramo produce su propio audio y se coloca EXACTO en su segundo de inicio. 'pantalla' se quema como subtítulo (usa \\n para cortar línea). 'prompt' es lo que se le pide a la IA de video; se le antepone 'estilo' para que todas las escenas se vean iguales. 'sfx' describe el efecto de sonido en inglés, que se genera con ElevenLabs. El tramo con 'cierre' no pasa por la IA: lo dibujamos nosotros. Pon 'usar': false para volver al guion automático.",
+  "_comentario": "Guion del cortometraje. Manda por sobre lo que escriba el generador. Cada tramo genera su propio audio y se coloca EXACTO en su segundo de inicio. 'voz' debe caber en su ventana a 2,1 palabras por segundo: el generador avisa antes de gastar créditos si se pasa. 'pantalla' se quema como subtítulo y debe decir lo MISMO que la voz, no otra cosa. 'prompt' es lo que se le pide a la IA de video; se le antepone 'estilo' y se le agrega 'cola'. 'anclar': false cuando la escena introduce un personaje nuevo, porque partir del cuadro anterior impide que entre en cuadro. 'sfx' se genera con ElevenLabs. El tramo con 'cierre' lo dibujamos nosotros, sin costo.",
   "usar": true,
-  "estilo": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16.",
-  "cola": "No text overlays, no logos, no watermarks, no on-screen writing.",
+  "estilo": "3D animated cartoon short in the style of a modern family animated feature film. Stylized cartoon characters with oversized expressive eyes, soft rounded shapes, smooth stylized skin shading, vibrant saturated colors, warm cinematic key light, shallow depth of field. Vertical 9:16 framing.",
+  "cola": "Strictly a stylized 3D cartoon: not photorealistic, not live action, not a real photograph, no real human skin texture. No text overlays, no logos, no watermarks, no on-screen writing, no subtitles.",
+  "reparto": {
+    "mascota": "a small stylized cartoon puppy with scruffy tan-and-white fur, floppy ears, big round brown eyes and a purple collar with a yellow tag",
+    "sala": "a cartoon veterinary waiting room with a deep purple accent wall, bright yellow plastic chairs, a light wood bench and a leafy potted plant",
+    "impostor": "a cartoon man in his forties with a round face, thick black moustache and messy dark hair, wearing a white lab coat several sizes too big whose sleeves swallow his hands",
+    "veterinaria": "a cartoon woman veterinarian in her thirties with warm brown skin and dark hair in a bun, wearing a well-fitted white coat with a glowing blue verification badge on her chest"
+  },
   "tramos": [
     {
       "desde": 0,
       "hasta": 5,
-      "voz": "Todo tranquilo en la sala de espera... hasta que aparece alguien que dice ser veterinario.",
+      "voz": "Todo tranquilo en la sala de espera... hasta ahora.",
       "pantalla": "Todo tranquilo en la sala de espera...",
-      "prompt": "Cute small brown and white dog sitting calmly on a wooden bench in a bright veterinary waiting room, warm sunlight. Purple accent wall and yellow chairs. The dog wears a purple collar. Single subject, no people in frame.",
+      "prompt": "Medium shot, slow gentle camera push-in. {mascota} sits calmly on the light wood bench of {sala}, ears perked, tail wagging softly, looking toward a closed consulting room door. Only the puppy is in frame: no people, no other animals.",
       "sfx": "calm quiet veterinary waiting room ambience, soft distant murmur"
     },
     {
       "desde": 5,
       "hasta": 13,
-      "voz": "Delantal gigante, estetoscopio de plástico y un diploma hecho a crayón. ¿El problema? Nadie sabe quién es... porque nadie lo verificó.",
+      "voz": "Bata gigante. Estetoscopio de plástico. Un diploma dibujado a crayón. Nadie lo verificó.",
       "pantalla": "Bata gigante.\nDiploma dibujado a crayón.",
-      "prompt": "Friendly suspicious fake vet wearing an oversized white lab coat, holding a funny child drawing made with crayons as a diploma. Same bright veterinary waiting room with purple accent wall. Single character in frame, no extra background people, no duplicate characters.",
+      "prompt": "Medium shot, camera steady. In {sala}, {impostor} stands proudly facing the camera, his whole face clearly visible, grinning with absurd confidence while holding up a child's crayon drawing as if it were a diploma, a plastic toy stethoscope around his neck. {mascota} sits on the bench beside him and tilts its head, unconvinced. Exactly two characters in frame, no other people, no duplicate characters, no one in the background.",
+      "anclar": true,
       "sfx": "funny comedic record scratch, short cartoon stinger"
     },
     {
       "desde": 13,
       "hasta": 22,
-      "voz": "Por eso existe EncuentraVet: verificamos la identidad y los antecedentes profesionales de los veterinarios registrados, para que puedas reconocer a los profesionales validados.",
-      "pantalla": "¿Confiarías a tu mascota?",
-      "prompt": "The same small brown and white dog with a purple collar happily walking towards ONE single verified veterinarian kneeling with open arms: a woman in her thirties with dark hair in a bun, wearing a well-fitted white coat with a small blue verification badge. She is clearly a different person from the man in the previous scene. Clean background without duplicate characters, only two subjects in frame.",
+      "voz": "¿Le confiarías tu mascota? En EncuentraVet verificamos identidad y antecedentes profesionales.",
+      "pantalla": "¿Le confiarías tu mascota?",
+      "prompt": "Wide shot at floor level in {sala}. {veterinaria} kneels with open arms and a warm smile, her whole face and her blue chest badge clearly visible, and {mascota} runs happily toward her with its tail wagging. She is a woman and is unmistakably a different person from any man seen before: do not show the moustached man. Exactly two characters in frame, clean uncluttered background, no other people, no duplicate characters.",
+      "anclar": false,
       "sfx": "happy single dog bark, warm and short"
     },
     {
       "desde": 22,
-      "hasta": 27,
-      "voz": "Porque cualquiera puede ponerse una bata. Pero una insignia azul se verifica. En encuentravet punto cl.",
+      "hasta": 29,
+      "voz": "Cualquiera se pone una bata. La insignia azul se verifica. Encuentravet punto cl.",
       "pantalla": "Cualquiera se pone una bata.\nLa insignia azul se verifica.\nencuentravet.cl",
       "sfx": "bright positive notification chime, verification confirmed",
       "cierre": true

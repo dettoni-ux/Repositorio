@@ -206,9 +206,13 @@ export async function generarCortometraje({ escenas, salida, alAvanzar }) {
     for (let i = 0; i < escenas.length; i++) {
       if (alAvanzar) alAvanzar(i, escenas.length);
       const parcial = salida.replace(/\.mp4$/, `.escena${i + 1}.mp4`);
+      // Una escena marcada sin anclaje parte de cero: si arrastra el cuadro
+      // anterior, la composición queda amarrada y el personaje nuevo no entra.
+      const anclaEsta = escenas[i].anclar === false ? null : imagenInicial;
+      if (escenas[i].anclar === false) console.log('    escena sin anclaje (estrena personaje)');
       await generarVideo({
         prompt: escenas[i].prompt_ia, duracion: escenas[i].duracion_s,
-        salida: parcial, imagenInicial, referencias
+        salida: parcial, imagenInicial: anclaEsta, referencias
       });
       await recortarA(parcial, escenas[i].duracion_s);
       clips.push(parcial);

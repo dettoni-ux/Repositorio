@@ -26,7 +26,43 @@ export function leerGuion() {
   const tramos = (cfg.tramos || []).filter(t => Number.isFinite(t.desde) && Number.isFinite(t.hasta) && t.hasta > t.desde);
   if (!tramos.length) return null;
   tramos.sort((a, b) => a.desde - b.desde);
-  return { tramos, total: tramos[tramos.length - 1].hasta };
+  const guion = { ...cfg, tramos, total: tramos[tramos.length - 1].hasta };
+  revisarTiempos(guion);
+  return guion;
+}
+
+/* Se habla a unas 2,1 palabras por segundo dejando aire; más rápido suena apurado. */
+const PALABRAS_POR_SEG = 2.1;
+
+/**
+ * Avisa ANTES de gastar créditos si una frase no cabe en su ventana. Antes esto
+ * se descubría al final, con el video ya pagado y la voz atropellada.
+ */
+export function revisarTiempos(guion) {
+  const problemas = [];
+  for (const [i, t] of guion.tramos.entries()) {
+    if (!t.voz) continue;
+    const ventana = t.hasta - t.desde;
+    const palabras = t.voz.trim().split(/\s+/).length;
+    const caben = Math.floor(ventana * PALABRAS_POR_SEG);
+    if (palabras > caben) {
+      problemas.push(`  Tramo ${i + 1} (${ventana}s): ${palabras} palabras, caben ${caben}. `
+        + `Sobran ${palabras - caben}: la voz va a sonar apurada.`);
+    }
+  }
+  if (problemas.length) {
+    console.log('AVISO del guion — la locución no cabe en su tramo:');
+    problemas.forEach(p => console.log(p));
+  } else {
+    console.log('Guion revisado: la locución cabe en todos los tramos.');
+  }
+  return problemas;
+}
+
+/** Reemplaza {mascota}, {impostor}, … por su descripción del reparto. */
+function conReparto(texto, reparto) {
+  if (!texto || !reparto) return texto;
+  return texto.replace(/\{(\w+)\}/g, (todo, clave) => reparto[clave] || todo);
 }
 
 /**
@@ -41,9 +77,15 @@ export function escenasSegunGuion(guion, escenasIA) {
     const propio = t.prompt && t.prompt.trim();
     const fuente = escenasIA?.[Math.min(i, (escenasIA?.length || 1) - 1)];
     const prompt_ia = propio
-      ? [guion.estilo, t.prompt.trim(), guion.cola].filter(Boolean).join(' ')
+      ? [guion.estilo, conReparto(t.prompt.trim(), guion.reparto), guion.cola].filter(Boolean).join(' ')
       : fuente?.prompt_ia;
-    return { prompt_ia, duracion_s: +(t.hasta - t.desde).toFixed(2) };
+    // Una escena que estrena personaje no debe partir del cuadro anterior: la
+    // composición queda amarrada y el personaje nuevo nunca entra en cuadro.
+    return {
+      prompt_ia,
+      duracion_s: +(t.hasta - t.desde).toFixed(2),
+      anclar: t.anclar !== false
+    };
   });
 }
 
