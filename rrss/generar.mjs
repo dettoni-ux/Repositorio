@@ -355,7 +355,7 @@ try {
             const voz = path.join(DIR_PIEZAS, `.voz-${i + 1}.mp3`);
             try {
               if (GUION && conIA) {
-                await generarVozPorTramos({ tramos: GUION.tramos, total: GUION.total, salida: voz });
+                await generarVozPorTramos({ tramos: GUION.tramos, total: GUION.total, salida: voz, conEfectos: GUION.efectos !== false });
               } else {
                 await generarVoz({ texto: narracionAUsar(pieza.video.narracion), salida: voz });
               }

@@ -56,9 +56,18 @@ export async function cuotaRestante(clave) {
   } catch (e) { return null; }
 }
 
-/** Avisa si la cuota está por agotarse, con nombres claros y sin tecnicismos. */
-export async function avisarCuota() {
+/**
+ * Avisa cuánta cuota queda y cuánta necesita ESTE corto. Saber que quedan
+ * 6 créditos no sirve de nada si no se sabe que hacen falta 300.
+ */
+export async function avisarCuota(tramos, conEfectos = true) {
   const c = await cuotaRestante();
+  if (Array.isArray(tramos)) {
+    const letras = tramos.reduce((n, t) => n + (t.voz ? t.voz.length : 0), 0);
+    const efectos = conEfectos === false ? 0 : tramos.filter(t => t.sfx).length;
+    console.log(`  Este corto necesita ~${letras} créditos de locución`
+      + (efectos ? ` más ${efectos} efectos (mucho más caros).` : ' y ningún efecto.'));
+  }
   if (!c) return null;
   const fecha = c.renueva ? new Date(c.renueva * 1000).toLocaleDateString('es-CL') : null;
   const pct = ((c.quedan / c.tope) * 100).toFixed(0);
@@ -161,10 +170,11 @@ export async function generarVoz({ texto, salida }) {
  * Si un tramo se pasa de su ventana, se acelera solo ese tramo (hasta 18%) para
  * que no pise al siguiente.
  */
-export async function generarVozPorTramos({ tramos, total, salida }) {
+export async function generarVozPorTramos({ tramos, total, salida, conEfectos = true }) {
   const dir = path.dirname(salida);
   mkdirSync(dir, { recursive: true });
-  await avisarCuota();
+  if (conEfectos === false) console.log('  Efectos de sonido desactivados: solo voz.');
+  await avisarCuota(tramos, conEfectos);
   const piezas = [];
   try {
     for (let i = 0; i < tramos.length; i++) {
@@ -179,7 +189,7 @@ export async function generarVozPorTramos({ tramos, total, salida }) {
     // Efectos de sonido, por debajo de la voz para no taparla.
     for (let i = 0; i < tramos.length; i++) {
       const t = tramos[i];
-      if (!t.sfx) continue;
+      if (!t.sfx || conEfectos === false) continue;
       const archivo = path.join(dir, `sfx${i + 1}.mp3`);
       try {
         await generarEfecto({ texto: t.sfx, duracion: t.hasta - t.desde, salida: archivo });

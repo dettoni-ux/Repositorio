@@ -49,7 +49,7 @@ const pista = path.join(path.dirname(entrada), '.remonte.mp3');
 
 console.log(`Rehaciendo el audio de ${path.basename(entrada)} (la imagen no se toca, no cuesta créditos de video).`);
 try {
-  await generarVozPorTramos({ tramos: guion.tramos, total: guion.total, salida: pista });
+  await generarVozPorTramos({ tramos: guion.tramos, total: guion.total, salida: pista, conEfectos: guion.efectos !== false });
   // La imagen se copia tal cual: no se recodifica, así no pierde calidad.
   // Nada de «-shortest»: si el audio queda corto recorta el video y se pierde
   // el final del cierre. Se rellena el audio con silencio hasta el largo real.
