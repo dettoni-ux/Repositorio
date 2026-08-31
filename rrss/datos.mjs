@@ -3,17 +3,25 @@
  * Sin DATABASE_URL (o con --demo) usa cifras de ejemplo marcadas como demo, para poder
  * probar el flujo completo sin tocar la BD.
  *
- * ⚠️ TODO (sesión local): ajustar los nombres de tablas/columnas de CONSULTAS cuando
- * llegue el esquema real (pg_dump --schema-only). Cada consulta cae a su valor demo
- * si falla, con aviso en el log, así el lote nunca se cae por un nombre desactualizado.
+ * Las consultas usan el esquema real de la plataforma. Cada una cae a su valor demo
+ * si falla, con aviso en el log, así el lote nunca se cae por un cambio de esquema.
+
  */
 import pg from 'pg';
 
 const CONSULTAS = {
-  total_vets: "SELECT count(*)::int AS n FROM veterinarios WHERE verificado = true",
-  total_comunas: "SELECT count(DISTINCT comuna)::int AS n FROM veterinarios WHERE verificado = true",
-  reservas_mes: "SELECT count(*)::int AS n FROM reservas WHERE creado_en >= date_trunc('month', now())",
-  feedback: "SELECT nota_rechazo FROM rrss_piezas WHERE estado = 'rechazada' AND nota_rechazo IS NOT NULL ORDER BY creado_en DESC LIMIT 5"
+  // Esquema real de la plataforma (Prisma, tablas en inglés y columnas en camelCase).
+  total_vets: `SELECT count(*)::int AS n FROM practitioner
+                WHERE "verificationStatus" = 'VERIFIED' AND "isActive" = true AND "deletedAt" IS NULL`,
+  total_comunas: `SELECT count(DISTINCT l."communeId")::int AS n
+                    FROM practitioner p
+                    JOIN location l ON l."providerId" = p."providerId"
+                   WHERE p."verificationStatus" = 'VERIFIED' AND p."isActive" = true AND p."deletedAt" IS NULL`,
+  reservas_mes: `SELECT count(*)::int AS n FROM booking
+                  WHERE "createdAt" >= date_trunc('month', now())`,
+  feedback: `SELECT nota_rechazo FROM rrss_piezas
+              WHERE estado = 'rechazada' AND nota_rechazo IS NOT NULL
+              ORDER BY creado_en DESC LIMIT 5`
 };
 
 const DEMO = { total_vets: 100, total_comunas: 32, reservas_mes: 180 };

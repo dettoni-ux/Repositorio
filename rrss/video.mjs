@@ -2,8 +2,14 @@
  * Generación de video con IA (Seedance vía Replicate) para las piezas tipo «video».
  * Requiere REPLICATE_API_TOKEN; el modelo se cambia con SEEDANCE_MODEL.
  */
-import { writeFileSync, mkdirSync } from 'node:fs';
+import { writeFileSync, mkdirSync, unlinkSync, existsSync } from 'node:fs';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 import path from 'node:path';
+import ffmpegStatic from 'ffmpeg-static';
+
+const ejecutar = promisify(execFile);
+const ffmpeg = () => process.env.FFMPEG_PATH || ffmpegStatic || 'ffmpeg';
 
 const MODELO_DEF = 'bytedance/seedance-1-pro';
 
@@ -44,4 +50,34 @@ export async function generarVideo({ prompt, duracion = 10, salida }) {
   const bin = await fetch(url);
   writeFileSync(salida, Buffer.from(await bin.arrayBuffer()));
   return salida;
+}
+
+/**
+ * Cortometraje: genera un clip por escena y los une en un solo video.
+ * Con una sola escena devuelve ese clip tal cual.
+ */
+export async function generarCortometraje({ escenas, salida, alAvanzar }) {
+  const clips = [];
+  try {
+    for (let i = 0; i < escenas.length; i++) {
+      if (alAvanzar) alAvanzar(i, escenas.length);
+      const parcial = salida.replace(/\.mp4$/, `.escena${i + 1}.mp4`);
+      await generarVideo({ prompt: escenas[i].prompt_ia, duracion: escenas[i].duracion_s, salida: parcial });
+      clips.push(parcial);
+    }
+    if (clips.length === 1) {
+      const { renameSync } = await import('node:fs');
+      renameSync(clips[0], salida);
+      return salida;
+    }
+    // Unir re-codificando: los clips pueden venir con parámetros distintos.
+    const entradas = clips.flatMap(c => ['-i', c]);
+    const filtro = clips.map((_, i) => `[${i}:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,setsar=1[v${i}]`).join(';')
+      + ';' + clips.map((_, i) => `[v${i}]`).join('') + `concat=n=${clips.length}:v=1:a=0[v]`;
+    await ejecutar(ffmpeg(), ['-y', ...entradas, '-filter_complex', filtro, '-map', '[v]',
+      '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-preset', 'medium', '-crf', '20', salida]);
+    return salida;
+  } finally {
+    clips.forEach(c => { if (existsSync(c)) { try { unlinkSync(c); } catch (e) {} } });
+  }
 }
