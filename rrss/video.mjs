@@ -27,8 +27,17 @@ async function esquemaModelo(modelo, cab) {
     const res = await fetch(`https://api.replicate.com/v1/models/${modelo}`, { headers: cab });
     if (!res.ok) return null;
     const info = await res.json();
-    const props = info?.latest_version?.openapi_schema?.components?.schemas?.Input?.properties;
-    return props ? { props, version: info.latest_version?.id } : null;
+    const esquemas = info?.latest_version?.openapi_schema?.components?.schemas;
+    const props = esquemas?.Input?.properties;
+    if (!props) return null;
+    // Las opciones válidas viven detrás de un $ref; sin resolverlo, ajustar()
+    // no ve ningún enum y deja pasar valores que el modelo no acepta.
+    for (const d of Object.values(props)) {
+      const ref = d.allOf?.[0]?.$ref || d.$ref;
+      const nombre = typeof ref === 'string' ? ref.split('/').pop() : null;
+      if (nombre && esquemas[nombre]?.enum) d.enum = esquemas[nombre].enum;
+    }
+    return { props, version: info.latest_version?.id };
   } catch (e) { return null; }
 }
 
@@ -78,7 +87,16 @@ export async function generarVideo({ prompt, duracion = 10, salida, imagenInicia
   const esquema = await esquemaModelo(modelo, cab);
   const entrada = { prompt };
   ponerSiExiste(entrada, esquema?.props, ['duration', 'duration_seconds', 'num_frames'], Math.ceil(duracion), true);
-  ponerSiExiste(entrada, esquema?.props, ['resolution', 'video_size', 'size'], (process.env.SEEDANCE_RES || RESOLUCION_DEF).trim());
+  const modo = (process.env.SEEDANCE_IDENTIDAD || 'encadenado').trim();
+  const usaReferencia = modo === 'referencia' && referencias?.length;
+  // «Reference images cannot be used with 1080p resolution»: lo dice el propio
+  // esquema del modelo. Si se piden referencias, la resolución baja a 720p.
+  let resolucion = (process.env.SEEDANCE_RES || RESOLUCION_DEF).trim();
+  if (usaReferencia && resolucion === '1080p') {
+    resolucion = '720p';
+    console.log('    (las referencias no admiten 1080p: se genera en 720p)');
+  }
+  ponerSiExiste(entrada, esquema?.props, ['resolution', 'video_size', 'size'], resolucion);
   ponerSiExiste(entrada, esquema?.props, ['aspect_ratio', 'aspect'], '9:16');
   // Cómo se mantiene el mismo personaje entre escenas. Son excluyentes: el
   // modelo rechaza referencia y cuadro inicial juntos.
@@ -87,9 +105,8 @@ export async function generarVideo({ prompt, duracion = 10, salida, imagenInicia
   //     modelo devuelve «input was invalid» sin explicar, así que no se usa
   //     salvo que se pida a propósito con SEEDANCE_IDENTIDAD=referencia.
   //   ninguna — solo el texto del prompt.
-  const modo = (process.env.SEEDANCE_IDENTIDAD || 'encadenado').trim();
   let comoSeAncla = 'solo el texto del prompt';
-  if (modo === 'referencia' && referencias?.length) {
+  if (usaReferencia) {
     const campo = ['reference_images', 'reference_image'].find(c => !esquema?.props || c in esquema.props);
     if (campo) {
       entrada[campo] = campo === 'reference_image' ? referencias[0] : referencias;
@@ -102,10 +119,11 @@ export async function generarVideo({ prompt, duracion = 10, salida, imagenInicia
   if (esquema) {
     console.log(`    parámetros aceptados por el modelo: ${Object.keys(esquema.props).join(', ')}`);
     const resumen = { ...entrada };
-    if (resumen.image) resumen.image = `«último cuadro de la escena anterior» (${Math.round(imagenInicial.length / 1024)} KB)`;
+    delete resumen.prompt;
+    if (resumen.image) resumen.image = `«cuadro anterior» (${Math.round(imagenInicial.length / 1024)} KB)`;
     if (resumen.reference_images) resumen.reference_images = `«${referencias.length} referencia(s) de la escena 1»`;
     if (resumen.reference_image) resumen.reference_image = '«referencia de la escena 1»';
-    console.log(`    identidad: ${comoSeAncla}`);
+    console.log(`    identidad: ${comoSeAncla} · parámetros: ${JSON.stringify(resumen)}`);
     console.log(`    enviando: ${JSON.stringify(resumen).slice(0, 260)}`);
   }
 
