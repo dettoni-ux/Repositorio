@@ -67,7 +67,24 @@ try {
              OR c.column_name IN ('verificado','colmevet','insignia_azul'))
       GROUP BY c.table_name ORDER BY c.table_name`);
 
-  if (!candidatas.length) {
+  const forzada = (process.env.TABLA_VETS || '').trim();
+  if (forzada) {
+    if (!existe(forzada)) {
+      console.log(`\n⚠ La tabla \`${forzada}\` no existe.`);
+    } else {
+      const { rows: [c] } = await cliente.query(
+        `SELECT count(*)::int AS n FROM information_schema.columns
+          WHERE table_schema='public' AND table_name=$1 AND column_name='autoriza_rrss'`, [forzada]);
+      const ident = '"' + forzada.replace(/"/g, '""') + '"';
+      if (c.n > 0) console.log(`\n✓ \`${forzada}\` ya tiene el flag \`autoriza_rrss\`.`);
+      else if (REVISAR) console.log(`\n→ Se agregaría el flag \`autoriza_rrss\` a \`${forzada}\`.`);
+      else {
+        await cliente.query(`ALTER TABLE ${ident} ADD COLUMN autoriza_rrss boolean NOT NULL DEFAULT false`);
+        await cliente.query(`COMMENT ON COLUMN ${ident}.autoriza_rrss IS 'El profesional autoriza aparecer en las redes sociales de EncuentraVet'`);
+        console.log(`\n✓ Flag \`autoriza_rrss\` agregado a \`${forzada}\` (todos en false).`);
+      }
+    }
+  } else if (!candidatas.length) {
     console.log('\n⚠ No encontré una tabla de veterinarios. El flag `autoriza_rrss` queda pendiente:');
     console.log('  dime cuál de las tablas de arriba guarda los veterinarios y lo agrego.');
   } else if (candidatas.length > 1) {
@@ -88,7 +105,7 @@ try {
   }
 
   /* --- 3. Columnas de las tablas que alimentan al generador --- */
-  const aInspeccionar = (process.env.COLUMNAS || 'practitioner,commune,booking,review')
+  const aInspeccionar = (process.env.COLUMNAS || 'practitioner,commune,booking,review,location,provider')
     .split(',').map(t => t.trim()).filter(Boolean);
   for (const t of aInspeccionar) {
     if (!existe(t)) { console.log(`\n· \`${t}\`: no existe`); continue; }
@@ -97,6 +114,15 @@ try {
         WHERE table_schema='public' AND table_name=$1 ORDER BY ordinal_position`, [t]);
     const { rows: [c] } = await cliente.query(`SELECT count(*)::int AS n FROM "${t.replace(/"/g,'""')}"`);
     console.log(`\n· \`${t}\` (${c.n} filas): ` + rows.map(r => r.column_name).join(', '));
+  }
+
+  if (existe('practitioner')) {
+    try {
+      const { rows } = await cliente.query(
+        `SELECT "verificationStatus" AS estado, count(*)::int AS n FROM practitioner GROUP BY 1 ORDER BY 2 DESC`);
+      console.log('\n· estados de verificación en `practitioner`: ' +
+        rows.map(r => `${r.estado}=${r.n}`).join(', '));
+    } catch (e) { console.log('\n· no pude leer verificationStatus: ' + e.message.split('\n')[0]); }
   }
 
   /* --- 4. Cifras reales para el generador --- */

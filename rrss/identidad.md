@@ -55,28 +55,39 @@ Para tutores: "tu mascota", "el regalón de la casa". Gancho fuerte en la primer
   2 a 4 puntos accionables en `visual.lineas`; el cierre conecta con la herramienta.
 - **hito** (imagen): logro real de la comunidad con cifras del bloque DATOS REALES,
   contado como beneficio de la herramienta ("N vets ya atienden con agenda online").
-- **video** (reel animado): corto de animación 3D estilo película familiar sobre el tema más
-  fuerte de la marca: **personas que se hacen pasar por veterinarios**, y cómo la insignia
-  azul de verificación (Registro Civil + COLMEVET) protege a todos. Ver reglas abajo.
+- **video** (cortometraje animado): un corto de animación 3D estilo película familiar sobre el
+  tema más fuerte de la marca: **personas que se hacen pasar por veterinarios**, y cómo la
+  insignia azul de verificación (Registro Civil + COLMEVET) protege a todos. Ver reglas abajo.
 
-# Reglas del tipo «video»
+# Reglas del tipo «video» (cortometraje)
 
-- Historia de ficción de 1 escena continua o 2-3 micro-escenas, duración total 5 a 10 segundos
-  (un solo clip generado por IA). Personajes animales antropomórficos o personas caricaturizadas,
-  SIEMPRE ficticios.
-- Arco: situación cotidiana → señal de alerta del falso "veterinario" (bata mal puesta, diploma
-  dibujado a crayón, maletín de juguete...) → aparece la insignia azul / el vet verificado.
-  Humor amable, jamás terror ni sufrimiento animal en pantalla. La mascota nunca resulta dañada.
-- `video.prompt_ia`: EN INGLÉS, describe el estilo sin nombrar estudios ni marcas de animación:
-  "high-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm
-  cinematic lighting, family-friendly". Vertical 9:16. Sin texto en pantalla, sin logos,
-  sin marcas de agua. Acentos de color morado (#5B2E7E) y amarillo (#FFD84D) en la escena.
-  Describe la acción tomas por toma con segundos.
+Es un CORTOMETRAJE, no un reel informativo: cuenta una historia con principio, nudo y desenlace.
+
+- Ficción con personajes inventados (animales antropomórficos o personas caricaturizadas).
+  Nunca personas ni clínicas reales.
+- Arco en 3 actos, uno por escena:
+  1. Situación: presenta al personaje y su mundo cotidiano.
+  2. Sospecha: aparecen las señales del falso veterinario — bata que le queda enorme,
+     diploma dibujado a crayón, maletín de juguete, estetoscopio de plástico.
+  3. Desenlace: llega el veterinario verificado con su insignia azul y todo se resuelve.
+- Humor amable siempre. Jamás terror, sufrimiento ni daño a un animal en pantalla.
+- CONTINUIDAD: los mismos personajes en las tres escenas, descritos IGUAL en cada prompt
+  (especie, color, ropa, tamaño), porque cada escena se genera por separado. Repite la
+  descripción física completa del personaje en cada prompt; nunca digas «el mismo gato».
+- `video.escenas_ia`: entre 1 y 3 escenas. Cada una con:
+  · `prompt_ia`: EN INGLÉS, sin nombrar estudios ni marcas de animación. Empieza siempre con
+    "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm
+    cinematic lighting, family-friendly, vertical 9:16." Luego la descripción física de los
+    personajes y la acción de esa escena. Termina con "No text overlays, no logos, no
+    watermarks." Acentos morado (#5B2E7E) y amarillo (#FFD84D) en la escenografía.
+  · `duracion_s`: entre 5 y 10 segundos.
+  Menos escenas = corto más barato de producir; 3 escenas es el cortometraje completo.
 - `video.escenas`: el guion en español (tiempo, descripción, texto en pantalla que se agregará
   al editar). El texto en pantalla NO va en el prompt de IA.
 - `video.narracion`: el guion de la VOZ EN OFF en español de Chile, neutro y cálido, que se
-  generará con voz sintética y se montará sobre el video. Debe caber holgadamente en la
-  duración del clip: **20 a 30 palabras como máximo para 10 segundos** (unas 2-3 frases cortas).
+  generará con voz sintética y se montará sobre el cortometraje completo. Calcula unas
+  **2,5 palabras por segundo**: para un corto de 30 segundos, entre 60 y 75 palabras.
+  Debe acompañar la historia acto por acto y rematar con el mensaje de la marca.
   Sin emoji, sin hashtags, sin leer la URL letra por letra: se dice "encuentravet punto cl".
   Cierra con el gancho de la marca (la insignia azul se verifica).
 - El caption del video refuerza el mensaje: cualquiera puede ponerse una bata; la insignia azul

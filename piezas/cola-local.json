@@ -18,9 +18,9 @@
       "cierre": "Menos teléfono, más pacientes"
     },
     "estado": "pendiente",
-    "lote": "lote-2026-08-30-22-41",
-    "imagen": "lote-2026-08-30-22-41-1-tip.png",
-    "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/main/piezas/lote-2026-08-30-22-41-1-tip.png",
+    "lote": "lote-2026-08-31-00-09",
+    "imagen": "lote-2026-08-31-00-09-1-tip.png",
+    "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/main/piezas/lote-2026-08-31-00-09-1-tip.png",
     "nota": null
   },
   {
@@ -42,9 +42,9 @@
       "cierre": "Tu título vale: que nadie dude de ti"
     },
     "estado": "pendiente",
-    "lote": "lote-2026-08-30-22-41",
-    "imagen": "lote-2026-08-30-22-41-2-hito.png",
-    "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/main/piezas/lote-2026-08-30-22-41-2-hito.png",
+    "lote": "lote-2026-08-31-00-09",
+    "imagen": "lote-2026-08-31-00-09-2-hito.png",
+    "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/main/piezas/lote-2026-08-31-00-09-2-hito.png",
     "nota": null
   },
   {
@@ -55,8 +55,20 @@
     "hora_propuesta": "12:00",
     "caption": "Cualquiera puede ponerse una bata. 🥼\n\nLa insignia azul de EncuentraVet no se compra: se verifica con Registro Civil y COLMEVET, uno a uno.\n\nRegístrate gratis en encuentravet.cl\n\n#EncuentraVet #VeterinariosVerificados #MascotasChile #TutorResponsable",
     "video": {
-      "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A fluffy cartoon cat sits in a waiting room chair holding a tiny purse. Scene 1 (0-4s): a suspicious rooster wearing an oversized white coat and a crayon-drawn diploma taped to the wall proudly opens a toy doctor kit; the cat raises one eyebrow. Scene 2 (4-7s): the cat looks at the wall, the crayon diploma slowly peels off and falls. Scene 3 (7-10s): a friendly capybara veterinarian with a glowing blue verification badge on the chest opens the next door and waves warmly; the cat walks over happily. Purple (#5B2E7E) and yellow (#FFD84D) accents in the room decor. No text overlays, no logos, no watermarks, realistic smooth animation.",
-      "duracion_s": 10,
+      "escenas_ia": [
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A fluffy grey cartoon cat with round amber eyes and a small red collar sits patiently on a waiting room chair, holding a tiny purse. The waiting room has purple (#5B2E7E) walls and yellow (#FFD84D) chairs. No text overlays, no logos, no watermarks.",
+          "duracion_s": 8
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A scruffy rooster wearing a white coat three sizes too big proudly opens a plastic toy doctor kit; behind him a diploma drawn in crayon is taped crookedly to the purple (#5B2E7E) wall and slowly peels off. The same fluffy grey cartoon cat with round amber eyes and a small red collar raises one eyebrow, unimpressed. No text overlays, no logos, no watermarks.",
+          "duracion_s": 8
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A friendly capybara veterinarian in a clean fitted white coat, with a glowing blue verification badge on the chest, opens a door and waves warmly. The same fluffy grey cartoon cat with round amber eyes and a small red collar trots over happily. Purple (#5B2E7E) and yellow (#FFD84D) accents in the clinic decor. No text overlays, no logos, no watermarks.",
+          "duracion_s": 8
+        }
+      ],
       "narracion": "Cualquiera puede ponerse una bata. Pero el título no se improvisa. En EncuentraVet verificamos a cada veterinario, uno por uno. Búscalo en encuentravet punto cl.",
       "escenas": [
         {
@@ -77,8 +89,20 @@
       ]
     },
     "visual": {
-      "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A fluffy cartoon cat sits in a waiting room chair holding a tiny purse. Scene 1 (0-4s): a suspicious rooster wearing an oversized white coat and a crayon-drawn diploma taped to the wall proudly opens a toy doctor kit; the cat raises one eyebrow. Scene 2 (4-7s): the cat looks at the wall, the crayon diploma slowly peels off and falls. Scene 3 (7-10s): a friendly capybara veterinarian with a glowing blue verification badge on the chest opens the next door and waves warmly; the cat walks over happily. Purple (#5B2E7E) and yellow (#FFD84D) accents in the room decor. No text overlays, no logos, no watermarks, realistic smooth animation.",
-      "duracion_s": 10,
+      "escenas_ia": [
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A fluffy grey cartoon cat with round amber eyes and a small red collar sits patiently on a waiting room chair, holding a tiny purse. The waiting room has purple (#5B2E7E) walls and yellow (#FFD84D) chairs. No text overlays, no logos, no watermarks.",
+          "duracion_s": 8
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A scruffy rooster wearing a white coat three sizes too big proudly opens a plastic toy doctor kit; behind him a diploma drawn in crayon is taped crookedly to the purple (#5B2E7E) wall and slowly peels off. The same fluffy grey cartoon cat with round amber eyes and a small red collar raises one eyebrow, unimpressed. No text overlays, no logos, no watermarks.",
+          "duracion_s": 8
+        },
+        {
+          "prompt_ia": "High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A friendly capybara veterinarian in a clean fitted white coat, with a glowing blue verification badge on the chest, opens a door and waves warmly. The same fluffy grey cartoon cat with round amber eyes and a small red collar trots over happily. Purple (#5B2E7E) and yellow (#FFD84D) accents in the clinic decor. No text overlays, no logos, no watermarks.",
+          "duracion_s": 8
+        }
+      ],
       "narracion": "Cualquiera puede ponerse una bata. Pero el título no se improvisa. En EncuentraVet verificamos a cada veterinario, uno por uno. Búscalo en encuentravet punto cl.",
       "escenas": [
         {
@@ -100,211 +124,9 @@
       "nota": "Video pendiente de generación: falta el secret REPLICATE_API_TOKEN. El prompt de IA está en la pieza."
     },
     "estado": "pendiente",
-    "lote": "lote-2026-08-30-22-41",
+    "lote": "lote-2026-08-31-00-09",
     "imagen": null,
     "imagen_url": null,
     "nota": "Video pendiente de generación: falta el secret REPLICATE_API_TOKEN. El prompt de IA está en la pieza."
-  },
-  {
-    "fecha_propuesta": "2026-08-31",
-    "hora_propuesta": "09:30",
-    "publico": "veterinarios",
-    "caption": "¿Cuántas veces hoy dejaste el estetoscopio para contestar el teléfono? 📞\n\nEntre un control de vacunas y una consulta, suena el celular: \"¿tiene hora mañana?\". Cortas, anotas en un papel, vuelves al paciente... y a las 6 de la tarde ya no sabes si esa hora quedó tomada o no.\n\nLa agenda online de EncuentraVet muestra tu disponibilidad real. El tutor entra, ve tus bloques libres y reserva solo. Tú te enteras con la hora ya confirmada.\n\nTres cosas que puedes hacer hoy mismo para que tu agenda trabaje por ti 👇\n\nY lo de siempre: 0% comisión. Lo que cobras es tuyo.\n\nCrea tu perfil gratis en encuentravet.cl\n\n#EncuentraVet #VeterinariosVerificados #MédicoVeterinario #VeterinariosChile #AgendaOnline #GestiónClínica #ConsultaVeterinaria",
-    "tipo": "tip",
-    "formato": "post",
-    "visual": {
-      "etiqueta": "AGENDA ONLINE",
-      "titulo": "Menos teléfono, más pacientes",
-      "destacado": "0 llamadas",
-      "lineas": [
-        "Carga solo los bloques que de verdad puedes atender: disponibilidad real, cero sobrecupo.",
-        "Deja un bloque de 20 min entre consultas para urgencias y para respirar.",
-        "Cierra tu agenda con anticipación los días de cirugía: el tutor ni te llama."
-      ],
-      "cierre": "Tu agenda visible 24/7. Tú, tranquilo con el paciente."
-    },
-    "estado": "pendiente",
-    "lote": "lote-2026-08-30-23-25",
-    "imagen": "lote-2026-08-30-23-25-1-tip.png",
-    "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/claude/influence-chile-promo-graphic-zix4zb/piezas/lote-2026-08-30-23-25-1-tip.png",
-    "nota": null
-  },
-  {
-    "fecha_propuesta": "2026-09-01",
-    "hora_propuesta": "10:00",
-    "publico": "veterinarios",
-    "caption": "Partimos con una idea simple: que un tutor pudiera saber, sin dudar, que quien atiende a su mascota es médico veterinario de verdad. 💙\n\nHoy somos 100 veterinarios verificados uno a uno, validados contra el Registro Civil y COLMEVET antes de recibir la insignia azul. Estamos presentes en 32 comunas y este mes se hicieron 180 reservas a través de la plataforma.\n\nNo es un directorio donde cualquiera se inscribe. Es una comunidad donde tu título vale y se ve.\n\nSi tu comuna todavía no aparece en el mapa, puede ser por ti.\n\nCrea tu perfil gratis en encuentravet.cl\n\n#EncuentraVet #VeterinariosVerificados #MédicoVeterinario #VeterinariosChile #InsigniaAzul #ComunidadVeterinaria",
-    "tipo": "hito",
-    "formato": "post",
-    "visual": {
-      "etiqueta": "HITO DE LA COMUNIDAD",
-      "titulo": "100 veterinarios verificados uno a uno",
-      "destacado": "💯",
-      "lineas": [
-        "Validados con Registro Civil y COLMEVET.",
-        "32 comunas con vets verificados.",
-        "180 reservas este mes. 0% comisión."
-      ],
-      "cierre": "Tu título vale. Aquí además se ve."
-    },
-    "estado": "pendiente",
-    "lote": "lote-2026-08-30-23-25",
-    "imagen": "lote-2026-08-30-23-25-2-hito.png",
-    "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/claude/influence-chile-promo-graphic-zix4zb/piezas/lote-2026-08-30-23-25-2-hito.png",
-    "nota": null
-  },
-  {
-    "fecha_propuesta": "2026-09-03",
-    "hora_propuesta": "09:00",
-    "publico": "veterinarios",
-    "caption": "\"Doctor, ¿y cuándo fue la última desparasitación?\" 🤔\n\nY ahí viene el silencio: el carnet quedó en la casa, la foto del examen se perdió en el WhatsApp de la familia y el tratamiento anterior nadie lo recuerda bien. Terminas reconstruyendo la historia clínica a punta de memoria ajena.\n\nLa ficha clínica digital de EncuentraVet guarda vacunas, exámenes e historial de cada paciente en un solo lugar. Cuando ese perrito vuelve en seis meses, la información está ahí, ordenada y disponible.\n\nTres hábitos cortos que te ahorran minutos en cada control 👇\n\nMenos arqueología clínica, más decisiones con respaldo.\n\nCrea tu perfil gratis en encuentravet.cl\n\n#EncuentraVet #VeterinariosVerificados #MédicoVeterinario #VeterinariosChile #FichaClínica #HistorialClínico #GestiónVeterinaria",
-    "tipo": "tip",
-    "formato": "post",
-    "visual": {
-      "etiqueta": "FICHA CLÍNICA DIGITAL",
-      "titulo": "El historial no debería vivir en un carnet perdido",
-      "destacado": "1 lugar",
-      "lineas": [
-        "Registra la vacuna en el momento, no al final del día: se te van los detalles.",
-        "Sube la foto del examen a la ficha del paciente, no al chat: ahí sí la encuentras.",
-        "Anota el motivo de consulta en una línea clara para tu yo del próximo control."
-      ],
-      "cierre": "Vacunas, exámenes e historial en un solo lugar"
-    },
-    "estado": "pendiente",
-    "lote": "lote-2026-08-30-23-25",
-    "imagen": "lote-2026-08-30-23-25-3-tip.png",
-    "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/claude/influence-chile-promo-graphic-zix4zb/piezas/lote-2026-08-30-23-25-3-tip.png",
-    "nota": null
-  },
-  {
-    "fecha_propuesta": "2026-09-05",
-    "hora_propuesta": "19:00",
-    "publico": "tutores",
-    "caption": "Buscar veterinario a las 11 de la noche, cuando el regalón de la casa anda raro, no debería ser una lotería. 🐾\n\nEn EncuentraVet cada veterinario está verificado uno a uno: se valida contra el Registro Civil y COLMEVET antes de recibir la insignia azul. Si ves la insignia, es médico veterinario de verdad.\n\nAsí sacas provecho a la plataforma en tres pasos 👇\n\nAdemás, la ficha de tu mascota es gratis: vacunas, exámenes y recordatorios en un solo lugar, para que no se te pase ninguna fecha.\n\nRegístrate gratis en encuentravet.cl\n\n#EncuentraVet #VeterinariosVerificados #MascotasChile #TutorResponsable #InsigniaAzul #VeterinarioCerca",
-    "tipo": "tip",
-    "formato": "post",
-    "visual": {
-      "etiqueta": "BUSCA POR COMUNA",
-      "titulo": "Cómo elegir bien al vet de tu mascota",
-      "destacado": "Insignia",
-      "lineas": [
-        "Filtra por tu comuna y revisa que el perfil tenga la insignia azul de verificado.",
-        "Reserva la hora online: eliges el bloque disponible y queda confirmado.",
-        "Crea la ficha gratis de tu mascota y ten vacunas y exámenes siempre a mano."
-      ],
-      "cierre": "Si tiene insignia azul, es veterinario de verdad"
-    },
-    "estado": "pendiente",
-    "lote": "lote-2026-08-30-23-25",
-    "imagen": "lote-2026-08-30-23-25-4-tip.png",
-    "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/claude/influence-chile-promo-graphic-zix4zb/piezas/lote-2026-08-30-23-25-4-tip.png",
-    "nota": null
-  },
-  {
-    "fecha_propuesta": "2026-09-01",
-    "hora_propuesta": "09:00",
-    "publico": "veterinarios",
-    "caption": "¿Cuántas veces te interrumpieron una consulta para preguntar \"doctor, ¿tiene hora el jueves?\" 📞\n\nEl teléfono es el ladrón silencioso de tu tiempo clínico. Contestas con las manos ocupadas, anotas en un papel, se te cruzan dos pacientes a la misma hora y terminas devolviendo llamadas a las 22:00.\n\nLa agenda online de EncuentraVet existe justamente para eso: tú publicas tus bloques reales de atención, el tutor entra, ve lo que está disponible y reserva solo. Sin llamadas, sin cadenas de WhatsApp, sin \"me confirma y le aviso\".\n\nTres cosas que puedes hacer hoy:\n1. Cargar tus horarios reales, no los ideales. La agenda funciona cuando refleja tu semana de verdad.\n2. Bloquear cirugías, terreno y almuerzo una sola vez. Nadie te va a agendar encima.\n3. Dejar activos los recordatorios automáticos: el tutor recibe el aviso y las horas perdidas bajan.\n\nY sí: 0% comisión. Lo que cobras es tuyo, siempre.\n\nMenos teléfono, más pacientes. Crea tu perfil gratis en encuentravet.cl\n\n#EncuentraVet #VeterinariosVerificados #MédicoVeterinario #VeterinariosChile #AgendaOnline #GestiónVeterinaria",
-    "tipo": "tip",
-    "formato": "post",
-    "visual": {
-      "etiqueta": "AGENDA ONLINE",
-      "titulo": "Menos teléfono, más pacientes",
-      "destacado": "0 llamadas",
-      "lineas": [
-        "Publica tus bloques reales de atención: el tutor elige y reserva solo, sin llamarte.",
-        "Bloquea cirugías, terreno y almuerzo una vez; nadie te agenda encima.",
-        "Deja activos los recordatorios automáticos y baja las horas perdidas."
-      ],
-      "cierre": "Tu agenda trabaja mientras tú estás en pabellón"
-    },
-    "estado": "pendiente",
-    "lote": "lote-2026-08-30-23-57",
-    "imagen": "lote-2026-08-30-23-57-1-tip.png",
-    "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/claude/influence-chile-promo-graphic-zix4zb/piezas/lote-2026-08-30-23-57-1-tip.png",
-    "nota": null
-  },
-  {
-    "fecha_propuesta": "2026-09-03",
-    "hora_propuesta": "09:30",
-    "publico": "veterinarios",
-    "caption": "Cualquiera puede comprarse una bata blanca. 🥼\n\nEn internet hay cuentas que ofrecen \"consultas a domicilio\", \"vacunas baratas\" y \"desparasitación express\" sin un solo respaldo. Y cuando aparece uno de esos, el que queda mal parado es el gremio completo: el tutor desconfía, pregunta el título, duda del precio, duda de ti.\n\nEste corto es ficción, pero la escena la conoces: el maletín de juguete, el diploma dibujado a crayón, la seguridad de quien nunca pisó una clínica.\n\nPor eso en EncuentraVet cada veterinario se valida uno a uno contra el Registro Civil y COLMEVET antes de recibir la insignia azul. No es un adorno del perfil: es la prueba pública de que tu título existe y es tuyo.\n\nEl tutor no tiene que creerte. Puede verificarlo.\n\nCertifícate y que nadie dude de ti. Crea tu perfil gratis en encuentravet.cl\n\n#EncuentraVet #VeterinariosVerificados #MédicoVeterinario #VeterinariosChile #InsigniaAzul #FalsosVeterinarios",
-    "tipo": "video",
-    "formato": "reel",
-    "video": {
-      "prompt_ia": "High-quality 3D cartoon animation, soft rounded anthropomorphic animal characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16, shallow depth of field, no text, no logos, no watermarks. Purple (#5B2E7E) and yellow (#FFD84D) color accents in the props and room. Scene: a cozy cartoon living room. 0-3s: a scruffy raccoon in a lab coat three sizes too big, sleeves dragging on the floor, proudly opens a plastic toy medical briefcase full of rubber ducks and a lollipop; behind him on the wall hangs a crayon-drawn diploma with wobbly letters, taped crooked. A fluffy calm white cat sits on the sofa, ears flat, unimpressed, tilting its head. 3-6s: the raccoon places a bright yellow toy stethoscope backwards on his own ears and listens to a cushion instead of the cat; the cat slowly raises one eyebrow and glances at the camera. 6-9s: warm purple light spills through the door as a calm, tidy capybara veterinarian in a perfectly fitted lab coat steps in with a real professional bag; a soft glowing blue circular badge with a simple check mark floats and gently settles beside the capybara's chest, sparkling softly. The raccoon freezes, sheepishly hides the toy briefcase behind his back and tiptoes out of frame. The cat happily walks toward the capybara and rubs against its leg. Smooth camera push-in, gentle comedic timing, cheerful and safe atmosphere, no animal ever harmed.",
-      "duracion_s": 9,
-      "narracion": "Cualquiera puede ponerse una bata. Solo un veterinario verificado pasa por Registro Civil y Colmevet. Busca la insignia azul en encuentravet punto cl.",
-      "escenas": [
-        {
-          "tiempo": "0-3s",
-          "descripcion": "Mapache con bata gigante abre un maletín de juguete con patos de goma. Detrás, un diploma dibujado a crayón pegado chueco. El gato en el sillón lo mira sin convencerse.",
-          "texto_pantalla": "Se presentó como veterinario"
-        },
-        {
-          "tiempo": "3-6s",
-          "descripcion": "Se pone el estetoscopio de juguete al revés y auscula un cojín en vez del gato. El gato levanta una ceja y mira a cámara.",
-          "texto_pantalla": "Nadie le pidió el título"
-        },
-        {
-          "tiempo": "6-9s",
-          "descripcion": "Entra un carpincho veterinario con bata a su medida y maletín real; aparece la insignia azul brillando a su lado. El mapache esconde el maletín y se va en puntillas.",
-          "texto_pantalla": "La insignia azul se verifica: Registro Civil + COLMEVET"
-        }
-      ]
-    },
-    "visual": {
-      "prompt_ia": "High-quality 3D cartoon animation, soft rounded anthropomorphic animal characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16, shallow depth of field, no text, no logos, no watermarks. Purple (#5B2E7E) and yellow (#FFD84D) color accents in the props and room. Scene: a cozy cartoon living room. 0-3s: a scruffy raccoon in a lab coat three sizes too big, sleeves dragging on the floor, proudly opens a plastic toy medical briefcase full of rubber ducks and a lollipop; behind him on the wall hangs a crayon-drawn diploma with wobbly letters, taped crooked. A fluffy calm white cat sits on the sofa, ears flat, unimpressed, tilting its head. 3-6s: the raccoon places a bright yellow toy stethoscope backwards on his own ears and listens to a cushion instead of the cat; the cat slowly raises one eyebrow and glances at the camera. 6-9s: warm purple light spills through the door as a calm, tidy capybara veterinarian in a perfectly fitted lab coat steps in with a real professional bag; a soft glowing blue circular badge with a simple check mark floats and gently settles beside the capybara's chest, sparkling softly. The raccoon freezes, sheepishly hides the toy briefcase behind his back and tiptoes out of frame. The cat happily walks toward the capybara and rubs against its leg. Smooth camera push-in, gentle comedic timing, cheerful and safe atmosphere, no animal ever harmed.",
-      "duracion_s": 9,
-      "narracion": "Cualquiera puede ponerse una bata. Solo un veterinario verificado pasa por Registro Civil y Colmevet. Busca la insignia azul en encuentravet punto cl.",
-      "escenas": [
-        {
-          "tiempo": "0-3s",
-          "descripcion": "Mapache con bata gigante abre un maletín de juguete con patos de goma. Detrás, un diploma dibujado a crayón pegado chueco. El gato en el sillón lo mira sin convencerse.",
-          "texto_pantalla": "Se presentó como veterinario"
-        },
-        {
-          "tiempo": "3-6s",
-          "descripcion": "Se pone el estetoscopio de juguete al revés y auscula un cojín en vez del gato. El gato levanta una ceja y mira a cámara.",
-          "texto_pantalla": "Nadie le pidió el título"
-        },
-        {
-          "tiempo": "6-9s",
-          "descripcion": "Entra un carpincho veterinario con bata a su medida y maletín real; aparece la insignia azul brillando a su lado. El mapache esconde el maletín y se va en puntillas.",
-          "texto_pantalla": "La insignia azul se verifica: Registro Civil + COLMEVET"
-        }
-      ],
-      "nota": "Video no generado: Replicate 402: {\"title\":\"Insufficient credit\",\"detail\":\"You have insufficient credit to run this model. Go to https://replicate.com/account/billing#billing to purchase credit. Once you purchase credit, please wait a few minutes before trying again.\",\"status\":402}. El prompt queda en la pieza para regenerar."
-    },
-    "estado": "pendiente",
-    "lote": "lote-2026-08-30-23-57",
-    "imagen": null,
-    "imagen_url": null,
-    "nota": "Video no generado: Replicate 402: {\"title\":\"Insufficient credit\",\"detail\":\"You have insufficient credit to run this model. Go to https://replicate.com/account/billing#billing to purchase credit. Once you purchase credit, please wait a few minutes before trying again.\",\"status\":402}. El prompt queda en la pieza para regenerar."
-  },
-  {
-    "fecha_propuesta": "2026-09-05",
-    "hora_propuesta": "12:00",
-    "publico": "tutores",
-    "caption": "Buscar veterinario en internet no debería ser un acto de fe. 🐾\n\nHoy en EncuentraVet hay 100 veterinarios verificados. Y \"verificado\" acá no significa que subió una foto con bata: significa que su identidad y su título se validaron uno a uno contra el Registro Civil y COLMEVET antes de recibir la insignia azul.\n\nEso lo puedes ver tú, en su perfil, antes de reservar.\n\nAdemás ya hay vets verificados en 32 comunas, así que puedes filtrar por la tuya, mirar horarios disponibles y tomar la hora online. Este mes se hicieron 180 reservas así: sin llamar, sin esperar respuesta en WhatsApp, sin cruzar la ciudad para preguntar.\n\nY de paso, la ficha de tu regalón queda gratis en un solo lugar: vacunas, exámenes, historial y recordatorios para que no se te pase la próxima dosis.\n\nQue quien atienda a tu mascota sea veterinario de verdad. Regístrate gratis en encuentravet.cl\n\n#EncuentraVet #VeterinariosVerificados #MascotasChile #TutorResponsable #InsigniaAzul #ReservaOnline",
-    "tipo": "hito",
-    "formato": "post",
-    "visual": {
-      "etiqueta": "COMUNIDAD ENCUENTRAVET",
-      "titulo": "100 veterinarios verificados, uno por uno",
-      "destacado": "✔",
-      "lineas": [
-        "Validados con Registro Civil y COLMEVET.",
-        "Verificados en 32 comunas: busca la tuya.",
-        "180 reservas este mes, sin llamadas."
-      ],
-      "cierre": "Busca por comuna y reserva con la insignia azul"
-    },
-    "estado": "pendiente",
-    "lote": "lote-2026-08-30-23-57",
-    "imagen": "lote-2026-08-30-23-57-3-hito.png",
-    "imagen_url": "https://raw.githubusercontent.com/dettoni-ux/Repositorio/claude/influence-chile-promo-graphic-zix4zb/piezas/lote-2026-08-30-23-57-3-hito.png",
-    "nota": null
   }
 ]

@@ -23,7 +23,7 @@ import { z } from 'zod';
 import { zodOutputFormat } from '@anthropic-ai/sdk/helpers/zod';
 import { obtenerDatos, insertarPieza } from './datos.mjs';
 import { abrirNavegador, renderPieza } from './render.mjs';
-import { generarVideo, videoDisponible } from './video.mjs';
+import { generarCortometraje, videoDisponible } from './video.mjs';
 import { generarVoz, mezclarVideoYVoz, vozDisponible } from './voz.mjs';
 
 const AQUI = path.dirname(fileURLToPath(import.meta.url));
@@ -60,9 +60,11 @@ const VideoSchema = z.object({
   tipo: z.literal('video'),
   formato: z.literal('reel'),
   video: z.object({
-    prompt_ia: z.string().max(1600),
-    duracion_s: z.number().int().min(5).max(10),
-    narracion: z.string().max(260),
+    escenas_ia: z.array(z.object({
+      prompt_ia: z.string().max(1600),
+      duracion_s: z.number().int().min(5).max(10)
+    })).min(1).max(3),
+    narracion: z.string().max(700),
     escenas: z.array(z.object({
       tiempo: z.string().max(20),
       descripcion: z.string().max(220),
@@ -171,8 +173,11 @@ function piezasEjemplo(datos) {
       tipo: 'video', formato: 'reel', publico: 'tutores', fecha_propuesta: '2026-09-06', hora_propuesta: '12:00',
       caption: 'Cualquiera puede ponerse una bata. 🥼\n\nLa insignia azul de EncuentraVet no se compra: se verifica con Registro Civil y COLMEVET, uno a uno.\n\nRegístrate gratis en encuentravet.cl\n\n#EncuentraVet #VeterinariosVerificados #MascotasChile #TutorResponsable',
       video: {
-        prompt_ia: 'High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A fluffy cartoon cat sits in a waiting room chair holding a tiny purse. Scene 1 (0-4s): a suspicious rooster wearing an oversized white coat and a crayon-drawn diploma taped to the wall proudly opens a toy doctor kit; the cat raises one eyebrow. Scene 2 (4-7s): the cat looks at the wall, the crayon diploma slowly peels off and falls. Scene 3 (7-10s): a friendly capybara veterinarian with a glowing blue verification badge on the chest opens the next door and waves warmly; the cat walks over happily. Purple (#5B2E7E) and yellow (#FFD84D) accents in the room decor. No text overlays, no logos, no watermarks, realistic smooth animation.',
-        duracion_s: 10,
+        escenas_ia: [
+          { prompt_ia: 'High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A fluffy grey cartoon cat with round amber eyes and a small red collar sits patiently on a waiting room chair, holding a tiny purse. The waiting room has purple (#5B2E7E) walls and yellow (#FFD84D) chairs. No text overlays, no logos, no watermarks.', duracion_s: 8 },
+          { prompt_ia: 'High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A scruffy rooster wearing a white coat three sizes too big proudly opens a plastic toy doctor kit; behind him a diploma drawn in crayon is taped crookedly to the purple (#5B2E7E) wall and slowly peels off. The same fluffy grey cartoon cat with round amber eyes and a small red collar raises one eyebrow, unimpressed. No text overlays, no logos, no watermarks.', duracion_s: 8 },
+          { prompt_ia: 'High-quality 3D cartoon animation, soft rounded characters, big expressive eyes, warm cinematic lighting, family-friendly, vertical 9:16. A friendly capybara veterinarian in a clean fitted white coat, with a glowing blue verification badge on the chest, opens a door and waves warmly. The same fluffy grey cartoon cat with round amber eyes and a small red collar trots over happily. Purple (#5B2E7E) and yellow (#FFD84D) accents in the clinic decor. No text overlays, no logos, no watermarks.', duracion_s: 8 }
+        ],
         narracion: 'Cualquiera puede ponerse una bata. Pero el título no se improvisa. En EncuentraVet verificamos a cada veterinario, uno por uno. Búscalo en encuentravet punto cl.',
         escenas: [
           { tiempo: '0-4 s', descripcion: 'El “doctor” gallo con bata gigante y diploma a crayón abre un maletín de juguete', texto_pantalla: '¿Tu “veterinario”… es veterinario?' },
@@ -204,10 +209,14 @@ try {
     if (pieza.tipo === 'video') {
       archivo = `${lote}-${i + 1}-video.mp4`;
       if (videoDisponible()) {
-        console.log(`  Pieza ${i + 1} (video): generando con IA (~1-3 min)…`);
+        const n = pieza.video.escenas_ia.length;
+        console.log(`  Pieza ${i + 1} (cortometraje de ${n} escena${n>1?'s':''}): generando con IA…`);
         const mudo = path.join(DIR_PIEZAS, `.mudo-${i + 1}.mp4`);
         try {
-          await generarVideo({ prompt: pieza.video.prompt_ia, duracion: pieza.video.duracion_s, salida: mudo });
+          await generarCortometraje({
+            escenas: pieza.video.escenas_ia, salida: mudo,
+            alAvanzar: (k, t) => console.log(`    escena ${k + 1} de ${t}…`)
+          });
           if (vozDisponible()) {
             console.log('  Generando voz en off con ElevenLabs y montándola sobre el video…');
             const voz = path.join(DIR_PIEZAS, `.voz-${i + 1}.mp3`);
