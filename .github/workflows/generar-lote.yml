@@ -45,6 +45,11 @@ on:
         required: false
         default: false
         type: boolean
+      rehacer_audio:
+        description: 'Rehacer SOLO el audio del último video (no cuesta créditos de video)'
+        required: false
+        default: false
+        type: boolean
   schedule:
     # Lunes 13:00 UTC = 09:00 Chile (invierno, UTC-4) / 10:00 (verano, UTC-3)
     - cron: '0 13 * * 1'
@@ -93,6 +98,12 @@ jobs:
           fi
           if [ "${{ inputs.solo_costo }}" = "true" ]; then
             node costo.mjs 50
+            exit 0
+          fi
+          if [ "${{ inputs.rehacer_audio }}" = "true" ]; then
+            ultimo=$(ls -t ../piezas/*.mp4 | grep -v -- '-audio2' | head -1)
+            echo "Rehaciendo el audio de: $ultimo"
+            node remontar.mjs "$ultimo"
             exit 0
           fi
           node generar.mjs \
