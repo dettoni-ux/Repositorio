@@ -62,7 +62,8 @@ try {
        FROM information_schema.columns c
       WHERE c.table_schema = 'public'
         AND c.table_name <> 'rrss_piezas'
-        AND (c.table_name ILIKE '%vet%' OR c.table_name ILIKE '%profesional%'
+        AND (c.table_name IN ('practitioner','veterinarios','veterinario')
+             OR c.table_name ILIKE '%profesional%'
              OR c.column_name IN ('verificado','colmevet','insignia_azul'))
       GROUP BY c.table_name ORDER BY c.table_name`);
 
@@ -86,7 +87,19 @@ try {
     }
   }
 
-  /* --- 3. Cifras reales para el generador --- */
+  /* --- 3. Columnas de las tablas que alimentan al generador --- */
+  const aInspeccionar = (process.env.COLUMNAS || 'practitioner,commune,booking,review')
+    .split(',').map(t => t.trim()).filter(Boolean);
+  for (const t of aInspeccionar) {
+    if (!existe(t)) { console.log(`\n· \`${t}\`: no existe`); continue; }
+    const { rows } = await cliente.query(
+      `SELECT column_name, data_type FROM information_schema.columns
+        WHERE table_schema='public' AND table_name=$1 ORDER BY ordinal_position`, [t]);
+    const { rows: [c] } = await cliente.query(`SELECT count(*)::int AS n FROM "${t.replace(/"/g,'""')}"`);
+    console.log(`\n· \`${t}\` (${c.n} filas): ` + rows.map(r => r.column_name).join(', '));
+  }
+
+  /* --- 4. Cifras reales para el generador --- */
   console.log('\nCifras que usará el generador:');
   for (const [nombre, sql] of [
     ['veterinarios verificados', 'SELECT count(*)::int AS n FROM veterinarios WHERE verificado = true'],
