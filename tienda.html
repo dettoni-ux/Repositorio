@@ -46,34 +46,39 @@ body {
   color: #fff;
 }
 
-/* ---------- header ---------- */
+/* ---------- header (color del fondo del logo) ---------- */
 header {
   position: sticky;
   top: 0;
   z-index: 50;
-  padding: 14px 5%;
+  padding: 10px 5%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(27, 17, 64, 0.92);
-  backdrop-filter: blur(8px);
+  background: linear-gradient(120deg, #40013E 0%, #330133 55%, #240029 100%);
   color: #fff;
-  box-shadow: 0 4px 22px rgba(27, 17, 64, 0.35);
+  box-shadow: 0 4px 22px rgba(36, 0, 44, 0.45);
 }
 
-.brand { text-align: left; line-height: 1; }
+.brand { display: flex; align-items: center; gap: 14px; line-height: 1; }
+
+.brand img {
+  height: 66px;
+  width: 66px;
+  display: block;
+}
 
 .brand .name {
   font-family: 'Cormorant Garamond', serif;
   font-weight: 500;
-  font-size: 30px;
-  letter-spacing: 8px;
+  font-size: 26px;
+  letter-spacing: 7px;
 }
 
 .brand .by {
   display: block;
-  font-size: 10.5px;
-  letter-spacing: 4px;
+  font-size: 10px;
+  letter-spacing: 3.5px;
   color: var(--rosa);
   margin-top: 5px;
   text-transform: uppercase;
@@ -121,10 +126,33 @@ header {
 
 /* ---------- hero ---------- */
 .hero {
-  text-align: center;
-  padding: 74px 6% 86px;
+  padding: 64px 6% 76px;
   position: relative;
   overflow: hidden;
+}
+
+.hero-flex {
+  max-width: 1150px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 56px;
+  flex-wrap: wrap;
+}
+
+.hero-text { flex: 1 1 480px; }
+
+.hero-photo {
+  flex: 1 1 320px;
+  max-width: 430px;
+  margin: 0 auto;
+}
+
+.hero-photo img {
+  width: 100%;
+  display: block;
+  border-radius: 28px;
+  box-shadow: 0 26px 60px rgba(10, 4, 30, 0.55);
 }
 
 .hero .pre {
@@ -138,12 +166,9 @@ header {
 .hero h1 {
   font-family: 'Cormorant Garamond', serif;
   font-weight: 500;
-  font-size: clamp(38px, 6vw, 66px);
+  font-size: clamp(38px, 5vw, 60px);
   line-height: 1.15;
   margin-top: 14px;
-  max-width: 820px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .hero h1 em {
@@ -152,8 +177,8 @@ header {
 }
 
 .hero p {
-  margin: 18px auto 0;
-  max-width: 620px;
+  margin-top: 18px;
+  max-width: 560px;
   font-size: clamp(14.5px, 2vw, 17px);
   font-weight: 300;
   line-height: 1.7;
@@ -504,6 +529,61 @@ header {
   text-decoration: underline;
 }
 
+/* ---------- banda emotiva ---------- */
+.band {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+}
+
+.band .band-photo {
+  flex: 1 1 380px;
+  min-height: 340px;
+  background: url('img/band-mama.jpg') center 28% / cover no-repeat;
+}
+
+.band .band-text {
+  flex: 1 1 380px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 7%;
+}
+
+.band h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 500;
+  font-size: clamp(28px, 3.5vw, 42px);
+  line-height: 1.25;
+}
+
+.band h2 em { font-style: italic; color: var(--rosa); }
+
+.band p {
+  margin-top: 14px;
+  font-weight: 300;
+  font-size: 15.5px;
+  line-height: 1.7;
+  opacity: 0.92;
+  max-width: 480px;
+}
+
+.band .cta {
+  display: inline-block;
+  align-self: flex-start;
+  margin-top: 24px;
+  background: var(--rosa-fuerte);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15.5px;
+  padding: 14px 36px;
+  border-radius: 999px;
+  transition: transform 0.15s, filter 0.15s;
+}
+
+.band .cta:hover { transform: scale(1.04); filter: brightness(1.08); }
+
 /* ---------- footer ---------- */
 footer {
   text-align: center;
@@ -561,8 +641,11 @@ footer .soc { opacity: 0.85; }
 
 <header>
   <div class="brand">
-    <div class="name">MILCH</div>
-    <span class="by">by Magic Resin</span>
+    <img src="img/logo-milch.png" alt="Milch by Magic Resin">
+    <div>
+      <div class="name">MILCH</div>
+      <span class="by">by Magic Resin</span>
+    </div>
   </div>
   <button class="cart-btn" id="openCart">
     Mi pedido
@@ -571,10 +654,17 @@ footer .soc { opacity: 0.85; }
 </header>
 
 <section class="hero night">
-  <div class="pre">Joyas con leche materna</div>
-  <h1>Tu lactancia, convertida en una <em>joya para siempre</em></h1>
-  <p>Cada pieza se elabora a mano con una pequeña muestra de tu leche materna, preservada en resina de grado joyero. Un recuerdo único del vínculo más hermoso de tu vida.</p>
-  <a class="cta" href="#catalogo">Ver los 13 modelos</a>
+  <div class="hero-flex">
+    <div class="hero-text">
+      <div class="pre">Joyas con leche materna</div>
+      <h1>Tu lactancia, convertida en una <em>joya para siempre</em></h1>
+      <p>Cada pieza se elabora a mano con una pequeña muestra de tu leche materna, preservada en resina de grado joyero. Un recuerdo único del vínculo más hermoso de tu vida.</p>
+      <a class="cta" href="#catalogo">Ver los 13 modelos</a>
+    </div>
+    <div class="hero-photo">
+      <img src="img/hero-mama.jpg" alt="Mamá con su bebé sosteniendo el kit Milch">
+    </div>
+  </div>
 </section>
 
 <section class="how">
@@ -630,9 +720,17 @@ footer .soc { opacity: 0.85; }
   </div>
 </main>
 
+<section class="band night">
+  <div class="band-photo" role="img" aria-label="Mamá abrazando a su bebé con la caja Milch"></div>
+  <div class="band-text">
+    <h2>El vínculo más hermoso, <em>guardado para siempre</em></h2>
+    <p>La lactancia termina, pero el recuerdo no tiene por qué hacerlo. Cada joya Milch preserva ese momento en una pieza única, hecha a mano especialmente para ti.</p>
+    <a class="cta" id="bandWhatsapp" href="#catalogo">Quiero mi joya</a>
+  </div>
+</section>
+
 <footer class="night">
-  <div class="logo">MILCH</div>
-  <span class="by">by Magic Resin</span>
+  <img src="img/logo-milch.png" alt="Milch by Magic Resin" style="width:130px; margin-bottom:10px;">
   <div class="soc">www.mresin.cl · Joyas con leche materna · Hecho con amor en Chile 🤍</div>
 </footer>
 
@@ -705,8 +803,10 @@ const WHATSAPP = '56965450723'; // ← reemplazar por el WhatsApp de Milch
 const PRODUCTS = [
   { id: 'm01', icon: 'ic-anillo',   name: 'Anillo Luna Llena',        price: 55000, desc: 'Anillo de plata 925 con esfera de tu leche preservada.' },
   { id: 'm02', icon: 'ic-anillo',   name: 'Anillo Gota de Vida',      price: 55000, desc: 'Anillo con gota de resina y leche materna, ajustable.' },
-  { id: 'm03', icon: 'ic-colgante', name: 'Colgante Gota Estelar',    price: 48000, desc: 'Colgante en forma de gota con destellos y cadena incluida.' },
-  { id: 'm04', icon: 'ic-corazon',  name: 'Colgante Corazón Eterno',  price: 48000, desc: 'Corazón de leche materna con cadena de plata 925.' },
+  { id: 'm03', icon: 'ic-colgante', name: 'Colgante Gota Estelar',    price: 48000, desc: 'Colgante en forma de gota con destellos y cadena incluida.',
+    img: 'img/colgante-gota.jpg', pos: '64% 84%' },
+  { id: 'm04', icon: 'ic-corazon',  name: 'Colgante Corazón Eterno',  price: 48000, desc: 'Corazón de leche materna con cadena de plata 925.',
+    img: 'img/corazon-eterno.jpg', pos: '50% 42%' },
   { id: 'm05', icon: 'ic-luna',     name: 'Colgante Luna y Estrella', price: 50000, desc: 'Media luna con tu leche y estrella de circonia.' },
   { id: 'm06', icon: 'ic-colgante', name: 'Colgante Árbol de la Vida',price: 52000, desc: 'Símbolo del vínculo madre e hijo, con base de tu leche.' },
   { id: 'm07', icon: 'ic-aros',     name: 'Aros Estrella Polar',      price: 42000, desc: 'Par de aros con leche preservada y broche de plata.' },
@@ -734,7 +834,7 @@ function renderCatalog() {
     <article class="card">
       <div class="photo night">
         ${p.img
-          ? `<img src="${p.img}" alt="${p.name}">`
+          ? `<img src="${p.img}" alt="${p.name}"${p.pos ? ` style="object-position:${p.pos}"` : ''}>`
           : `<svg viewBox="0 0 100 100"><use href="#${p.icon}"/></svg>`}
       </div>
       <div class="body">
