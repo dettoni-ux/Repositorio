@@ -314,6 +314,12 @@ header {
   background: #1B1140;
 }
 
+.video-wrap.vertical {
+  aspect-ratio: 9 / 16;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
 .video-wrap iframe,
 .video-wrap video {
   position: absolute;
@@ -892,8 +898,9 @@ footer .soc { opacity: 0.85; }
 // ⚠️ CONFIGURACIÓN — editar aquí:
 const WHATSAPP = '56966734756'; // WhatsApp de Milch (del catálogo oficial)
 
-// ⚙️ VIDEO TUTORIAL — pegar aquí el enlace de YouTube del video
-// (ej: 'https://www.youtube.com/watch?v=ABC123xyz' o 'https://youtu.be/ABC123xyz').
+// ⚙️ VIDEO TUTORIAL — pegar aquí el enlace del video.
+// Acepta YouTube ('https://youtu.be/ABC123'), TikTok
+// ('https://www.tiktok.com/@usuario/video/1234567890') o un .mp4 directo.
 // Si se deja vacío, la sección del video no se muestra.
 const VIDEO_URL = '';
 
@@ -1083,14 +1090,17 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') openCart(fal
 
 function setupVideo() {
   if (!VIDEO_URL) return;
-  let id = '';
-  const m = VIDEO_URL.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{6,})/);
-  if (m) id = m[1];
   const wrap = document.getElementById('videoWrap');
-  if (id) {
-    wrap.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}" title="Video tutorial Milch" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+  let m;
+  if ((m = VIDEO_URL.match(/tiktok\.com\/.*\/video\/(\d+)/))) {
+    // TikTok: video vertical 9:16
+    wrap.classList.add('vertical');
+    wrap.innerHTML = `<iframe src="https://www.tiktok.com/embed/v2/${m[1]}" title="Video tutorial Milch" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+  } else if ((m = VIDEO_URL.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{6,})/))) {
+    if (VIDEO_URL.includes('/shorts/')) wrap.classList.add('vertical');
+    wrap.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${m[1]}" title="Video tutorial Milch" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
   } else {
-    // si no es YouTube, se asume un archivo de video directo (mp4)
+    // cualquier otro enlace se asume archivo de video directo (mp4)
     wrap.innerHTML = `<video src="${VIDEO_URL}" controls playsinline preload="metadata"></video>`;
   }
   document.getElementById('videoSection').hidden = false;
