@@ -302,6 +302,34 @@ header {
   line-height: 1.6;
 }
 
+/* ---------- video tutorial ---------- */
+.video-section { max-width: 960px; margin: 0 auto; padding: 60px 5% 10px; }
+
+.video-wrap {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 22px 50px rgba(43, 27, 102, 0.28);
+  background: #1B1140;
+}
+
+.video-wrap iframe,
+.video-wrap video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.video-section .note {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 14.5px;
+  color: var(--gris);
+}
+
 /* ---------- catálogo ---------- */
 .catalog {
   max-width: 1200px;
@@ -767,6 +795,15 @@ footer .soc { opacity: 0.85; }
   </div>
 </section>
 
+<section class="video-section" id="videoSection" hidden>
+  <div class="section-head">
+    <h2>Mira lo simple que es</h2>
+    <p>Así se crea una joya Milch — el video tutorial completo viene incluido en tu kit.</p>
+  </div>
+  <div class="video-wrap" id="videoWrap"></div>
+  <p class="note">¿Dudas mientras creas tu joya? Te acompañamos por WhatsApp.</p>
+</section>
+
 <main class="catalog" id="catalogo">
   <div class="section-head">
     <h2>Nuestros 13 modelos</h2>
@@ -854,6 +891,11 @@ footer .soc { opacity: 0.85; }
 <script>
 // ⚠️ CONFIGURACIÓN — editar aquí:
 const WHATSAPP = '56966734756'; // WhatsApp de Milch (del catálogo oficial)
+
+// ⚙️ VIDEO TUTORIAL — pegar aquí el enlace de YouTube del video
+// (ej: 'https://www.youtube.com/watch?v=ABC123xyz' o 'https://youtu.be/ABC123xyz').
+// Si se deja vacío, la sección del video no se muestra.
+const VIDEO_URL = '';
 
 // Los 13 modelos. Cuando tengas las fotos, agrega img: 'img/modelo-01.jpg'
 // a cada uno (la foto reemplaza automáticamente al ícono ilustrado).
@@ -1039,6 +1081,22 @@ document.addEventListener('click', e => {
 document.getElementById('overlay').addEventListener('click', () => openCart(false));
 document.addEventListener('keydown', e => { if (e.key === 'Escape') openCart(false); });
 
+function setupVideo() {
+  if (!VIDEO_URL) return;
+  let id = '';
+  const m = VIDEO_URL.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{6,})/);
+  if (m) id = m[1];
+  const wrap = document.getElementById('videoWrap');
+  if (id) {
+    wrap.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}" title="Video tutorial Milch" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+  } else {
+    // si no es YouTube, se asume un archivo de video directo (mp4)
+    wrap.innerHTML = `<video src="${VIDEO_URL}" controls playsinline preload="metadata"></video>`;
+  }
+  document.getElementById('videoSection').hidden = false;
+}
+
+setupVideo();
 renderCatalog();
 renderCart();
 </script>
