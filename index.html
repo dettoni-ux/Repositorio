@@ -524,6 +524,30 @@ header {
   box-shadow: 0 4px 14px rgba(20, 10, 45, 0.35);
 }
 
+.opcion-wrap {
+  display: block;
+  margin-top: 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--noche-media);
+}
+
+.opcion-select {
+  display: block;
+  width: 100%;
+  margin-top: 5px;
+  padding: 10px 12px;
+  border: 1.5px solid #E4DBEF;
+  border-radius: 12px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  color: var(--texto);
+  background: #FDFBFF;
+  outline: none;
+}
+
+.opcion-select:focus { border-color: var(--violeta); }
+
 .add-btn {
   margin-top: 12px;
   width: 100%;
@@ -1360,6 +1384,10 @@ const CONFIG = {
     { "id": "corazoncito-dorado", "icon": "ic-corazon", "name": "Milch: Corazoncito Dorado", "price": 64990,
       "desc": "Corazón de plata 925 con baño de oro 18k. Incluye cadena de plata 925 con baño de oro.",
       "img": "img/corazoncito-dorado.jpg" },
+    { "id": "anillo-acero", "icon": "ic-anillo", "name": "Milch: Anillo Acero Ajustable Dorado", "price": 38990,
+      "desc": "Anillo ajustable de acero dorado con tu leche materna preservada. Elige tu forma favorita.",
+      "img": "img/anillo-acero.jpg",
+      "opciones": { "nombre": "Forma", "valores": ["Ovalado", "Corazón"] } },
     { "id": "anillo-oro", "icon": "ic-anillo", "name": "Milch: Anillo Plata 925 Baño de Oro", "price": 59990,
       "desc": "Anillo de plata 925 con baño de oro y gota de tu leche materna preservada.",
       "img": "img/anillo-oro.jpg" },
@@ -1456,6 +1484,9 @@ function renderCatalog() {
         <p class="desc">${p.desc}</p>
         ${socialHTML(p)}
         <div class="price">${clp(precioDe(p))}${enOferta(p) ? ` <s>${clp(p.price)}</s>` : ''} <small>kit completo</small></div>
+        ${p.opciones ? `<label class="opcion-wrap">${p.opciones.nombre}
+          <select class="opcion-select" data-op="${p.id}">${p.opciones.valores.map(v => `<option>${v}</option>`).join('')}</select>
+        </label>` : ''}
         <button class="add-btn" data-id="${p.id}">Agregar a mi pedido</button>
       </div>
     </article>
@@ -1464,7 +1495,10 @@ function renderCatalog() {
 
 function cartEntries() {
   return Object.entries(cart)
-    .map(([id, qty]) => ({ product: PRODUCTS.find(p => p.id === id), qty }))
+    .map(([key, qty]) => {
+      const [id, variante] = key.split('|');
+      return { key, product: PRODUCTS.find(p => p.id === id), variante: variante || '', qty };
+    })
     .filter(e => e.product && e.qty > 0);
 }
 
@@ -1489,24 +1523,30 @@ function renderCart() {
     return;
   }
 
-  itemsEl.innerHTML = entries.map(({ product, qty }) => `
+  itemsEl.innerHTML = entries.map(({ key, product, variante, qty }) => `
     <div class="cart-item">
       <div class="info">
-        <div class="name">${product.name}</div>
+        <div class="name">${product.name}${variante ? ` · ${variante}` : ''}</div>
         <div class="unit">${clp(precioDe(product))} · kit completo</div>
       </div>
       <div class="qty">
-        <button data-minus="${product.id}" aria-label="Quitar uno">−</button>
+        <button data-minus="${key}" aria-label="Quitar uno">−</button>
         <span class="n">${qty}</span>
-        <button data-plus="${product.id}" aria-label="Agregar uno">+</button>
+        <button data-plus="${key}" aria-label="Agregar uno">+</button>
       </div>
-      <button class="remove-btn" data-remove="${product.id}" aria-label="Eliminar">🗑</button>
+      <button class="remove-btn" data-remove="${key}" aria-label="Eliminar">🗑</button>
     </div>
   `).join('');
 }
 
 function addToCart(id) {
-  cart[id] = (cart[id] || 0) + 1;
+  const p = PRODUCTS.find(x => x.id === id);
+  let key = id;
+  if (p && p.opciones) {
+    const sel = document.querySelector(`.opcion-select[data-op="${id}"]`);
+    if (sel && sel.value) key = `${id}|${sel.value}`;
+  }
+  cart[key] = (cart[key] || 0) + 1;
   saveCart();
   renderCart();
   showToast();
@@ -1566,7 +1606,7 @@ function openCheckout() {
   const { entries, subtotal, total } = totales();
   if (!entries.length) return;
   document.getElementById('checkoutSummary').innerHTML =
-    entries.map(e => `<div class="row"><span>${e.qty} x ${e.product.name}</span><span>${clp(precioDe(e.product) * e.qty)}</span></div>`).join('') +
+    entries.map(e => `<div class="row"><span>${e.qty} x ${e.product.name}${e.variante ? ` (${e.variante})` : ''}</span><span>${clp(precioDe(e.product) * e.qty)}</span></div>`).join('') +
     `<div class="row"><span>Envío a todo Chile</span><span>${clp(ENVIO)}</span></div>` +
     `<div class="row total"><span>Total a transferir</span><span>${clp(total)}</span></div>`;
   document.getElementById('stepDatos').hidden = false;
@@ -1654,7 +1694,7 @@ function enviarPedido() {
   const lines = [
     '¡Hola Milch! 🤍 Acabo de hacer mi pedido en la web:',
     '',
-    ...entries.map(e => `• ${e.qty} x ${e.product.name} — ${clp(precioDe(e.product) * e.qty)}`),
+    ...entries.map(e => `• ${e.qty} x ${e.product.name}${e.variante ? ` (${e.variante})` : ''} — ${clp(precioDe(e.product) * e.qty)}`),
     `Subtotal: ${clp(subtotal)}`,
     `Envío: ${clp(ENVIO)}`,
     `TOTAL TRANSFERIDO: ${clp(total)}`,

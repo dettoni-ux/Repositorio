@@ -711,6 +711,10 @@ function productoHTML(prod, i) {
         ${campo('Unidades vendidas <small>(0 = no se muestra)</small>', `productos.${i}.vendidos`, { numero: true })}
       </div>
       ${campo('Descripción', `productos.${i}.desc`, { textarea: true })}
+      <div class="fila">
+        <label class="campo">Opción a elegir <small>(ej: Forma — vacío = sin opción)</small><input type="text" data-opcion="${i}|nombre" value="${esc(prod.opciones ? prod.opciones.nombre : '')}"></label>
+        <label class="campo">Valores de la opción <small>(separados por coma)</small><input type="text" data-opcion="${i}|valores" value="${esc(prod.opciones ? prod.opciones.valores.join(', ') : '')}"></label>
+      </div>
       <details class="res-det" data-di="${i}" ${resAbiertas.has(i) ? 'open' : ''}>
         <summary>⭐ Reseñas (${(prod.resenas || []).length})</summary>
         ${(prod.resenas || []).map((r, j) => `
@@ -768,6 +772,12 @@ document.addEventListener('input', e => {
     setPath(t.dataset.path, v);
   } else if (t.dataset.lista) {
     setPath(t.dataset.lista, t.value.split('\n').map(s => s.trim()).filter(Boolean));
+  } else if (t.dataset.opcion) {
+    const [i, campo] = t.dataset.opcion.split('|');
+    const p = cfg.productos[Number(i)];
+    if (!p.opciones) p.opciones = { nombre: 'Forma', valores: [] };
+    if (campo === 'nombre') p.opciones.nombre = t.value;
+    else p.opciones.valores = t.value.split(',').map(s => s.trim()).filter(Boolean);
   }
 });
 
@@ -846,6 +856,7 @@ function generarHTML() {
     if (!p.oferta || p.oferta <= 0 || p.oferta >= p.price) delete p.oferta;
     if (!p.vendidos || p.vendidos <= 0) delete p.vendidos;
     if (p.resenas && !p.resenas.length) delete p.resenas;
+    if (p.opciones && (!p.opciones.valores || !p.opciones.valores.length || !p.opciones.nombre)) delete p.opciones;
   }
   const json = JSON.stringify(limpio, null, 2).replace(/</g, '\\u003c');
   return fuente.replace(RE_CONFIG, '/*CONFIG_INICIO*/\nconst CONFIG = ' + json + ';\n/*CONFIG_FIN*/');
