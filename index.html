@@ -435,6 +435,81 @@ header {
   margin-left: 4px;
 }
 
+/* reseñas y vendidos */
+.social-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.stars-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.stars {
+  position: relative;
+  display: inline-block;
+  font-size: 15px;
+  line-height: 1;
+  letter-spacing: 1px;
+}
+
+.stars .fondo { color: #E2D9EF; }
+
+.stars .lleno {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  color: #F0A93B;
+}
+
+.stars-btn .rnum { font-size: 13px; font-weight: 700; color: var(--noche-media); }
+.stars-btn .rcount { font-size: 12.5px; color: var(--gris); text-decoration: underline; }
+
+.vendidos {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--rosa-fuerte);
+}
+
+.resena { border-bottom: 1px solid #F1EBF9; padding: 13px 0; }
+.resena:last-child { border-bottom: none; }
+
+.resena .quien {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.resena .quien strong { font-size: 14.5px; color: var(--noche-media); }
+.resena .quien .fecha { font-size: 12px; color: var(--gris); }
+.resena p { margin-top: 5px; font-size: 14px; line-height: 1.6; color: var(--texto); }
+
+.resenas-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1.5px solid #F1EBF9;
+}
+
+.resenas-head .prom { font-size: 26px; font-weight: 700; color: var(--noche-media); }
+.resenas-head .cuantas { font-size: 13px; color: var(--gris); }
+
+.sin-resenas { text-align: center; color: var(--gris); padding: 30px 10px; font-size: 14.5px; }
+
 .badge-oferta {
   position: absolute;
   top: 12px;
@@ -1152,6 +1227,17 @@ footer .soc { opacity: 0.85; }
   </div>
 </div>
 
+<!-- reseñas de producto -->
+<div class="checkout-overlay" id="resenasModal" hidden>
+  <div class="checkout-panel">
+    <div class="checkout-head night">
+      <h2 id="resenasTitulo">Reseñas</h2>
+      <button class="close-btn" id="closeResenas" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="checkout-body" id="resenasBody"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast">Agregado a tu pedido ✨</div>
 
 <!-- íconos de joyas para los placeholders (se reemplazan al subir las fotos reales) -->
@@ -1306,6 +1392,43 @@ const clp = n => '$' + n.toLocaleString('es-CL');
 const precioDe = p => (p.oferta && p.oferta > 0 && p.oferta < p.price) ? p.oferta : p.price;
 const enOferta = p => precioDe(p) !== p.price;
 
+// reseñas
+const resenasDe = p => p.resenas || [];
+const promedioDe = p => {
+  const r = resenasDe(p);
+  return r.length ? r.reduce((s, x) => s + (Number(x.estrellas) || 0), 0) / r.length : 0;
+};
+
+function estrellasHTML(valor) {
+  return `<span class="stars"><span class="lleno" style="width:${Math.max(0, Math.min(100, valor / 5 * 100))}%">★★★★★</span><span class="fondo">★★★★★</span></span>`;
+}
+
+function socialHTML(p) {
+  const r = resenasDe(p);
+  const partes = [];
+  if (r.length) {
+    const prom = promedioDe(p);
+    partes.push(`<button class="stars-btn" data-resenas="${p.id}" aria-label="Ver reseñas de ${p.name}">${estrellasHTML(prom)}<span class="rnum">${prom.toFixed(1)}</span><span class="rcount">${r.length} reseña${r.length === 1 ? '' : 's'}</span></button>`);
+  }
+  if (p.vendidos > 0) partes.push(`<span class="vendidos">✨ ${p.vendidos} vendido${p.vendidos === 1 ? '' : 's'}</span>`);
+  return partes.length ? `<div class="social-row">${partes.join('')}</div>` : '';
+}
+
+function abrirResenas(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  const r = resenasDe(p);
+  document.getElementById('resenasTitulo').textContent = p.name;
+  document.getElementById('resenasBody').innerHTML = r.length
+    ? `<div class="resenas-head"><span class="prom">${promedioDe(p).toFixed(1)}</span>${estrellasHTML(promedioDe(p))}<span class="cuantas">${r.length} reseña${r.length === 1 ? '' : 's'} de mamás Milch</span></div>` +
+      r.map(x => `<div class="resena">
+        <div class="quien">${estrellasHTML(Number(x.estrellas) || 0)}<strong>${x.nombre || 'Anónima'}</strong>${x.fecha ? `<span class="fecha">${x.fecha}</span>` : ''}</div>
+        ${x.texto ? `<p>${x.texto}</p>` : ''}
+      </div>`).join('')
+    : '<div class="sin-resenas">Aún no hay reseñas para este modelo.</div>';
+  document.getElementById('resenasModal').hidden = false;
+}
+
 let cart = {};
 try {
   cart = JSON.parse(localStorage.getItem('carrito-milch') || '{}');
@@ -1327,6 +1450,7 @@ function renderCatalog() {
       <div class="body">
         <h3>${p.name}</h3>
         <p class="desc">${p.desc}</p>
+        ${socialHTML(p)}
         <div class="price">${clp(precioDe(p))}${enOferta(p) ? ` <s>${clp(p.price)}</s>` : ''} <small>kit completo</small></div>
         <button class="add-btn" data-id="${p.id}">Agregar a mi pedido</button>
       </div>
@@ -1581,6 +1705,8 @@ document.addEventListener('click', e => {
   else if (t.id === 'openCart') openCart(true);
   else if (t.id === 'closeCart') openCart(false);
   else if (t.id === 'clearCart') { cart = {}; saveCart(); renderCart(); }
+  else if (t.dataset.resenas) abrirResenas(t.dataset.resenas);
+  else if (t.id === 'closeResenas') document.getElementById('resenasModal').hidden = true;
   else if (t.id === 'checkoutBtn') openCheckout();
   else if (t.id === 'closeCheckout') closeCheckout();
   else if (t.id === 'backToData') { clearInterval(timerInterval); openCheckout(); }
@@ -1590,9 +1716,13 @@ document.addEventListener('click', e => {
 document.getElementById('overlay').addEventListener('click', () => openCart(false));
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
-    if (!document.getElementById('checkoutOverlay').hidden) closeCheckout();
+    if (!document.getElementById('resenasModal').hidden) document.getElementById('resenasModal').hidden = true;
+    else if (!document.getElementById('checkoutOverlay').hidden) closeCheckout();
     else openCart(false);
   }
+});
+document.getElementById('resenasModal').addEventListener('click', e => {
+  if (e.target.id === 'resenasModal') e.target.hidden = true;
 });
 
 function setupVideo() {

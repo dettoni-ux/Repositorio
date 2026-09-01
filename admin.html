@@ -168,6 +168,23 @@ button {
 
 .subir-foto { font-size: 12.5px; margin-top: 6px; }
 
+.res-det { margin: 6px 0 12px; }
+
+.res-det summary {
+  cursor: pointer;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--violeta);
+  padding: 6px 0;
+}
+
+.resena-edit {
+  border: 1.5px dashed var(--borde);
+  border-radius: 12px;
+  padding: 12px 14px 4px;
+  margin: 10px 0;
+}
+
 /* barra de acciones */
 .barra {
   position: fixed;
@@ -691,9 +708,29 @@ function productoHTML(prod, i) {
       </div>
       <div class="fila">
         ${campo('Precio OFERTA <small>(vacío o 0 = sin oferta)</small>', `productos.${i}.oferta`, { numero: true })}
-        <div></div>
+        ${campo('Unidades vendidas <small>(0 = no se muestra)</small>', `productos.${i}.vendidos`, { numero: true })}
       </div>
       ${campo('Descripción', `productos.${i}.desc`, { textarea: true })}
+      <details class="res-det" data-di="${i}" ${resAbiertas.has(i) ? 'open' : ''}>
+        <summary>⭐ Reseñas (${(prod.resenas || []).length})</summary>
+        ${(prod.resenas || []).map((r, j) => `
+          <div class="resena-edit">
+            <div class="fila">
+              ${campo('Nombre de la clienta', `productos.${i}.resenas.${j}.nombre`)}
+              <label class="campo">Estrellas
+                <select data-path="productos.${i}.resenas.${j}.estrellas">
+                  ${[5, 4, 3, 2, 1].map(v => `<option value="${v}" ${Number(r.estrellas) === v ? 'selected' : ''}>${'★'.repeat(v)}${'☆'.repeat(5 - v)}</option>`).join('')}
+                </select>
+              </label>
+            </div>
+            ${campo('Comentario', `productos.${i}.resenas.${j}.texto`, { textarea: true })}
+            <div class="fila">
+              ${campo('Fecha <small>(ej: agosto 2026)</small>', `productos.${i}.resenas.${j}.fecha`)}
+              <label class="campo">&nbsp;<button type="button" class="btn-mini peligro" data-quitarresena="${i}|${j}">🗑 Eliminar reseña</button></label>
+            </div>
+          </div>`).join('')}
+        <button type="button" class="btn-mini" data-agregarresena="${i}">＋ Agregar reseña</button>
+      </details>
       <div class="acciones">
         <button class="btn-mini" data-mover="-1" data-i="${i}">↑ Subir</button>
         <button class="btn-mini" data-mover="1" data-i="${i}">↓ Bajar</button>
@@ -702,6 +739,14 @@ function productoHTML(prod, i) {
     </div>
   </div>`;
 }
+
+const resAbiertas = new Set();
+document.addEventListener('toggle', e => {
+  if (e.target.classList && e.target.classList.contains('res-det')) {
+    const i = Number(e.target.dataset.di);
+    e.target.open ? resAbiertas.add(i) : resAbiertas.delete(i);
+  }
+}, true);
 
 function agregarProducto() {
   cfg.productos.push({
@@ -718,7 +763,8 @@ function agregarProducto() {
 document.addEventListener('input', e => {
   const t = e.target;
   if (t.dataset.path) {
-    const v = t.type === 'number' ? Number(t.value) || 0 : t.value;
+    const v = (t.type === 'number' || (t.tagName === 'SELECT' && t.value !== '' && !isNaN(t.value)))
+      ? Number(t.value) || 0 : t.value;
     setPath(t.dataset.path, v);
   } else if (t.dataset.lista) {
     setPath(t.dataset.lista, t.value.split('\n').map(s => s.trim()).filter(Boolean));
@@ -734,6 +780,17 @@ document.addEventListener('click', e => {
       cfg.productos.splice(i, 1);
       render();
     }
+  } else if (t.dataset.agregarresena !== undefined) {
+    const i = Number(t.dataset.agregarresena);
+    if (!cfg.productos[i].resenas) cfg.productos[i].resenas = [];
+    cfg.productos[i].resenas.push({ nombre: '', estrellas: 5, texto: '', fecha: '' });
+    resAbiertas.add(i);
+    render();
+  } else if (t.dataset.quitarresena) {
+    const [i, j] = t.dataset.quitarresena.split('|').map(Number);
+    cfg.productos[i].resenas.splice(j, 1);
+    resAbiertas.add(i);
+    render();
   } else if (t.dataset.mover) {
     const i = Number(t.dataset.i), d = Number(t.dataset.mover), j = i + d;
     if (j < 0 || j >= cfg.productos.length) return;
@@ -787,6 +844,8 @@ function generarHTML() {
   const limpio = JSON.parse(JSON.stringify(cfg));
   for (const p of limpio.productos) {
     if (!p.oferta || p.oferta <= 0 || p.oferta >= p.price) delete p.oferta;
+    if (!p.vendidos || p.vendidos <= 0) delete p.vendidos;
+    if (p.resenas && !p.resenas.length) delete p.resenas;
   }
   const json = JSON.stringify(limpio, null, 2).replace(/</g, '\\u003c');
   return fuente.replace(RE_CONFIG, '/*CONFIG_INICIO*/\nconst CONFIG = ' + json + ';\n/*CONFIG_FIN*/');
