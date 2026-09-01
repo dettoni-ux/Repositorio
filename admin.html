@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Panel Milch — Administración</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Poppins:wght@400;500;600;700&display=swap');
+
+:root {
+  --noche: #1B1140;
+  --noche-media: #2B1B66;
+  --violeta: #6B4FD8;
+  --rosa: #F2A7C3;
+  --rosa-fuerte: #E96FA8;
+  --crema: #FAF7FF;
+  --texto: #2C2145;
+  --gris: #8B80A3;
+  --borde: #E4DBEF;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: var(--crema);
+  color: var(--texto);
+  padding-bottom: 120px;
+}
+
+header {
+  background: linear-gradient(120deg, #40013E, #240029);
+  color: #fff;
+  padding: 16px 5%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+header h1 { font-family: 'Cormorant Garamond', serif; font-size: 26px; letter-spacing: 2px; }
+header .sub { font-size: 12.5px; opacity: 0.8; }
+
+main { max-width: 900px; margin: 0 auto; padding: 26px 4%; }
+
+.aviso {
+  background: #FFF6E8;
+  border: 1.5px solid #F5D9A8;
+  border-radius: 14px;
+  padding: 14px 18px;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 22px;
+}
+
+.aviso.error { background: #FDECEC; border-color: #F1B3B3; }
+.aviso.ok { background: #EAF8EF; border-color: #A9DFC0; }
+
+section.bloque {
+  background: #fff;
+  border-radius: 18px;
+  border: 1.5px solid var(--borde);
+  margin-bottom: 22px;
+  overflow: hidden;
+}
+
+.bloque > h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  color: var(--noche-media);
+  padding: 16px 22px;
+  border-bottom: 1.5px solid var(--borde);
+  background: #FBF8FF;
+}
+
+.bloque .contenido { padding: 18px 22px 22px; }
+
+label.campo {
+  display: block;
+  margin-bottom: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--noche-media);
+}
+
+label.campo small { font-weight: 400; color: var(--gris); }
+
+input[type="text"], input[type="number"], textarea, select {
+  display: block;
+  width: 100%;
+  margin-top: 5px;
+  padding: 10px 12px;
+  border: 1.5px solid var(--borde);
+  border-radius: 10px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  color: var(--texto);
+  background: #FDFBFF;
+  outline: none;
+}
+
+input:focus, textarea:focus, select:focus { border-color: var(--violeta); }
+
+textarea { resize: vertical; min-height: 64px; }
+
+.fila { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+@media (max-width: 600px) { .fila { grid-template-columns: 1fr; } }
+
+/* productos */
+.producto {
+  border: 1.5px solid var(--borde);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 600px) { .producto { grid-template-columns: 1fr; } }
+
+.producto .foto {
+  width: 96px;
+  height: 120px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: linear-gradient(150deg, #241457, #7A3D8F);
+  display: block;
+}
+
+.producto .acciones {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+button {
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+}
+
+.btn-mini {
+  border: 1.5px solid var(--borde);
+  background: #fff;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--noche-media);
+}
+
+.btn-mini:hover { border-color: var(--violeta); }
+.btn-mini.peligro { color: #B42318; }
+
+.btn-agregar {
+  width: 100%;
+  border: 1.5px dashed var(--violeta);
+  background: #F7F3FC;
+  color: var(--violeta);
+  border-radius: 12px;
+  padding: 12px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.subir-foto { font-size: 12.5px; margin-top: 6px; }
+
+/* barra de acciones */
+.barra {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-top: 1.5px solid var(--borde);
+  box-shadow: 0 -8px 30px rgba(43, 27, 102, 0.12);
+  padding: 14px 5%;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  z-index: 50;
+}
+
+.barra .estado { margin-right: auto; font-size: 13px; color: var(--gris); }
+
+.btn-primario, .btn-secundario {
+  border: none;
+  border-radius: 999px;
+  padding: 13px 28px;
+  font-weight: 600;
+  font-size: 14.5px;
+}
+
+.btn-primario { background: var(--rosa-fuerte); color: #fff; }
+.btn-primario:hover { filter: brightness(1.07); }
+.btn-secundario { background: #fff; border: 1.5px solid var(--violeta); color: var(--violeta); }
+
+.foto-seccion { display: flex; gap: 14px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+.foto-seccion img { width: 130px; height: 90px; object-fit: cover; border-radius: 10px; border: 1.5px solid var(--borde); }
+.foto-seccion .info { flex: 1; min-width: 220px; }
+.foto-seccion .nombre { font-size: 13.5px; font-weight: 600; color: var(--noche-media); }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>PANEL MILCH</h1>
+    <div class="sub">Administración de la tienda — www.mresin.cl</div>
+  </div>
+</header>
+
+<main>
+  <div class="aviso" id="avisoCarga">Cargando la configuración de <strong>tienda.html</strong>…</div>
+  <div id="panel" hidden></div>
+</main>
+
+<div class="barra" id="barra" hidden>
+  <span class="estado" id="estado">Los cambios se guardan al descargar el archivo.</span>
+  <button class="btn-secundario" id="btnPreview">👁 Vista previa</button>
+  <button class="btn-primario" id="btnDescargar">⬇ Descargar tienda.html</button>
+</div>
+
+<input type="file" id="archivoTienda" accept=".html" hidden>
+
+<script>
+let fuente = null;   // HTML completo de tienda.html
+let cfg = null;      // configuración editable
+
+const RE_CONFIG = /\/\*CONFIG_INICIO\*\/\s*const CONFIG = ([\s\S]*?);\s*\/\*CONFIG_FIN\*\//;
+
+/* ---------- carga ---------- */
+async function cargar() {
+  const aviso = document.getElementById('avisoCarga');
+  try {
+    const res = await fetch('tienda.html', { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    iniciar(await res.text());
+  } catch (e) {
+    aviso.className = 'aviso error';
+    aviso.innerHTML = 'No se pudo cargar <strong>tienda.html</strong> automáticamente (esto pasa al abrir el panel como archivo local). ' +
+      '<button class="btn-mini" onclick="document.getElementById(\'archivoTienda\').click()">Seleccionar tienda.html manualmente</button>';
+  }
+}
+
+document.getElementById('archivoTienda').addEventListener('change', e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => iniciar(r.result);
+  r.readAsText(f);
+});
+
+function iniciar(html) {
+  const m = html.match(RE_CONFIG);
+  if (!m) {
+    const aviso = document.getElementById('avisoCarga');
+    aviso.className = 'aviso error';
+    aviso.textContent = 'El archivo no contiene el bloque de configuración (CONFIG_INICIO/CONFIG_FIN). ¿Es la versión correcta de tienda.html?';
+    return;
+  }
+  fuente = html;
+  cfg = JSON.parse(m[1]);
+  document.getElementById('avisoCarga').hidden = true;
+  document.getElementById('panel').hidden = false;
+  document.getElementById('barra').hidden = false;
+  render();
+}
+
+/* ---------- helpers de datos ---------- */
+function getPath(path) {
+  return path.split('.').reduce((o, k) => o[k], cfg);
+}
+
+function setPath(path, valor) {
+  const partes = path.split('.');
+  const ultimo = partes.pop();
+  const obj = partes.reduce((o, k) => o[k], cfg);
+  obj[ultimo] = valor;
+}
+
+const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+
+/* ---------- render del panel ---------- */
+function campo(etiqueta, path, opts = {}) {
+  const valor = getPath(path);
+  if (opts.textarea) {
+    return `<label class="campo">${etiqueta}<textarea data-path="${path}">${esc(valor)}</textarea></label>`;
+  }
+  const tipo = opts.numero ? 'number' : 'text';
+  return `<label class="campo">${etiqueta}<input type="${tipo}" data-path="${path}" value="${esc(valor)}"></label>`;
+}
+
+function campoLista(etiqueta, path) {
+  const valor = getPath(path).join('\n');
+  return `<label class="campo">${etiqueta} <small>(una por línea)</small><textarea data-lista="${path}" rows="5">${esc(valor)}</textarea></label>`;
+}
+
+function fotoSeccion(nombre, key) {
+  return `<div class="foto-seccion">
+    <img src="${esc(cfg.fotos[key])}" id="foto-${key}" alt="${nombre}">
+    <div class="info">
+      <div class="nombre">${nombre}</div>
+      <input class="subir-foto" type="file" accept="image/*" data-foto="${key}">
+    </div>
+  </div>`;
+}
+
+function render() {
+  const p = document.getElementById('panel');
+  p.innerHTML = `
+    <section class="bloque"><h2>Portada (hero)</h2><div class="contenido">
+      ${campo('Etiqueta superior', 'textos.heroPre')}
+      <div class="fila">
+        ${campo('Título — parte normal', 'textos.heroTitulo1')}
+        ${campo('Título — parte cursiva', 'textos.heroTitulo2')}
+      </div>
+      ${campo('Texto de la portada', 'textos.heroTexto', { textarea: true })}
+      ${campoLista('Distintivos (badges)', 'textos.badges')}
+      ${campo('Texto del botón', 'textos.heroCta')}
+    </div></section>
+
+    <section class="bloque"><h2>¿Cómo funciona?</h2><div class="contenido">
+      <div class="fila">
+        ${campo('Título', 'textos.comoTitulo')}
+        ${campo('Subtítulo', 'textos.comoSub')}
+      </div>
+      ${cfg.textos.pasos.map((_, i) => `
+        <div class="fila">
+          ${campo(`Paso ${i + 1} — título`, `textos.pasos.${i}.titulo`)}
+          ${campo(`Paso ${i + 1} — texto`, `textos.pasos.${i}.texto`)}
+        </div>`).join('')}
+    </div></section>
+
+    <section class="bloque"><h2>¿Qué incluye tu kit?</h2><div class="contenido">
+      <div class="fila">
+        ${campo('Título', 'textos.kitTitulo')}
+        ${campo('Subtítulo', 'textos.kitSub')}
+      </div>
+      ${campoLista('Lista de lo que incluye', 'textos.kitLista')}
+      ${campo('Nota final', 'textos.kitNota', { textarea: true })}
+    </div></section>
+
+    <section class="bloque"><h2>Video tutorial</h2><div class="contenido">
+      ${campo('Enlace del video <small>(YouTube, TikTok o .mp4 — vacío oculta la sección)</small>', 'videoUrl')}
+      <div class="fila">
+        ${campo('Título', 'textos.videoTitulo')}
+        ${campo('Subtítulo', 'textos.videoSub')}
+      </div>
+      ${campo('Nota bajo el video', 'textos.videoNota')}
+    </div></section>
+
+    <section class="bloque"><h2>Catálogo — textos</h2><div class="contenido">
+      <div class="fila">
+        ${campo('Título', 'textos.catTitulo')}
+        ${campo('Subtítulo', 'textos.catSub')}
+      </div>
+      ${campo('Nota bajo el catálogo', 'textos.catNota', { textarea: true })}
+    </div></section>
+
+    <section class="bloque"><h2>Productos (${cfg.productos.length})</h2><div class="contenido" id="listaProductos">
+      ${cfg.productos.map(productoHTML).join('')}
+      <button class="btn-agregar" id="btnAgregarProducto">＋ Agregar producto</button>
+    </div></section>
+
+    <section class="bloque"><h2>Sección emotiva y pie de página</h2><div class="contenido">
+      <div class="fila">
+        ${campo('Título — parte normal', 'textos.bandaTitulo1')}
+        ${campo('Título — parte cursiva', 'textos.bandaTitulo2')}
+      </div>
+      ${campo('Texto', 'textos.bandaTexto', { textarea: true })}
+      ${campo('Texto del botón', 'textos.bandaCta')}
+      ${campo('Pie — línea 1 (contactos)', 'textos.footerLinea1')}
+      ${campo('Pie — línea 2', 'textos.footerLinea2')}
+    </div></section>
+
+    <section class="bloque"><h2>Fotos de las secciones</h2><div class="contenido">
+      ${fotoSeccion('Portada (hero)', 'hero')}
+      ${fotoSeccion('¿Cómo funciona?', 'comoFunciona')}
+      ${fotoSeccion('Contenido del kit', 'kitContenido')}
+      ${fotoSeccion('Sección emotiva', 'banda')}
+    </div></section>
+
+    <section class="bloque"><h2>Pedidos y pago</h2><div class="contenido">
+      <div class="fila">
+        ${campo('Valor del envío (CLP)', 'envio', { numero: true })}
+        ${campo('WhatsApp de pedidos <small>(solo números, ej: 56990070115)</small>', 'whatsappPedidos')}
+      </div>
+      <div class="fila">
+        ${campo('Titular de la cuenta', 'transferencia.titular')}
+        ${campo('RUT del titular', 'transferencia.rut')}
+      </div>
+      <div class="fila">
+        ${campo('Banco', 'transferencia.banco')}
+        ${campo('Tipo de cuenta', 'transferencia.tipo')}
+      </div>
+      <div class="fila">
+        ${campo('N° de cuenta', 'transferencia.numero')}
+        ${campo('Correo para transferencias', 'transferencia.correo')}
+      </div>
+    </div></section>`;
+
+  p.querySelector('#btnAgregarProducto').addEventListener('click', agregarProducto);
+}
+
+function productoHTML(prod, i) {
+  const foto = prod.img
+    ? `<img class="foto" src="${esc(prod.img)}" id="fotoProd-${i}">`
+    : `<div class="foto" id="fotoProd-${i}" style="display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;text-align:center;padding:6px;">sin foto<br>(ícono ilustrado)</div>`;
+  return `<div class="producto" data-index="${i}">
+    <div>
+      ${foto}
+      <input class="subir-foto" type="file" accept="image/*" data-fotoprod="${i}">
+    </div>
+    <div>
+      <div class="fila">
+        ${campo('Nombre', `productos.${i}.name`)}
+        ${campo('Precio (CLP)', `productos.${i}.price`, { numero: true })}
+      </div>
+      ${campo('Descripción', `productos.${i}.desc`, { textarea: true })}
+      <div class="acciones">
+        <button class="btn-mini" data-mover="-1" data-i="${i}">↑ Subir</button>
+        <button class="btn-mini" data-mover="1" data-i="${i}">↓ Bajar</button>
+        <button class="btn-mini peligro" data-eliminar="${i}">🗑 Eliminar</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function agregarProducto() {
+  cfg.productos.push({
+    id: 'nuevo-' + Date.now(),
+    icon: 'ic-colgante',
+    name: 'Milch: Nuevo Modelo',
+    price: 39990,
+    desc: 'Descripción del nuevo modelo.',
+  });
+  render();
+}
+
+/* ---------- eventos ---------- */
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.dataset.path) {
+    const v = t.type === 'number' ? Number(t.value) || 0 : t.value;
+    setPath(t.dataset.path, v);
+  } else if (t.dataset.lista) {
+    setPath(t.dataset.lista, t.value.split('\n').map(s => s.trim()).filter(Boolean));
+  }
+});
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('button');
+  if (!t) return;
+  if (t.dataset.eliminar !== undefined) {
+    const i = Number(t.dataset.eliminar);
+    if (confirm(`¿Eliminar "${cfg.productos[i].name}" del catálogo?`)) {
+      cfg.productos.splice(i, 1);
+      render();
+    }
+  } else if (t.dataset.mover) {
+    const i = Number(t.dataset.i), d = Number(t.dataset.mover), j = i + d;
+    if (j < 0 || j >= cfg.productos.length) return;
+    [cfg.productos[i], cfg.productos[j]] = [cfg.productos[j], cfg.productos[i]];
+    render();
+  }
+});
+
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.dataset.foto && t.files[0]) {
+    redimensionar(t.files[0], 1400, 1400, false).then(uri => {
+      cfg.fotos[t.dataset.foto] = uri;
+      document.getElementById('foto-' + t.dataset.foto).src = uri;
+    });
+  } else if (t.dataset.fotoprod !== undefined && t.files[0]) {
+    const i = Number(t.dataset.fotoprod);
+    redimensionar(t.files[0], 800, 1000, true).then(uri => {
+      cfg.productos[i].img = uri;
+      render();
+    });
+  }
+});
+
+/* redimensiona una imagen; cover=true recorta al formato exacto (4:5) */
+function redimensionar(file, W, H, cover) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      let w = W, h = H;
+      if (cover) {
+        c.width = W; c.height = H;
+        const esc = Math.max(W / img.width, H / img.height);
+        const sw = W / esc, sh = H / esc;
+        c.getContext('2d').drawImage(img, (img.width - sw) / 2, (img.height - sh) / 2, sw, sh, 0, 0, W, H);
+      } else {
+        const esc = Math.min(1, W / img.width, H / img.height);
+        w = Math.round(img.width * esc); h = Math.round(img.height * esc);
+        c.width = w; c.height = h;
+        c.getContext('2d').drawImage(img, 0, 0, w, h);
+      }
+      resolve(c.toDataURL('image/jpeg', 0.84));
+    };
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+/* ---------- exportar ---------- */
+function generarHTML() {
+  const json = JSON.stringify(cfg, null, 2).replace(/</g, '\\u003c');
+  return fuente.replace(RE_CONFIG, '/*CONFIG_INICIO*/\nconst CONFIG = ' + json + ';\n/*CONFIG_FIN*/');
+}
+
+document.getElementById('btnDescargar').addEventListener('click', () => {
+  const blob = new Blob([generarHTML()], { type: 'text/html' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'tienda.html';
+  a.click();
+  const est = document.getElementById('estado');
+  est.textContent = '✓ Archivo descargado — súbelo al hosting para publicar los cambios.';
+});
+
+document.getElementById('btnPreview').addEventListener('click', () => {
+  let html = generarHTML();
+  const base = location.href.replace(/admin\.html.*$/, '');
+  html = html.replace('<head>', `<head><base href="${base}">`);
+  const blob = new Blob([html], { type: 'text/html' });
+  window.open(URL.createObjectURL(blob), '_blank');
+});
+
+cargar();
+</script>
+</body>
+</html>
