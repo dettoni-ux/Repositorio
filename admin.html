@@ -411,7 +411,7 @@ button {
 </header>
 
 <main>
-  <div class="aviso" id="avisoCarga">Cargando la configuración de <strong>tienda.html</strong>…</div>
+  <div class="aviso" id="avisoCarga">Cargando la configuración de <strong>index.html</strong>…</div>
   <div id="panel" hidden></div>
 
   <div id="pedidosPage" hidden>
@@ -448,7 +448,7 @@ button {
 <div class="barra" id="barra" hidden>
   <span class="estado" id="estado">Los cambios se guardan al descargar el archivo.</span>
   <button class="btn-secundario" id="btnPreview">👁 Vista previa</button>
-  <button class="btn-primario" id="btnDescargar">⬇ Descargar tienda.html</button>
+  <button class="btn-primario" id="btnDescargar">⬇ Descargar index.html</button>
 </div>
 
 <input type="file" id="archivoTienda" accept=".html" hidden>
@@ -496,7 +496,7 @@ document.getElementById('btnSalir').addEventListener('click', () => {
   location.reload();
 });
 
-let fuente = null;   // HTML completo de tienda.html
+let fuente = null;   // HTML completo de index.html
 let cfg = null;      // configuración editable
 
 const RE_CONFIG = /\/\*CONFIG_INICIO\*\/\s*const CONFIG = ([\s\S]*?);\s*\/\*CONFIG_FIN\*\//;
@@ -505,13 +505,13 @@ const RE_CONFIG = /\/\*CONFIG_INICIO\*\/\s*const CONFIG = ([\s\S]*?);\s*\/\*CONF
 async function cargar() {
   const aviso = document.getElementById('avisoCarga');
   try {
-    const res = await fetch('tienda.html', { cache: 'no-store' });
+    const res = await fetch('index.html', { cache: 'no-store' });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     iniciar(await res.text());
   } catch (e) {
     aviso.className = 'aviso error';
-    aviso.innerHTML = 'No se pudo cargar <strong>tienda.html</strong> automáticamente (esto pasa al abrir el panel como archivo local). ' +
-      '<button class="btn-mini" onclick="document.getElementById(\'archivoTienda\').click()">Seleccionar tienda.html manualmente</button>';
+    aviso.innerHTML = 'No se pudo cargar <strong>index.html</strong> automáticamente (esto pasa al abrir el panel como archivo local). ' +
+      '<button class="btn-mini" onclick="document.getElementById(\'archivoTienda\').click()">Seleccionar index.html manualmente</button>';
   }
 }
 
@@ -528,7 +528,7 @@ function iniciar(html) {
   if (!m) {
     const aviso = document.getElementById('avisoCarga');
     aviso.className = 'aviso error';
-    aviso.textContent = 'El archivo no contiene el bloque de configuración (CONFIG_INICIO/CONFIG_FIN). ¿Es la versión correcta de tienda.html?';
+    aviso.textContent = 'El archivo no contiene el bloque de configuración (CONFIG_INICIO/CONFIG_FIN). ¿Es la versión correcta de index.html?';
     return;
   }
   fuente = html;
@@ -796,7 +796,7 @@ document.getElementById('btnDescargar').addEventListener('click', () => {
   const blob = new Blob([generarHTML()], { type: 'text/html' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'tienda.html';
+  a.download = 'index.html';
   a.click();
   const est = document.getElementById('estado');
   est.textContent = '✓ Archivo descargado — súbelo al hosting para publicar los cambios.';
