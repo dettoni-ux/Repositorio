@@ -801,21 +801,33 @@ const WHATSAPP = '56965450723'; // ← reemplazar por el WhatsApp de Milch
 // a cada uno (la foto reemplaza automáticamente al ícono ilustrado).
 // Nombres y precios son provisorios: edítalos con los reales.
 const PRODUCTS = [
-  { id: 'm01', icon: 'ic-anillo',   name: 'Anillo Luna Llena',        price: 55000, desc: 'Anillo de plata 925 con esfera de tu leche preservada.' },
-  { id: 'm02', icon: 'ic-anillo',   name: 'Anillo Gota de Vida',      price: 55000, desc: 'Anillo con gota de resina y leche materna, ajustable.' },
-  { id: 'm03', icon: 'ic-colgante', name: 'Milch Gotita Plata 935',   price: 54990, desc: 'Colgante gota de plata 935 con tu leche materna preservada. Incluye cadena.',
+  // ---- modelos reales ----
+  { id: 'gota', icon: 'ic-colgante', name: 'Milch Gota', price: 39990,
+    desc: 'Colgante gota clásico con tu leche materna preservada. Incluye cadena.',
+    img: 'img/gota.jpg' },
+  { id: 'gotita-plata', icon: 'ic-colgante', name: 'Milch Gotita Plata 935', price: 54990,
+    desc: 'Colgante gota de plata 935 con tu leche materna preservada. Incluye cadena.',
     img: 'img/gotita-plata.jpg', pos: '62% 48%' },
-  { id: 'm04', icon: 'ic-corazon',  name: 'Colgante Corazón Eterno',  price: 48000, desc: 'Corazón de leche materna con cadena de plata 925.',
-    img: 'img/corazon-eterno.jpg', pos: '50% 42%' },
-  { id: 'm05', icon: 'ic-luna',     name: 'Colgante Luna y Estrella', price: 50000, desc: 'Media luna con tu leche y estrella de circonia.' },
-  { id: 'm06', icon: 'ic-colgante', name: 'Colgante Árbol de la Vida',price: 52000, desc: 'Símbolo del vínculo madre e hijo, con base de tu leche.' },
-  { id: 'm07', icon: 'ic-aros',     name: 'Aros Estrella Polar',      price: 42000, desc: 'Par de aros con leche preservada y broche de plata.' },
-  { id: 'm08', icon: 'ic-aros',     name: 'Aros Gota de Cielo',       price: 42000, desc: 'Aros colgantes en forma de gota, livianos y delicados.' },
-  { id: 'm09', icon: 'ic-pulsera',  name: 'Pulsera Vía Láctea',       price: 47000, desc: 'Pulsera con esfera central de tu leche y cristales.' },
-  { id: 'm10', icon: 'ic-corazon',  name: 'Dije Mamá y Bebé',         price: 38000, desc: 'Dije para pulsera o cadena con silueta madre e hijo.' },
-  { id: 'm11', icon: 'ic-corazon',  name: 'Dije Huella de Amor',      price: 38000, desc: 'Puede incluir cabello o huella junto a tu leche.' },
-  { id: 'm12', icon: 'ic-luna',     name: 'Llavero Recuerdo',         price: 32000, desc: 'Para llevar tu recuerdo siempre contigo, ideal de regalo.' },
-  { id: 'm13', icon: 'ic-anillo',   name: 'Set Mamá Completo',        price: 89000, desc: 'Anillo + colgante elaborados con la misma muestra.' },
+  { id: 'doble-gota', icon: 'ic-colgante', name: 'Milch Doble Gota', price: 59990,
+    desc: 'Dos gotas gemelas hechas con la misma muestra — para compartir o regalar.',
+    img: 'img/doble-gota.jpg' },
+  { id: 'corazoncito-plata', icon: 'ic-corazon', name: 'Milch Corazoncito Plata 925', price: 54990,
+    desc: 'Corazón delicado de plata 925 con tu leche preservada. Incluye cadena.',
+    img: 'img/corazoncito-plata.jpg' },
+  { id: 'corazoncito-dorado', icon: 'ic-corazon', name: 'Milch Corazoncito Dorado', price: 64990,
+    desc: 'Corazón de plata 925 con baño de oro 18k. Incluye cadena de plata 925 con baño de oro.',
+    img: 'img/corazoncito-dorado.jpg' },
+  { id: 'mama-bebe', icon: 'ic-corazon', name: 'Milch Mamá y Bebé', price: 89990,
+    desc: 'Madre e hijo abrazados sobre un corazón de tu leche materna. Incluye cadena.',
+    img: 'img/mama-bebe.jpg' },
+  // ---- modelos por confirmar (nombres y precios provisorios) ----
+  { id: 'm01', icon: 'ic-anillo',  name: 'Anillo Luna Llena',         price: 55000, desc: 'Anillo de plata 925 con esfera de tu leche preservada.' },
+  { id: 'm02', icon: 'ic-anillo',  name: 'Anillo Gota de Vida',       price: 55000, desc: 'Anillo con gota de resina y leche materna, ajustable.' },
+  { id: 'm05', icon: 'ic-luna',    name: 'Colgante Luna y Estrella',  price: 50000, desc: 'Media luna con tu leche y estrella de circonia.' },
+  { id: 'm06', icon: 'ic-colgante',name: 'Colgante Árbol de la Vida', price: 52000, desc: 'Símbolo del vínculo madre e hijo, con base de tu leche.' },
+  { id: 'm07', icon: 'ic-aros',    name: 'Aros Estrella Polar',       price: 42000, desc: 'Par de aros con leche preservada y broche de plata.' },
+  { id: 'm09', icon: 'ic-pulsera', name: 'Pulsera Vía Láctea',        price: 47000, desc: 'Pulsera con esfera central de tu leche y cristales.' },
+  { id: 'm12', icon: 'ic-luna',    name: 'Llavero Recuerdo',          price: 32000, desc: 'Para llevar tu recuerdo siempre contigo, ideal de regalo.' },
 ];
 
 const clp = n => '$' + n.toLocaleString('es-CL');
