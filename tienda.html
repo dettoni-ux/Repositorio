@@ -428,6 +428,27 @@ header {
 
 .card .price small { font-size: 12.5px; font-weight: 400; color: var(--gris); }
 
+.card .price s {
+  font-size: 15.5px;
+  font-weight: 500;
+  color: var(--gris);
+  margin-left: 4px;
+}
+
+.badge-oferta {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--rosa-fuerte);
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 5px 14px;
+  border-radius: 999px;
+  box-shadow: 0 4px 14px rgba(20, 10, 45, 0.35);
+}
+
 .add-btn {
   margin-top: 12px;
   width: 100%;
@@ -1281,6 +1302,10 @@ const PRODUCTS = CONFIG.productos;
 
 const clp = n => '$' + n.toLocaleString('es-CL');
 
+// precio vigente: la oferta manda si existe y es menor al precio normal
+const precioDe = p => (p.oferta && p.oferta > 0 && p.oferta < p.price) ? p.oferta : p.price;
+const enOferta = p => precioDe(p) !== p.price;
+
 let cart = {};
 try {
   cart = JSON.parse(localStorage.getItem('carrito-milch') || '{}');
@@ -1297,11 +1322,12 @@ function renderCatalog() {
         ${p.img
           ? `<img src="${p.img}" alt="${p.name}"${p.pos ? ` style="object-position:${p.pos}"` : ''}>`
           : `<svg viewBox="0 0 100 100"><use href="#${p.icon}"/></svg>`}
+        ${enOferta(p) ? '<span class="badge-oferta">OFERTA</span>' : ''}
       </div>
       <div class="body">
         <h3>${p.name}</h3>
         <p class="desc">${p.desc}</p>
-        <div class="price">${clp(p.price)} <small>kit completo</small></div>
+        <div class="price">${clp(precioDe(p))}${enOferta(p) ? ` <s>${clp(p.price)}</s>` : ''} <small>kit completo</small></div>
         <button class="add-btn" data-id="${p.id}">Agregar a mi pedido</button>
       </div>
     </article>
@@ -1318,7 +1344,7 @@ function renderCart() {
   const entries = cartEntries();
   const itemsEl = document.getElementById('drawerItems');
   const count = entries.reduce((s, e) => s + e.qty, 0);
-  const subtotal = entries.reduce((s, e) => s + e.product.price * e.qty, 0);
+  const subtotal = entries.reduce((s, e) => s + precioDe(e.product) * e.qty, 0);
   const total = count > 0 ? subtotal + ENVIO : 0;
 
   const countEl = document.getElementById('cartCount');
@@ -1339,7 +1365,7 @@ function renderCart() {
     <div class="cart-item">
       <div class="info">
         <div class="name">${product.name}</div>
-        <div class="unit">${clp(product.price)} · kit completo</div>
+        <div class="unit">${clp(precioDe(product))} · kit completo</div>
       </div>
       <div class="qty">
         <button data-minus="${product.id}" aria-label="Quitar uno">−</button>
@@ -1404,7 +1430,7 @@ function validarRut(rut) {
 
 function totales() {
   const entries = cartEntries();
-  const subtotal = entries.reduce((s, e) => s + e.product.price * e.qty, 0);
+  const subtotal = entries.reduce((s, e) => s + precioDe(e.product) * e.qty, 0);
   return { entries, subtotal, total: subtotal + ENVIO };
 }
 
@@ -1412,7 +1438,7 @@ function openCheckout() {
   const { entries, subtotal, total } = totales();
   if (!entries.length) return;
   document.getElementById('checkoutSummary').innerHTML =
-    entries.map(e => `<div class="row"><span>${e.qty} x ${e.product.name}</span><span>${clp(e.product.price * e.qty)}</span></div>`).join('') +
+    entries.map(e => `<div class="row"><span>${e.qty} x ${e.product.name}</span><span>${clp(precioDe(e.product) * e.qty)}</span></div>`).join('') +
     `<div class="row"><span>Envío a todo Chile</span><span>${clp(ENVIO)}</span></div>` +
     `<div class="row total"><span>Total a transferir</span><span>${clp(total)}</span></div>`;
   document.getElementById('stepDatos').hidden = false;
@@ -1500,7 +1526,7 @@ function enviarPedido() {
   const lines = [
     '¡Hola Milch! 🤍 Acabo de hacer mi pedido en la web:',
     '',
-    ...entries.map(e => `• ${e.qty} x ${e.product.name} — ${clp(e.product.price * e.qty)}`),
+    ...entries.map(e => `• ${e.qty} x ${e.product.name} — ${clp(precioDe(e.product) * e.qty)}`),
     `Subtotal: ${clp(subtotal)}`,
     `Envío: ${clp(ENVIO)}`,
     `TOTAL TRANSFERIDO: ${clp(total)}`,

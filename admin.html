@@ -186,6 +186,8 @@ button {
   z-index: 50;
 }
 
+.barra[hidden] { display: none; }
+
 .barra .estado { margin-right: auto; font-size: 13px; color: var(--gris); }
 
 .btn-primario, .btn-secundario {
@@ -277,6 +279,110 @@ button {
   font-size: 12.5px;
   font-weight: 600;
 }
+
+/* pestañas */
+.tabs { display: flex; gap: 8px; }
+
+.tab {
+  border: 1.5px solid rgba(255,255,255,0.35);
+  background: none;
+  color: #fff;
+  border-radius: 999px;
+  padding: 9px 22px;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.tab.activa { background: var(--rosa-fuerte); border-color: var(--rosa-fuerte); }
+
+/* ---------- página de pedidos ---------- */
+.pedidos-barra {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.pedidos-barra input[type="text"], .pedidos-barra select {
+  width: auto;
+  margin-top: 0;
+  min-width: 160px;
+}
+
+.pedido {
+  background: #fff;
+  border: 1.5px solid var(--borde);
+  border-radius: 16px;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+
+.pedido-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 14px 18px;
+}
+
+.pedido-head .folio { font-weight: 700; color: var(--noche-media); font-size: 15px; }
+.pedido-head .fecha { font-size: 12.5px; color: var(--gris); }
+.pedido-head .cliente { font-size: 14px; flex: 1; min-width: 140px; }
+.pedido-head .total { font-weight: 700; color: var(--noche-media); }
+
+.chip {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 13px;
+  border-radius: 999px;
+  letter-spacing: 0.3px;
+}
+
+.chip.no-pagado { background: #FEF3C7; color: #92400E; }
+.chip.pagado { background: #D9F2E3; color: #14683B; }
+.chip.enviado { background: #E7E0FB; color: #4B2FB8; }
+.chip.cancelado { background: #FBE2E2; color: #A02222; }
+
+.pedido-acciones {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 0 18px 14px;
+}
+
+.pedido-detalle {
+  border-top: 1.5px solid var(--borde);
+  padding: 16px 18px;
+  background: #FBF8FF;
+}
+
+.items-tabla { width: 100%; border-collapse: collapse; margin: 6px 0 4px; }
+.items-tabla th { text-align: left; font-size: 12px; color: var(--gris); padding: 4px 6px; }
+.items-tabla td { padding: 4px 6px; }
+.items-tabla input { margin-top: 0; padding: 7px 9px; font-size: 13.5px; }
+.items-tabla .qty-col { width: 70px; }
+.items-tabla .precio-col { width: 120px; }
+
+.pedido-totales {
+  text-align: right;
+  font-size: 14px;
+  margin-top: 8px;
+  color: var(--texto);
+}
+
+.pedido-totales strong { font-size: 16px; color: var(--noche-media); }
+
+.vacio {
+  text-align: center;
+  color: var(--gris);
+  padding: 50px 20px;
+  font-size: 14.5px;
+  line-height: 1.7;
+}
+
+.importar-box { margin-bottom: 18px; }
+.importar-box textarea { min-height: 130px; font-size: 13px; }
 </style>
 </head>
 <body>
@@ -297,12 +403,46 @@ button {
     <h1>PANEL MILCH</h1>
     <div class="sub">Administración de la tienda — www.mresin.cl</div>
   </div>
+  <div class="tabs">
+    <button class="tab activa" id="tabContenido">Contenido</button>
+    <button class="tab" id="tabPedidos">Pedidos <span id="contadorPedidos"></span></button>
+  </div>
   <button class="btn-salir" id="btnSalir">Cerrar sesión</button>
 </header>
 
 <main>
   <div class="aviso" id="avisoCarga">Cargando la configuración de <strong>tienda.html</strong>…</div>
   <div id="panel" hidden></div>
+
+  <div id="pedidosPage" hidden>
+    <div class="aviso">Los pedidos se registran <strong>en este navegador</strong>. Usa <strong>“Importar de WhatsApp”</strong> pegando el mensaje que te llega con cada pedido, y descarga un <strong>respaldo</strong> de vez en cuando.</div>
+    <div class="pedidos-barra">
+      <button class="btn-mini" id="btnNuevoPedido">＋ Nuevo pedido</button>
+      <button class="btn-mini" id="btnImportarWsp">📋 Importar de WhatsApp</button>
+      <button class="btn-mini" id="btnRespaldo">⬇ Respaldo</button>
+      <button class="btn-mini" id="btnCargarRespaldo">⬆ Cargar respaldo</button>
+      <input type="file" id="archivoRespaldo" accept=".json" hidden>
+      <select id="filtroEstado">
+        <option value="">Todos los estados</option>
+        <option value="no-pagado">No pagados</option>
+        <option value="pagado">Pagados</option>
+        <option value="enviado">Enviados</option>
+        <option value="cancelado">Cancelados</option>
+      </select>
+      <input type="text" id="buscarPedido" placeholder="Buscar por nombre o folio…">
+    </div>
+    <section class="bloque importar-box" id="importarBox" hidden>
+      <h2>Importar pedido desde WhatsApp</h2>
+      <div class="contenido">
+        <label class="campo">Pega aquí el mensaje completo del pedido<textarea id="textoWsp" placeholder="¡Hola Milch! 🤍 Acabo de hacer mi pedido en la web:&#10;• 1 x Milch: Gota — $39.990&#10;…"></textarea></label>
+        <div class="acciones" style="display:flex;gap:8px;">
+          <button class="btn-mini" id="btnParsearWsp">Crear pedido desde el mensaje</button>
+          <button class="btn-mini" id="btnCerrarImportar">Cancelar</button>
+        </div>
+      </div>
+    </section>
+    <div id="listaPedidos"></div>
+  </div>
 </main>
 
 <div class="barra" id="barra" hidden>
@@ -547,7 +687,11 @@ function productoHTML(prod, i) {
     <div>
       <div class="fila">
         ${campo('Nombre', `productos.${i}.name`)}
-        ${campo('Precio (CLP)', `productos.${i}.price`, { numero: true })}
+        ${campo('Precio normal (CLP)', `productos.${i}.price`, { numero: true })}
+      </div>
+      <div class="fila">
+        ${campo('Precio OFERTA <small>(vacío o 0 = sin oferta)</small>', `productos.${i}.oferta`, { numero: true })}
+        <div></div>
       </div>
       ${campo('Descripción', `productos.${i}.desc`, { textarea: true })}
       <div class="acciones">
@@ -640,7 +784,11 @@ function redimensionar(file, W, H, cover) {
 
 /* ---------- exportar ---------- */
 function generarHTML() {
-  const json = JSON.stringify(cfg, null, 2).replace(/</g, '\\u003c');
+  const limpio = JSON.parse(JSON.stringify(cfg));
+  for (const p of limpio.productos) {
+    if (!p.oferta || p.oferta <= 0 || p.oferta >= p.price) delete p.oferta;
+  }
+  const json = JSON.stringify(limpio, null, 2).replace(/</g, '\\u003c');
   return fuente.replace(RE_CONFIG, '/*CONFIG_INICIO*/\nconst CONFIG = ' + json + ';\n/*CONFIG_FIN*/');
 }
 
@@ -661,6 +809,299 @@ document.getElementById('btnPreview').addEventListener('click', () => {
   const blob = new Blob([html], { type: 'text/html' });
   window.open(URL.createObjectURL(blob), '_blank');
 });
+
+/* ═══════════════ PÁGINA DE PEDIDOS ═══════════════ */
+const clpA = n => '$' + (Number(n) || 0).toLocaleString('es-CL');
+const ESTADOS = {
+  'no-pagado': { t: 'No pagado' },
+  'pagado': { t: 'Pagado' },
+  'enviado': { t: 'Enviado' },
+  'cancelado': { t: 'Cancelado' },
+};
+
+let pedidos = [];
+try { pedidos = JSON.parse(localStorage.getItem('milch-pedidos') || '[]'); } catch (e) {}
+const abiertos = new Set();
+
+function guardarPedidos() {
+  try { localStorage.setItem('milch-pedidos', JSON.stringify(pedidos)); } catch (e) {}
+  actualizarContador();
+}
+
+function actualizarContador() {
+  const n = pedidos.filter(p => p.estado === 'no-pagado').length;
+  document.getElementById('contadorPedidos').textContent = n ? `(${n})` : '';
+}
+
+function subtotalPedido(p) { return p.items.reduce((s, it) => s + (Number(it.precio) || 0) * (Number(it.qty) || 0), 0); }
+function totalPedido(p) { return subtotalPedido(p) + (Number(p.envio) || 0); }
+
+function nuevoFolio() {
+  const n = pedidos.reduce((m, p) => Math.max(m, parseInt((p.folio || '').replace(/\D/g, '')) || 0), 0) + 1;
+  return 'MP-' + String(n).padStart(3, '0');
+}
+
+function crearPedido(datos = {}) {
+  const base = {
+    id: 'p' + Date.now(),
+    folio: nuevoFolio(),
+    fecha: new Date().toISOString(),
+    estado: 'no-pagado',
+    envio: cfg ? cfg.envio : 4990,
+    items: [{ name: '', qty: 1, precio: 0 }],
+    cliente: { nombre: '', apellido: '', rut: '', celular: '', correo: '', direccion: '', numero: '', dpto: '', comuna: '', region: '' },
+    notas: '',
+  };
+  for (const k of Object.keys(datos)) if (datos[k] !== undefined) base[k] = datos[k];
+  pedidos.unshift(base);
+  abiertos.add(base.id);
+  guardarPedidos();
+  renderPedidos();
+}
+
+/* interpreta el mensaje de WhatsApp que genera la tienda */
+function parsearWsp(txt) {
+  const items = [...txt.matchAll(/•\s*(\d+)\s*x\s*(.+?)\s*—\s*\$?([\d.]+)/g)].map(m => {
+    const qty = Number(m[1]) || 1;
+    return { qty, name: m[2].trim(), precio: Math.round((parseInt(m[3].replace(/\./g, '')) || 0) / qty) };
+  });
+  const buscar = re => ((txt.match(re) || [])[1] || '').trim();
+  const nombreCompleto = buscar(/Nombre:\s*(.+)/);
+  const partes = nombreCompleto.split(' ');
+  const envioTxt = buscar(/Env[íi]o:\s*\$?([\d.]+)/);
+  return {
+    items: items.length ? items : undefined,
+    envio: envioTxt ? parseInt(envioTxt.replace(/\./g, '')) : undefined,
+    cliente: {
+      nombre: partes[0] || '', apellido: partes.slice(1).join(' '),
+      rut: buscar(/RUT:\s*(.+)/), celular: buscar(/Celular:\s*(.+)/),
+      correo: buscar(/Correo:\s*(.+)/), direccion: buscar(/Direcci[óo]n:\s*(.+)/),
+      numero: '', dpto: '', comuna: '', region: '',
+    },
+  };
+}
+
+function renderPedidos() {
+  actualizarContador();
+  const filtro = document.getElementById('filtroEstado').value;
+  const q = document.getElementById('buscarPedido').value.trim().toLowerCase();
+  const lista = pedidos.filter(p =>
+    (!filtro || p.estado === filtro) &&
+    (!q || `${p.folio} ${p.cliente.nombre} ${p.cliente.apellido}`.toLowerCase().includes(q)));
+  const cont = document.getElementById('listaPedidos');
+  if (!lista.length) {
+    cont.innerHTML = '<div class="vacio">No hay pedidos que mostrar.<br>Cuando llegue un pedido por WhatsApp, impórtalo con el botón de arriba 💜</div>';
+    return;
+  }
+  cont.innerHTML = lista.map(pedidoHTML).join('');
+}
+
+function pedidoHTML(p) {
+  const c = p.cliente;
+  const fecha = new Date(p.fecha).toLocaleDateString('es-CL', { day: '2-digit', month: 'short', year: 'numeric' });
+  const abierto = abiertos.has(p.id);
+  const botonesEstado = Object.keys(ESTADOS).filter(e => e !== p.estado)
+    .map(e => `<button class="btn-mini" data-pestado="${p.id}|${e}">${e === 'cancelado' ? '✖' : '→'} ${ESTADOS[e].t}</button>`).join('');
+  return `<div class="pedido">
+    <div class="pedido-head">
+      <span class="folio">${esc(p.folio)}</span>
+      <span class="fecha">${fecha}</span>
+      <span class="cliente">${esc(c.nombre)} ${esc(c.apellido)}</span>
+      <span class="total" id="totHead-${p.id}">${clpA(totalPedido(p))}</span>
+      <span class="chip ${p.estado}">${ESTADOS[p.estado].t}</span>
+    </div>
+    <div class="pedido-acciones">
+      ${botonesEstado}
+      <button class="btn-mini" data-pimprimir="${p.id}">🖨 Imprimir</button>
+      <button class="btn-mini" data-pabrir="${p.id}">${abierto ? '▲ Cerrar' : '✏️ Editar'}</button>
+      <button class="btn-mini peligro" data-peliminar="${p.id}">🗑 Eliminar</button>
+    </div>
+    ${abierto ? detalleHTML(p) : ''}
+  </div>`;
+}
+
+function detalleHTML(p) {
+  const c = p.cliente;
+  const cf = (etq, campo, valor) => `<label class="campo">${etq}<input type="text" data-ped="${p.id}|${campo}" value="${esc(valor)}"></label>`;
+  const filasItems = p.items.map((it, i) => `<tr>
+    <td class="qty-col"><input type="number" data-item="${p.id}|${i}|qty" value="${esc(it.qty)}"></td>
+    <td><input type="text" data-item="${p.id}|${i}|name" value="${esc(it.name)}" placeholder="Producto"></td>
+    <td class="precio-col"><input type="number" data-item="${p.id}|${i}|precio" value="${esc(it.precio)}"></td>
+    <td><button class="btn-mini peligro" data-pitemquitar="${p.id}|${i}">✕</button></td>
+  </tr>`).join('');
+  return `<div class="pedido-detalle">
+    <div class="fila">
+      ${cf('Nombre', 'nombre', c.nombre)} ${cf('Apellido', 'apellido', c.apellido)}
+      ${cf('RUT', 'rut', c.rut)} ${cf('Celular', 'celular', c.celular)}
+      ${cf('Correo', 'correo', c.correo)} ${cf('Dirección', 'direccion', c.direccion)}
+      ${cf('Número', 'numero', c.numero)} ${cf('Dpto / Casa', 'dpto', c.dpto)}
+      ${cf('Comuna', 'comuna', c.comuna)} ${cf('Región', 'region', c.region)}
+    </div>
+    <table class="items-tabla">
+      <tr><th>Cant.</th><th>Producto</th><th>Precio unit.</th><th></th></tr>
+      ${filasItems}
+    </table>
+    <button class="btn-mini" data-pitemagregar="${p.id}">＋ Agregar producto</button>
+    <div class="fila" style="margin-top:12px">
+      <label class="campo">Envío (CLP)<input type="number" data-ped="${p.id}|envio" value="${esc(p.envio)}"></label>
+      <label class="campo">Notas internas<input type="text" data-ped="${p.id}|notas" value="${esc(p.notas)}" placeholder="ej: transferencia verificada, enviar el lunes…"></label>
+    </div>
+    <div class="pedido-totales" id="tot-${p.id}">${resumenTotales(p)}</div>
+  </div>`;
+}
+
+function resumenTotales(p) {
+  return `Subtotal: ${clpA(subtotalPedido(p))} · Envío: ${clpA(p.envio)} · <strong>Total: ${clpA(totalPedido(p))}</strong>`;
+}
+
+function refrescarTotales(p) {
+  const t = document.getElementById('tot-' + p.id);
+  if (t) t.innerHTML = resumenTotales(p);
+  const h = document.getElementById('totHead-' + p.id);
+  if (h) h.textContent = clpA(totalPedido(p));
+}
+
+function imprimirPedido(p) {
+  const c = p.cliente;
+  const filas = p.items.map(it => `<tr><td>${esc(it.qty)}</td><td>${esc(it.name)}</td><td style="text-align:right">${clpA(it.precio)}</td><td style="text-align:right">${clpA((it.precio || 0) * (it.qty || 0))}</td></tr>`).join('');
+  const dir = [c.direccion, c.numero, c.dpto].filter(Boolean).join(' ') + [c.comuna, c.region].filter(Boolean).map(x => ', ' + x).join('');
+  const w = window.open('', '_blank');
+  w.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>${esc(p.folio)} — Milch</title><style>
+    body{font-family:Arial,Helvetica,sans-serif;color:#2C2145;max-width:640px;margin:30px auto;padding:0 20px}
+    .top{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2.5px solid #40013E;padding-bottom:10px}
+    h1{font-size:22px;letter-spacing:4px;margin:0}
+    table{width:100%;border-collapse:collapse;margin:16px 0}
+    th{text-align:left;border-bottom:1.5px solid #bbb;padding:6px 4px;font-size:12px}
+    td{padding:6px 4px;border-bottom:1px solid #eee;font-size:14px}
+    .tot{text-align:right;font-size:14px} .tot strong{font-size:18px}
+    .datos{font-size:13.5px;line-height:1.75;margin-top:16px}
+    .estado{display:inline-block;border:1.5px solid #40013E;border-radius:999px;padding:3px 16px;font-size:12px;font-weight:bold;margin-top:10px}
+  </style></head><body>
+    <div class="top"><h1>MILCH <span style="font-size:10px;letter-spacing:2px">BY MAGIC RESIN</span></h1>
+    <div style="text-align:right">Pedido <strong>${esc(p.folio)}</strong><br><small>${new Date(p.fecha).toLocaleDateString('es-CL')}</small></div></div>
+    <span class="estado">${ESTADOS[p.estado].t.toUpperCase()}</span>
+    <table><tr><th>Cant.</th><th>Producto</th><th style="text-align:right">Precio unit.</th><th style="text-align:right">Total</th></tr>${filas}</table>
+    <p class="tot">Subtotal: ${clpA(subtotalPedido(p))} · Envío: ${clpA(p.envio)}<br><strong>Total: ${clpA(totalPedido(p))}</strong></p>
+    <div class="datos"><strong>Datos del cliente</strong><br>${esc(c.nombre)} ${esc(c.apellido)}${c.rut ? ' — RUT ' + esc(c.rut) : ''}<br>${esc(c.celular)}${c.correo ? ' · ' + esc(c.correo) : ''}<br>${esc(dir)}</div>
+    ${p.notas ? `<div class="datos"><strong>Notas</strong><br>${esc(p.notas)}</div>` : ''}
+    <p style="margin-top:28px;font-size:11.5px;color:#888">www.mresin.cl · Joyas con leche materna · Hecho con amor en Chile</p>
+    <script>window.print();<\/script>
+  </body></html>`);
+  w.document.close();
+}
+
+/* eventos de la página de pedidos */
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.dataset.ped) {
+    const [id, campo] = t.dataset.ped.split('|');
+    const p = pedidos.find(x => x.id === id);
+    if (!p) return;
+    if (campo === 'envio') p.envio = Number(t.value) || 0;
+    else if (campo === 'notas') p.notas = t.value;
+    else p.cliente[campo] = t.value;
+    guardarPedidos();
+    refrescarTotales(p);
+  } else if (t.dataset.item) {
+    const [id, idx, campo] = t.dataset.item.split('|');
+    const p = pedidos.find(x => x.id === id);
+    if (!p || !p.items[idx]) return;
+    if (campo === 'name') p.items[idx].name = t.value;
+    else p.items[idx][campo] = Number(t.value) || 0;
+    guardarPedidos();
+    refrescarTotales(p);
+  } else if (t.id === 'buscarPedido') {
+    renderPedidos();
+  }
+});
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('button');
+  if (!t) return;
+  const buscar = id => pedidos.find(x => x.id === id);
+  if (t.dataset.pestado) {
+    const [id, estado] = t.dataset.pestado.split('|');
+    const p = buscar(id);
+    if (p) { p.estado = estado; guardarPedidos(); renderPedidos(); }
+  } else if (t.dataset.pabrir) {
+    abiertos.has(t.dataset.pabrir) ? abiertos.delete(t.dataset.pabrir) : abiertos.add(t.dataset.pabrir);
+    renderPedidos();
+  } else if (t.dataset.pimprimir) {
+    const p = buscar(t.dataset.pimprimir);
+    if (p) imprimirPedido(p);
+  } else if (t.dataset.peliminar) {
+    const p = buscar(t.dataset.peliminar);
+    if (p && confirm(`¿Eliminar el pedido ${p.folio} de ${p.cliente.nombre}? Esta acción no se puede deshacer.`)) {
+      pedidos = pedidos.filter(x => x.id !== p.id);
+      guardarPedidos();
+      renderPedidos();
+    }
+  } else if (t.dataset.pitemquitar) {
+    const [id, idx] = t.dataset.pitemquitar.split('|');
+    const p = buscar(id);
+    if (p) { p.items.splice(Number(idx), 1); guardarPedidos(); renderPedidos(); }
+  } else if (t.dataset.pitemagregar) {
+    const p = buscar(t.dataset.pitemagregar);
+    if (p) { p.items.push({ name: '', qty: 1, precio: 0 }); guardarPedidos(); renderPedidos(); }
+  }
+});
+
+document.getElementById('btnNuevoPedido').addEventListener('click', () => crearPedido());
+document.getElementById('btnImportarWsp').addEventListener('click', () => { document.getElementById('importarBox').hidden = false; });
+document.getElementById('btnCerrarImportar').addEventListener('click', () => { document.getElementById('importarBox').hidden = true; });
+document.getElementById('btnParsearWsp').addEventListener('click', () => {
+  const txt = document.getElementById('textoWsp').value.trim();
+  if (!txt) return;
+  crearPedido(parsearWsp(txt));
+  document.getElementById('textoWsp').value = '';
+  document.getElementById('importarBox').hidden = true;
+});
+document.getElementById('filtroEstado').addEventListener('change', renderPedidos);
+
+document.getElementById('btnRespaldo').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(pedidos, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `pedidos-milch-${new Date().toISOString().slice(0, 10)}.json`;
+  a.click();
+});
+document.getElementById('btnCargarRespaldo').addEventListener('click', () => document.getElementById('archivoRespaldo').click());
+document.getElementById('archivoRespaldo').addEventListener('change', e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const datos = JSON.parse(r.result);
+      let nuevos = 0;
+      for (const p of datos) {
+        if (!pedidos.some(x => x.id === p.id)) { pedidos.push(p); nuevos++; }
+      }
+      pedidos.sort((a, b) => (b.fecha || '').localeCompare(a.fecha || ''));
+      guardarPedidos();
+      renderPedidos();
+      alert(`Respaldo cargado: ${nuevos} pedido(s) nuevos agregados.`);
+    } catch (err) { alert('El archivo no es un respaldo válido.'); }
+  };
+  r.readAsText(f);
+});
+
+/* ---------- pestañas ---------- */
+function setTab(cual) {
+  const enPedidos = cual === 'pedidos';
+  document.getElementById('tabContenido').classList.toggle('activa', !enPedidos);
+  document.getElementById('tabPedidos').classList.toggle('activa', enPedidos);
+  document.getElementById('pedidosPage').hidden = !enPedidos;
+  const cargado = !!cfg;
+  document.getElementById('panel').hidden = enPedidos || !cargado;
+  document.getElementById('avisoCarga').hidden = enPedidos || cargado;
+  document.getElementById('barra').hidden = enPedidos || !cargado;
+  if (enPedidos) renderPedidos();
+}
+
+document.getElementById('tabContenido').addEventListener('click', () => setTab('contenido'));
+document.getElementById('tabPedidos').addEventListener('click', () => setTab('pedidos'));
+actualizarContador();
 
 /* si la sesión ya está iniciada en esta pestaña, entrar directo */
 try {
