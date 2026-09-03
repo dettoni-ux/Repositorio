@@ -1,10 +1,11 @@
 name: Publicar piezas aprobadas
 
-# Revisa cada 15 minutos si hay piezas APROBADAS cuya fecha ya llegó.
-# Solo toca piezas en estado 'aprobada': nada se publica sin tu aprobación en el panel.
+# Programación automática DESACTIVADA (fallaba cada 15 min por falta de
+# credenciales de Instagram: IG_USER_ID / IG_ACCESS_TOKEN). Cuando esos
+# secretos estén configurados, restaurar el bloque:
+#   schedule:
+#     - cron: '*/15 * * * *'
 on:
-  schedule:
-    - cron: '*/15 * * * *'
   workflow_dispatch:
     inputs:
       simulacion:
