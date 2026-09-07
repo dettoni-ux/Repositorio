@@ -4,6 +4,7 @@
 // Sin dependencias: usa el resolvedor DNS de Node contra 8.8.8.8 / 1.1.1.1.
 
 import { Resolver } from 'node:dns/promises';
+import { createPublicKey } from 'node:crypto';
 
 const dominio = process.argv[2] || 'encuentravet.cl';
 const resolver = new Resolver();
@@ -116,7 +117,18 @@ for (const sel of ['google', 'zoho', 'zmail', 'default']) {
     dkimEncontrado = true;
     const v = d.map((p) => p.join('')).join('');
     ok(`selector "${sel}" publicado (${v.length} caracteres)`);
-    if (!v.includes('p=')) mal(`  el selector "${sel}" no trae clave pública (p=)`);
+    // Parsear la clave demuestra que el copiar-pegar no la cortó ni la alteró:
+    // un solo carácter cambiado rompe la firma sin dar ningún error visible.
+    const pub = /(?:^|;)\s*p=([A-Za-z0-9+/=]*)/.exec(v)?.[1];
+    if (!pub) { mal(`  el selector "${sel}" no trae clave pública (p=)`); continue; }
+    try {
+      const k = createPublicKey({ key: Buffer.from(pub, 'base64'), format: 'der', type: 'spki' });
+      const bits = k.asymmetricKeyDetails?.modulusLength;
+      ok(`  clave RSA válida de ${bits} bits, copiada completa`);
+      if (bits && bits < 2048) ojo('  1024 bits: funciona en todas partes, pero 2048 es el estándar actual');
+    } catch {
+      mal(`  la clave del selector "${sel}" no es válida: se cortó o se alteró al copiar`);
+    }
   }
 }
 if (!dkimEncontrado) mal('no se encontró DKIM en los selectores google / zoho / zmail / default');
