@@ -1,0 +1,1408 @@
+<meta charset="utf-8">
+<title>Generador de contenido · EncuentraVet</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Generador de textos y captions para las redes de EncuentraVet: posts, carruseles, historias y reels con la voz, las reglas y las herramientas de la marca.">
+<style>
+  :root{
+    --bg:#FAF7FD; --panel:#FFFFFF; --panel2:#F4EEFA; --ink:#1E1526; --ink2:#6C5C7A;
+    --line:#E7DCF2; --morado:#5B2E7E; --morado-fuerte:#43205E; --morado-suave:#F0E7F8;
+    --amarillo:#FFD84D; --amarillo-ink:#5A4400; --amarillo-bg:#FFF6D8; --sobre-morado:#FFFFFF;
+    --vets:#5B2E7E; --vets-bg:#F0E7F8; --tut:#0F7A5A; --tut-bg:#DFF3EC;
+    --alerta:#A3320B; --alerta-bg:#FCEAE1;
+    --shadow:0 1px 2px rgba(30,21,38,.05), 0 10px 28px rgba(91,46,126,.08);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#14101A; --panel:#1E1826; --panel2:#282034; --ink:#F3ECF8; --ink2:#AE9DBE;
+      --line:#372C46; --morado:#C9A6E8; --morado-fuerte:#E0C9F3; --morado-suave:#33234A;
+      --amarillo:#FFD84D; --amarillo-ink:#FFE68A; --amarillo-bg:#3A2E08; --sobre-morado:#14101A;
+      --vets:#C9A6E8; --vets-bg:#33234A; --tut:#4FD1A5; --tut-bg:#0F3329;
+      --alerta:#FF9E76; --alerta-bg:#3C1D0E;
+      --shadow:0 1px 2px rgba(0,0,0,.45), 0 10px 28px rgba(0,0,0,.45);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#14101A; --panel:#1E1826; --panel2:#282034; --ink:#F3ECF8; --ink2:#AE9DBE;
+    --line:#372C46; --morado:#C9A6E8; --morado-fuerte:#E0C9F3; --morado-suave:#33234A;
+    --amarillo:#FFD84D; --amarillo-ink:#FFE68A; --amarillo-bg:#3A2E08; --sobre-morado:#14101A;
+    --vets:#C9A6E8; --vets-bg:#33234A; --tut:#4FD1A5; --tut-bg:#0F3329;
+    --alerta:#FF9E76; --alerta-bg:#3C1D0E;
+    --shadow:0 1px 2px rgba(0,0,0,.45), 0 10px 28px rgba(0,0,0,.45);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',sans-serif;
+    font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{margin:0; text-wrap:balance; line-height:1.2}
+  .wrap{max-width:1000px; margin:0 auto; padding:0 20px 90px}
+
+  header.top{padding:32px 0 20px; display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end; justify-content:space-between}
+  .kicker{font-size:12px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--morado)}
+  header.top h1{font-size:clamp(26px,4.2vw,38px); letter-spacing:-.02em; margin:4px 0 6px}
+  header.top p{margin:0; color:var(--ink2); max-width:56ch}
+  .tema-btn{border:1px solid var(--line); background:var(--panel); color:var(--ink2); border-radius:99px;
+    padding:8px 14px; font:inherit; font-size:14px; cursor:pointer}
+  .tema-btn:hover{border-color:var(--morado); color:var(--morado)}
+
+  .panel{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:20px; box-shadow:var(--shadow); margin-bottom:18px}
+  .panel > h2{font-size:19px; letter-spacing:-.01em}
+  .sub{color:var(--ink2); font-size:14.5px; margin:6px 0 0}
+
+  .controles{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:16px; margin-top:18px}
+  .campo{display:block; font-size:12.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--ink2); margin-bottom:7px}
+  select,input[type=text]{
+    width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:10px;
+    background:var(--panel); color:var(--ink); font:inherit; font-size:15px;
+  }
+  select:focus,input[type=text]:focus{outline:2px solid var(--morado); outline-offset:1px; border-color:var(--morado)}
+  .seg{display:flex; flex-wrap:wrap; gap:6px}
+  .seg button{
+    flex:1 1 auto; padding:10px 11px; border:1px solid var(--line); background:var(--panel);
+    color:var(--ink2); border-radius:10px; font:inherit; font-size:14.5px; font-weight:600; cursor:pointer;
+  }
+  .seg button:hover{border-color:var(--morado); color:var(--morado)}
+  .seg button[aria-pressed="true"]{background:var(--morado); border-color:var(--morado); color:var(--sobre-morado)}
+
+  .fila-botones{display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; align-items:center}
+  .btn{
+    border:none; border-radius:11px; padding:12px 20px; font:inherit; font-weight:700; font-size:15px;
+    background:var(--morado); color:var(--sobre-morado); cursor:pointer;
+  }
+  .btn:hover{background:var(--morado-fuerte)}
+  :root[data-theme="dark"] .btn:hover{color:var(--sobre-morado)}
+  .btn.sec{background:var(--panel2); color:var(--ink); border:1px solid var(--line)}
+  .btn.sec:hover{background:var(--morado-suave); border-color:var(--morado)}
+  .btn.mini{padding:8px 13px; font-size:13.5px; font-weight:600}
+  .btn.amar{background:var(--amarillo); color:var(--amarillo-ink)}
+  .btn.amar:hover{filter:brightness(.94)}
+  .btn:disabled{opacity:.5; cursor:not-allowed}
+
+  .chip{display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:800;
+    letter-spacing:.06em; text-transform:uppercase; padding:5px 11px; border-radius:99px}
+  .chip.vets{background:var(--vets-bg); color:var(--vets)}
+  .chip.tut{background:var(--tut-bg); color:var(--tut)}
+  .chip.neutro{background:var(--panel2); color:var(--ink2)}
+  .chip.amar{background:var(--amarillo-bg); color:var(--amarillo-ink)}
+
+  .pieza{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:20px; box-shadow:var(--shadow); margin-bottom:18px}
+  .pieza .cab{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:12px}
+  .pieza h3{font-size:22px; letter-spacing:-.015em; margin-bottom:14px}
+  .bloque{border-left:3px solid var(--line); padding:2px 0 2px 14px; margin:14px 0}
+  .bloque .rot{font-size:11.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--ink2); margin-bottom:5px}
+  .bloque p{margin:0 0 6px}
+  .bloque.dest{border-left-color:var(--morado); background:var(--morado-suave); border-radius:0 10px 10px 0; padding:12px 14px}
+  .bloque.dest .rot{color:var(--morado)}
+  ul.lineas{margin:6px 0 0; padding-left:20px}
+  ul.lineas li{margin-bottom:6px}
+  .caption{
+    white-space:pre-wrap; background:var(--panel2); border:1px solid var(--line); border-radius:12px;
+    padding:14px; font-size:15px; margin-top:8px;
+  }
+  .hash{color:var(--morado); font-weight:600}
+  .meta-linea{display:flex; flex-wrap:wrap; gap:10px 18px; font-size:13.5px; color:var(--ink2); margin-top:14px; padding-top:12px; border-top:1px solid var(--line)}
+  .meta-linea b{color:var(--ink); font-weight:700}
+
+  .chequeo{margin-top:14px; border-radius:12px; padding:12px 14px; font-size:14px; border:1px solid var(--line); background:var(--panel2)}
+  .chequeo.mal{background:var(--alerta-bg); border-color:var(--alerta)}
+  .chequeo .tit{font-weight:800; font-size:12px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink2); margin-bottom:6px}
+  .chequeo.mal .tit{color:var(--alerta)}
+  .chequeo ul{margin:0; padding-left:20px}
+  .chequeo li{margin-bottom:3px}
+
+  .guardado-item{border:1px solid var(--line); border-radius:12px; padding:14px; margin-bottom:10px; background:var(--panel2)}
+  .guardado-item .cab{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:8px}
+  .guardado-item pre{white-space:pre-wrap; margin:0; font:inherit; font-size:14px; color:var(--ink2); max-height:120px; overflow:hidden}
+  .vacio{color:var(--ink2); font-size:14.5px; margin:14px 0 0}
+
+  details.reglas{margin-top:14px; border-top:1px solid var(--line); padding-top:12px}
+  details.reglas summary{cursor:pointer; font-weight:700; font-size:14.5px; color:var(--morado)}
+  details.reglas ul{margin:10px 0 0; padding-left:20px; color:var(--ink2); font-size:14.5px}
+  details.reglas li{margin-bottom:5px}
+
+  .toast{
+    position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(12px);
+    background:var(--ink); color:var(--bg); padding:11px 18px; border-radius:99px; font-size:14.5px;
+    font-weight:600; opacity:0; pointer-events:none; transition:opacity .18s, transform .18s; z-index:40;
+  }
+  .toast.ver{opacity:1; transform:translateX(-50%) translateY(0)}
+  @media (max-width:560px){
+    .wrap{padding:0 14px 70px}
+    .panel,.pieza{padding:16px}
+  }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="kicker">EncuentraVet · encuentravet.cl</div>
+      <h1>Generador de contenido</h1>
+      <p>Textos y captions listos para pegar en Instagram. Cada pieza sale amarrada a una herramienta concreta de la plataforma y pasa por el chequeo de las reglas de la marca.</p>
+    </div>
+    <button class="tema-btn" id="btn-tema" type="button">🌗 Tema</button>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h2>Qué quieres escribir</h2>
+      <p class="sub">Deja «Automático» y el generador respeta la mezcla de la estrategia: 80% para veterinarios, 20% para tutores.</p>
+
+      <div class="controles">
+        <div>
+          <label class="campo" id="lbl-publico">Público</label>
+          <div class="seg" role="group" aria-labelledby="lbl-publico" id="seg-publico">
+            <button type="button" aria-pressed="true" data-v="auto">Automático 80/20</button>
+            <button type="button" aria-pressed="false" data-v="vets">Veterinarios</button>
+            <button type="button" aria-pressed="false" data-v="tutores">Tutores</button>
+          </div>
+        </div>
+        <div>
+          <label class="campo" id="lbl-formato">Formato</label>
+          <div class="seg" role="group" aria-labelledby="lbl-formato" id="seg-formato">
+            <button type="button" aria-pressed="true" data-v="post">Post</button>
+            <button type="button" aria-pressed="false" data-v="carrusel">Carrusel</button>
+            <button type="button" aria-pressed="false" data-v="historia">Historia</button>
+            <button type="button" aria-pressed="false" data-v="reel">Reel</button>
+          </div>
+        </div>
+        <div>
+          <label class="campo" for="sel-herramienta">Herramienta</label>
+          <select id="sel-herramienta"></select>
+        </div>
+        <div>
+          <label class="campo" for="sel-angulo">Ángulo</label>
+          <select id="sel-angulo"></select>
+        </div>
+        <div>
+          <label class="campo" for="inp-tema">Tema específico (opcional)</label>
+          <input type="text" id="inp-tema" placeholder="Ej: vacunación de otoño" autocomplete="off">
+        </div>
+        <div>
+          <label class="campo" id="lbl-largo">Largo del caption</label>
+          <div class="seg" role="group" aria-labelledby="lbl-largo" id="seg-largo">
+            <button type="button" aria-pressed="false" data-v="corto">Corto</button>
+            <button type="button" aria-pressed="true" data-v="medio">Medio</button>
+            <button type="button" aria-pressed="false" data-v="largo">Largo</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="fila-botones">
+        <button class="btn" id="btn-generar" type="button">Generar texto</button>
+        <button class="btn sec" id="btn-lote" type="button">Generar semana (5 piezas)</button>
+        <button class="btn sec mini" id="btn-limpiar" type="button">Limpiar</button>
+      </div>
+
+      <details class="reglas">
+        <summary>Reglas de marca que aplica el generador</summary>
+        <ul>
+          <li>Toda pieza conecta con una herramienta concreta de la plataforma: nada de contenido genérico de mascotas.</li>
+          <li>Solo se usan los datos reales verificados de EncuentraVet; el generador nunca inventa cifras, testimonios ni nombres.</li>
+          <li>Los relatos de «falso veterinario» son siempre ficción con personajes inventados. Nunca clínicas ni personas reales.</li>
+          <li>Sin promesas médicas ni diagnósticos.</li>
+          <li>El caption cierra con el CTA del público correspondiente y después los hashtags.</li>
+          <li>Hashtags base: #EncuentraVet #VeterinariosVerificados, más los del público y 2-3 del tema.</li>
+        </ul>
+        <ul id="lista-datos"></ul>
+      </details>
+    </section>
+
+    <div id="zona-resultado"></div>
+
+    <section class="panel" id="panel-guardados">
+      <h2>Guardados <span class="chip neutro" id="cuenta-guardados">0</span></h2>
+      <p class="sub">Lo que marques como guardado queda en este navegador. Sirve para armar el calendario de la semana y copiarlo de una vez.</p>
+      <div class="fila-botones">
+        <button class="btn sec mini" id="btn-copiar-todo" type="button">Copiar todo</button>
+        <button class="btn sec mini" id="btn-exportar" type="button">Descargar .md</button>
+        <button class="btn sec mini" id="btn-vaciar" type="button">Vaciar</button>
+      </div>
+      <div id="lista-guardados"></div>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+
+/* ============================================================
+   MARCA · datos reales
+   Ninguna cifra fuera de esta lista puede aparecer en una pieza.
+   ============================================================ */
+const MARCA = {
+  nombre:'EncuentraVet',
+  web:'encuentravet.cl',
+  ig:'@encuentravet',
+  slogan:'Veterinarios Certificados. Cerca de ti'
+};
+
+const DATOS_REALES = [
+  'Cada profesional se valida uno a uno contra el Registro Civil y COLMEVET antes de recibir la insignia azul.',
+  'Ya hay más de 100 veterinarios verificados en la plataforma.',
+  '0% comisión: lo que cobra el profesional es suyo, siempre.',
+  'Búsqueda por comuna disponible en las 346 comunas de Chile.',
+  'La agenda muestra disponibilidad real, sacada del calendario del propio profesional.',
+  'Ficha clínica digital por paciente: vacunas, exámenes e historial.',
+  'Recordatorios automáticos al tutor antes de la hora y del próximo control.',
+  'Para los tutores es gratis: la consulta se paga directo al profesional.',
+  'Cada profesional define sus propios precios.',
+  'Crear el perfil profesional es gratis y se publica desde el primer día.'
+];
+/* Números que sí pueden aparecer en un caption sin ser un invento. */
+const CIFRAS_PERMITIDAS = ['0','24','100','346'];
+
+const CTA = {
+  vets:'Crea tu perfil gratis en encuentravet.cl',
+  tutores:'Regístrate gratis en encuentravet.cl'
+};
+const HASHTAGS_BASE = ['#EncuentraVet','#VeterinariosVerificados'];
+const HASHTAGS_PUBLICO = {
+  vets:['#MédicoVeterinario','#VeterinariosChile'],
+  tutores:['#MascotasChile','#TutorResponsable']
+};
+
+/* ============================================================
+   HERRAMIENTAS DE LA PLATAFORMA
+   Todo el contenido nace de una de estas.
+   ============================================================ */
+const HERRAMIENTAS = {
+
+insignia:{
+  nombre:'Insignia azul de verificado', corto:'la insignia azul', publico:'vets', emoji:'🔵',
+  promesa:'tu título validado y a la vista de quien te busca',
+  ganchos:[
+    'Cualquiera puede comprarse una bata. Nadie puede comprarse la insignia azul.',
+    'Estudiaste seis años. Que se note antes de que tengas que explicarlo.',
+    'En internet cualquiera dice ser veterinario. Por eso verificamos uno por uno.',
+    'Tu título no debería quedarse colgado en la muralla de la consulta.',
+    'La insignia azul no se pide ni se compra: se verifica.',
+    '¿Cómo demuestras que eres veterinario de verdad cuando nadie te ha visto trabajar?',
+    'Hay una diferencia entre decir que eres veterinario y poder probarlo.'
+  ],
+  dolor:[
+    'Compites con cuentas que ofrecen «atención a domicilio» sin un título detrás.',
+    'Tener que explicar en cada consulta nueva que sí, que eres titulado.',
+    'El tutor elige por una foto bonita y no por quién está habilitado para atender.'
+  ],
+  beneficios:[
+    'Validamos tu cédula de identidad y tu título contra el Registro Civil y COLMEVET, uno por uno.',
+    'Recién ahí aparece la insignia azul en tu perfil: no se compra, se verifica.',
+    'El tutor ve la insignia antes de reservar y decide con esa información en la mano.',
+    'Queda en tu perfil desde el día uno y no tienes que volver a explicarlo.'
+  ],
+  mitos:[
+    {m:'«La insignia azul se paga.»', r:'No. Se entrega solo después de validar cédula y título; no hay forma de comprarla.'},
+    {m:'«Con subir una foto del diploma basta.»', r:'No basta: la validación se hace contra el Registro Civil y COLMEVET.'},
+    {m:'«Si ya tengo pacientes, no la necesito.»', r:'Tus pacientes ya te conocen. La insignia es para los que todavía no.'}
+  ],
+  relato:{
+    inicio:'Un gallo con una bata tres tallas más grande abrió consulta en el barrio.',
+    nudo:'Tenía estetoscopio de juguete y un diploma dibujado con lápiz de cera que se despegaba de la muralla.',
+    desenlace:'Hasta que llegó una veterinaria con su insignia azul y todo el mundo entendió la diferencia.',
+    moraleja:'Cualquiera puede ponerse una bata. La insignia azul se verifica.'
+  },
+  preguntas:[
+    '¿Te ha tocado que un tutor dude de tu título?',
+    '¿Cuántas veces has tenido que explicar que sí eres veterinario titulado?'
+  ],
+  cierre:[
+    'Verificarte es gratis, se hace una vez y la confianza queda.',
+    'Que el tutor sepa quién eres antes de escribirte.',
+    'Tu título ya lo tienes. Solo falta que se vea donde te buscan.'
+  ],
+  hashtags:['#InsigniaAzul','#VeterinarioTitulado','#COLMEVET']
+},
+
+agenda:{
+  nombre:'Agenda online con disponibilidad real', corto:'la agenda online', publico:'vets', emoji:'📅',
+  promesa:'menos teléfono y más pacientes',
+  ganchos:[
+    'El teléfono suena justo cuando tienes las manos dentro de un paciente.',
+    'Cada llamada para «consultar disponibilidad» es una consulta que se interrumpe.',
+    'Las horas fantasma existen: bloques libres que nadie supo que estaban libres.',
+    'Tu agenda no debería vivir en un cuaderno y tres conversaciones de WhatsApp.',
+    'Coordinar una hora por mensaje toma más tiempo que la hora misma.',
+    '¿Cuántas horas al día pasas coordinando horas?',
+    'La mejor secretaria es la que no te interrumpe.'
+  ],
+  dolor:[
+    'Coordinar por WhatsApp una hora que en realidad ya estaba tomada.',
+    'Interrumpir la consulta para contestar «¿tiene hora para mañana?».',
+    'Bloques vacíos que se pudieron llenar si alguien hubiera sabido que estaban libres.'
+  ],
+  beneficios:[
+    'Tu disponibilidad sale de tu propio calendario: lo que se ve libre, está libre.',
+    'El tutor reserva solo, a la hora que él pueda, sin llamar a nadie.',
+    'Abres y cierras bloques cuando quieras y la agenda se actualiza sola.',
+    'Menos interrupciones en consulta y menos horas que se pierden.'
+  ],
+  mitos:[
+    {m:'«Se me van a llenar todas las horas sin que yo decida.»', r:'Tú defines qué bloques abres. Lo que no abres, no existe para el tutor.'},
+    {m:'«Prefiero coordinar por teléfono para filtrar.»', r:'Puedes seguir haciéndolo. La agenda solo evita las llamadas que no aportan nada.'}
+  ],
+  relato:{
+    inicio:'Una veterinaria atendía con el celular en el bolsillo, siempre vibrando.',
+    nudo:'Entre consulta y consulta contestaba mensajes, y aun así el martes le quedaron dos bloques vacíos.',
+    desenlace:'Abrió su agenda online, dejó de contestar y esos bloques se llenaron solos.',
+    moraleja:'Las horas se llenan cuando el tutor puede verlas.'
+  },
+  preguntas:[
+    '¿Cuántas veces al día te interrumpen para preguntar por una hora?',
+    '¿Tu agenda de esta semana quedó completa o quedaron bloques sueltos?'
+  ],
+  cierre:[
+    'Que el tutor reserve mientras tú atiendes.',
+    'Tu tiempo clínico vale demasiado para gastarlo coordinando.',
+    'Una agenda ordenada se nota en la semana completa.'
+  ],
+  hashtags:['#AgendaOnline','#GestiónVeterinaria','#ReservaOnline']
+},
+
+ficha:{
+  nombre:'Ficha clínica digital', corto:'la ficha clínica digital', publico:'vets', emoji:'📋',
+  promesa:'todo el historial del paciente en un solo lugar',
+  ganchos:[
+    '«¿Cuándo fue la última vacuna?» «Uff, creo que en julio.»',
+    'El historial del paciente no debería depender de la memoria del tutor.',
+    'Un cuaderno, un correo y un carnet perdido no son una ficha clínica.',
+    'El control de marzo empieza con lo que anotaste hoy.',
+    'Cuando el paciente llega complicado, lo que te salva es el historial.',
+    'Buscar un examen de hace ocho meses no debería ser una investigación.'
+  ],
+  dolor:[
+    'Buscar la última vacuna entre un cuaderno, un correo y la memoria del tutor.',
+    'El tutor llega sin el carnet y hay que reconstruir todo desde cero.',
+    'Exámenes que se pierden entre conversaciones de WhatsApp.'
+  ],
+  beneficios:[
+    'Vacunas, exámenes e historial digital, ordenados por paciente.',
+    'Lo que registras hoy está disponible en el próximo control, sin buscarlo.',
+    'El tutor también ve la ficha de su mascota y llega con la información al día.',
+    'Menos papeles y menos «creo que fue en julio».'
+  ],
+  mitos:[
+    {m:'«Registrar todo me quita tiempo de consulta.»', r:'Toma menos que reconstruir un historial perdido en la consulta siguiente.'},
+    {m:'«El tutor va a interpretar mal lo que anote.»', r:'La ficha muestra lo que el tutor necesita saber: vacunas, exámenes y controles.'}
+  ],
+  relato:{
+    inicio:'Una gata llegó a control con un carnet de vacunas mojado y sin la mitad de las páginas.',
+    nudo:'Nadie recordaba la fecha de la última dosis, así que hubo que asumir lo peor y partir de nuevo.',
+    desenlace:'Con la ficha digital, la fecha estaba ahí: dos toques y el control siguió su curso.',
+    moraleja:'El historial de un paciente no debería caber en un papel que se moja.'
+  },
+  preguntas:[
+    '¿Cuánto demoras en encontrar el último examen de un paciente?',
+    '¿Cuántos carnets de vacunas perdidos has tenido que reemplazar este año?'
+  ],
+  cierre:[
+    'La información del paciente, donde tiene que estar.',
+    'Un control tranquilo empieza por un historial completo.',
+    'Menos memoria, más ficha.'
+  ],
+  hashtags:['#FichaClínica','#HistorialVeterinario','#SaludAnimal']
+},
+
+recordatorios:{
+  nombre:'Recordatorios automáticos', corto:'los recordatorios automáticos', publico:'vets', emoji:'🔔',
+  promesa:'que el paciente vuelva porque alguien le avisó',
+  ganchos:[
+    'El paciente que no volvió casi nunca se fue enojado: se le olvidó.',
+    'La desparasitación que se pasó no la olvidó el tutor: la olvidó el sistema.',
+    'Una inasistencia deja el bloque vacío igual.',
+    'Fidelizar no es un descuento: es acordarse del control.',
+    'Nadie falta a propósito. Faltan porque nadie les recordó.',
+    '¿Cuántos controles del año pasado quedaron sin agendar?'
+  ],
+  dolor:[
+    'Controles que se pasan porque nadie se acordó a tiempo.',
+    'Horas perdidas por inasistencia: el bloque queda vacío igual.',
+    'El seguimiento depende de que tú te acuerdes, entre paciente y paciente.'
+  ],
+  beneficios:[
+    'Recordatorios automáticos al tutor antes de la hora y antes del próximo control.',
+    'Menos inasistencias y una agenda que se sostiene sola.',
+    'El seguimiento pasa de tu memoria al sistema.',
+    'El tutor siente que hay alguien pendiente de su mascota.'
+  ],
+  mitos:[
+    {m:'«Mandar recordatorios se ve invasivo.»', r:'Un aviso a tiempo se agradece; lo invasivo es llamar tres veces para reagendar.'},
+    {m:'«Los tutores igual no leen los avisos.»', r:'Un recordatorio antes de la hora reduce la inasistencia sin que tengas que escribir nada.'}
+  ],
+  relato:{
+    inicio:'Un perro salchicha tenía su control de vacunas anotado en un papelito en el refrigerador.',
+    nudo:'El papelito se cayó detrás del mueble en marzo y nadie lo vio hasta septiembre.',
+    desenlace:'El recordatorio automático llegó al celular del tutor y el control se hizo a tiempo.',
+    moraleja:'La memoria falla. El recordatorio no.'
+  },
+  preguntas:[
+    '¿Cuántas inasistencias tuviste el mes pasado?',
+    '¿Haces seguimiento de controles o depende de que el tutor se acuerde?'
+  ],
+  cierre:[
+    'Un paciente que vuelve vale más que uno nuevo.',
+    'Que el control no dependa de un papelito en el refrigerador.',
+    'Tu agenda te lo agradece en la semana siguiente.'
+  ],
+  hashtags:['#Recordatorios','#Fidelización','#GestiónVeterinaria']
+},
+
+comision:{
+  nombre:'0% comisión', corto:'el 0% de comisión', publico:'vets', emoji:'💚',
+  promesa:'que lo que cobras sea tuyo',
+  ganchos:[
+    'Lo que cobras es tuyo. Completo. Siempre.',
+    'Hay plataformas que se llevan un pedazo de cada consulta. Esta no.',
+    'Subir el precio para compensar la comisión no debería ser parte del oficio.',
+    '0% de comisión no es una promoción de lanzamiento: es cómo funciona.',
+    '¿Cuánto se queda tu plataforma de cada consulta que haces?',
+    'Tú pones el precio. Nadie más.'
+  ],
+  dolor:[
+    'Plataformas que se quedan con un porcentaje de cada consulta.',
+    'Ajustar el precio hacia arriba para que la comisión no te coma el margen.',
+    'No saber cuánto te va a llegar en realidad de lo que cobraste.'
+  ],
+  beneficios:[
+    '0% comisión: EncuentraVet no toca el valor de tu consulta.',
+    'Cada profesional define sus propios precios.',
+    'El tutor te paga directo a ti.',
+    'Crear y publicar tu perfil es gratis.'
+  ],
+  mitos:[
+    {m:'«Si no cobran comisión, algo cobran después.»', r:'El perfil es gratis y la consulta se paga directo al profesional.'},
+    {m:'«Gratis significa que voy a aparecer último.»', r:'Puedes publicar tu perfil desde el primer día; la verificación es la que suma sello y prioridad.'}
+  ],
+  relato:{
+    inicio:'Un veterinario calculó cuánto había dejado de ganar en un año por comisiones.',
+    nudo:'El número le alcanzaba para el equipo que llevaba dos años postergando.',
+    desenlace:'Cambió a una plataforma con 0% de comisión y el cálculo dejó de doler.',
+    moraleja:'La comisión que no pagas es equipamiento que sí compras.'
+  },
+  preguntas:[
+    '¿Sabes exactamente cuánto te queda de cada consulta?',
+    'Si te devolvieran la comisión de un año, ¿en qué la usarías?'
+  ],
+  cierre:[
+    'Tu trabajo, tu precio, tu plata.',
+    'Sin letra chica y sin porcentaje escondido.',
+    'Lo que cobras llega completo.'
+  ],
+  hashtags:['#SinComisión','#EmprendimientoVeterinario','#TrabajoJusto']
+},
+
+comuna:{
+  nombre:'Visibilidad en búsquedas por comuna', corto:'la búsqueda por comuna', publico:'vets', emoji:'📍',
+  promesa:'aparecer donde te están buscando',
+  ganchos:[
+    'Alguien está buscando «veterinario en mi comuna» justo ahora.',
+    'Puedes ser el mejor del sector y ser invisible para el vecino de la esquina.',
+    'El tutor no busca en Google: busca cerca.',
+    'Tu próximo paciente vive a diez cuadras y no sabe que existes.',
+    '¿Apareces cuando buscan un veterinario en tu comuna?',
+    'La distancia sigue siendo el primer filtro de todo tutor.'
+  ],
+  dolor:[
+    'El tutor busca por comuna y llega a cualquier parte menos a ti.',
+    'Tener el mejor servicio del sector y que nadie del sector lo sepa.',
+    'Depender solo del boca a boca de siempre.'
+  ],
+  beneficios:[
+    'Los tutores filtran por comuna: si atiendes ahí, apareces ahí.',
+    'La búsqueda cubre las 346 comunas de Chile.',
+    'Tu perfil muestra tus servicios, tus horarios y tu disponibilidad real.',
+    'Puedes publicar tu perfil desde el primer día.'
+  ],
+  mitos:[
+    {m:'«Solo sirve si atiendo en el centro.»', r:'La búsqueda cubre las 346 comunas del país, no solo las grandes ciudades.'},
+    {m:'«Con mi Instagram basta.»', r:'Tu Instagram lo ven los que ya te siguen. La búsqueda por comuna te muestra a los que aún no.'}
+  ],
+  relato:{
+    inicio:'Una veterinaria atendía hacía años en su comuna, con una clientela fiel y pequeña.',
+    nudo:'A tres cuadras vivía una familia que llevaba meses buscando veterinario y nunca supo de ella.',
+    desenlace:'Publicó su perfil, apareció en la búsqueda de su comuna y la familia reservó esa misma semana.',
+    moraleja:'No basta con estar cerca: hay que ser encontrable.'
+  },
+  preguntas:[
+    '¿En cuántas comunas atiendes hoy?',
+    '¿Cómo te encuentra alguien que no te conoce todavía?'
+  ],
+  cierre:[
+    'Estar cerca sirve solo si te pueden encontrar.',
+    'Que tu comuna sepa que estás.',
+    'Tu próximo paciente te está buscando por zona.'
+  ],
+  hashtags:['#VeterinarioCerca','#BúsquedaPorComuna','#ChileMascotas']
+},
+
+buscar:{
+  nombre:'Buscar veterinarios verificados y reservar', corto:'la búsqueda de veterinarios verificados', publico:'tutores', emoji:'🔎',
+  promesa:'un veterinario verificado, cerca, sin llamar',
+  ganchos:[
+    'Llamar a cinco clínicas para saber quién tiene hora no debería ser el plan de un sábado.',
+    'Elegir veterinario por una foto de Instagram es apostar con la salud de tu mascota.',
+    'Buscas «veterinario cerca» y te aparecen mil resultados. ¿Cuál es de verdad?',
+    'La hora que ves libre está libre en serio.',
+    '¿Sabes a qué veterinario llevarías a tu mascota mañana a primera hora?',
+    'Buscar por comuna, ver quién está verificado y reservar. En ese orden.'
+  ],
+  dolor:[
+    'Llamar a varias clínicas para preguntar por horas disponibles.',
+    'No saber si quien atiende está realmente titulado.',
+    'Descubrir que la hora que te dieron ya estaba tomada.'
+  ],
+  beneficios:[
+    'Filtras por comuna y ves quién atiende cerca de ti.',
+    'La insignia azul te muestra a los profesionales verificados.',
+    'Las horas que aparecen salen del calendario del propio veterinario: están libres de verdad.',
+    'Reservas online, a la hora que tú puedas, sin llamar.'
+  ],
+  mitos:[
+    {m:'«Buscar por internet sale más caro.»', r:'Buscar y registrarte es gratis; la consulta se paga directo al profesional, al precio que él define.'},
+    {m:'«Todos los que se anuncian como veterinarios lo son.»', r:'En internet cualquiera puede decirlo. Por eso existe la insignia azul.'}
+  ],
+  relato:{
+    inicio:'Un domingo en la tarde, un gato empezó a esconderse debajo de la cama y no quiso comer.',
+    nudo:'La familia llamó a cuatro números; dos no contestaron y uno no era veterinario.',
+    desenlace:'Buscaron por comuna, vieron la insignia azul y reservaron la hora del lunes en dos minutos.',
+    moraleja:'Ten a tu veterinario ubicado antes de necesitarlo.'
+  },
+  preguntas:[
+    '¿Ya tienes veterinario de cabecera o lo buscas cuando aparece el problema?',
+    '¿Sabrías dónde llevar a tu mascota un domingo en la tarde?'
+  ],
+  cierre:[
+    'Tener el veterinario elegido antes de la urgencia cambia todo.',
+    'Buscar tranquilo hoy es no buscar apurado mañana.',
+    'Cerca, verificado y con hora real.'
+  ],
+  hashtags:['#VeterinarioCerca','#PerrosChile','#GatosChile']
+},
+
+fichaMascota:{
+  nombre:'Ficha gratis de tu mascota', corto:'la ficha de tu mascota', publico:'tutores', emoji:'🐾',
+  promesa:'el carnet de tu mascota siempre contigo',
+  ganchos:[
+    'El carnet de vacunas está en un cajón. O estaba.',
+    '«¿Cuándo fue la última desparasitación?» y silencio absoluto.',
+    'Tu mascota tiene historial médico. ¿Sabes dónde está?',
+    'El papelito del refrigerador no es un sistema de recordatorios.',
+    'Llegar a la consulta con todo al día también es cuidar.',
+    '¿Te sabes la fecha de la próxima vacuna de tu mascota?'
+  ],
+  dolor:[
+    'El carnet de vacunas guardado en un cajón… o perdido.',
+    'No acordarse de cuándo fue el último control.',
+    'Cambiar de veterinario y empezar el historial de nuevo.'
+  ],
+  beneficios:[
+    'Ficha gratis con vacunas, exámenes e historial de tu mascota.',
+    'Recordatorios automáticos de la próxima vacuna o control.',
+    'Si cambias de veterinario, la información viaja contigo.',
+    'Llegas a la consulta con todo al día, sin buscar papeles.'
+  ],
+  mitos:[
+    {m:'«La ficha es solo para mascotas con enfermedades.»', r:'Es para cualquier mascota: vacunas y controles también son historial.'},
+    {m:'«Tengo todo anotado en el celular.»', r:'Hasta que cambias de teléfono. La ficha queda asociada a tu mascota, no a tu equipo.'}
+  ],
+  relato:{
+    inicio:'Una familia se cambió de comuna y con la mudanza se perdió la caja de los documentos.',
+    nudo:'Adentro iba el carnet de vacunas del perro, con seis años de historial.',
+    desenlace:'La ficha digital tenía todo: el veterinario nuevo la revisó y siguió desde donde iban.',
+    moraleja:'Lo que está en papel se pierde. Lo que está en la ficha, no.'
+  },
+  preguntas:[
+    '¿Dónde está el carnet de vacunas de tu mascota en este momento?',
+    '¿Cuándo fue su último control?'
+  ],
+  cierre:[
+    'Es gratis y toma menos de lo que crees.',
+    'Tener el historial a mano es cuidar mejor.',
+    'Todo el historial de tu regalón, en un solo lugar.'
+  ],
+  hashtags:['#TenenciaResponsable','#MascotasChile','#CarnetDeVacunas']
+},
+
+insigniaTutores:{
+  nombre:'La insignia azul (para tutores)', corto:'la insignia azul', publico:'tutores', emoji:'🔵',
+  promesa:'saber que quien atiende a tu mascota es veterinario de verdad',
+  ganchos:[
+    'En internet cualquiera puede decir que es veterinario.',
+    'Antes de reservar, mira si tiene la insignia azul.',
+    'Una bata blanca no es un título universitario.',
+    'La insignia azul no se compra: se verifica.',
+    '¿Sabes si quien atendió a tu mascota está titulado?',
+    'Confiar está bien. Verificar es mejor.'
+  ],
+  dolor:[
+    'Cualquiera puede abrir una cuenta y ofrecer «atención veterinaria a domicilio».',
+    'Confiar la salud de tu regalón a alguien que no muestra su título.',
+    'Enterarte tarde de que quien atendió no era veterinario.'
+  ],
+  beneficios:[
+    'La insignia azul aparece solo tras validar cédula y título contra el Registro Civil y COLMEVET.',
+    'No se compra ni se solicita: se verifica uno por uno.',
+    'La ves en el perfil antes de reservar la hora.',
+    'Ya hay más de 100 veterinarios verificados para elegir.'
+  ],
+  mitos:[
+    {m:'«Si tiene muchos seguidores, es confiable.»', r:'Los seguidores no validan un título. La insignia azul sí.'},
+    {m:'«Si atiende a domicilio, seguro es veterinario.»', r:'Atender a domicilio no acredita nada. La verificación sí.'}
+  ],
+  relato:{
+    inicio:'En un barrio apareció un «veterinario a domicilio» que atendía barato y rápido.',
+    nudo:'Nadie le había visto nunca un título, pero tenía bata, maletín y muy buena conversación.',
+    desenlace:'Una vecina revisó el perfil de una veterinaria con insignia azul y prefirió esperar un día.',
+    moraleja:'Cualquiera puede ponerse una bata. La insignia azul se verifica.'
+  },
+  preguntas:[
+    '¿Revisas el título de quien atiende a tu mascota?',
+    '¿Qué miras primero al elegir veterinario: el precio o la verificación?'
+  ],
+  cierre:[
+    'Buscar el sello azul toma dos segundos y evita muchos problemas.',
+    'La salud de tu mascota merece un profesional verificado.',
+    'Verificado no es una palabra: es un proceso.'
+  ],
+  hashtags:['#InsigniaAzul','#TenenciaResponsable','#TutorInformado']
+}
+
+};
+
+/* Texto corto para la plantilla de imagen (máximos de la guía de marca). */
+const ETIQUETAS = {
+  insignia:'VERIFICACIÓN', agenda:'AGENDA ONLINE', ficha:'FICHA CLÍNICA',
+  recordatorios:'RECORDATORIOS', comision:'0% COMISIÓN', comuna:'TU COMUNA',
+  buscar:'BUSCA Y RESERVA', fichaMascota:'FICHA GRATIS', insigniaTutores:'INSIGNIA AZUL'
+};
+const DESTACADOS = {
+  insignia:'VERIFICADO', agenda:'SIN LLAMAR', ficha:'TODO AQUÍ',
+  recordatorios:'AUTOMÁTICO', comision:'0%', comuna:'346',
+  buscar:'CERCA', fichaMascota:'GRATIS', insigniaTutores:'AZUL'
+};
+
+/* ============================================================
+   ÁNGULOS · cómo se ordena el cuerpo del texto
+   ============================================================ */
+const ANGULOS = {
+  tip:       { nombre:'Tip accionable',        emoji:'💡' },
+  mito:      { nombre:'Mito vs realidad',      emoji:'🔍' },
+  error:     { nombre:'Error común',           emoji:'⚠️' },
+  pregunta:  { nombre:'Pregunta a la comunidad', emoji:'💬' },
+  historia:  { nombre:'Historia corta (ficción)', emoji:'📖' },
+  antes:     { nombre:'Antes / ahora',         emoji:'🔄' },
+  checklist: { nombre:'Checklist',             emoji:'✅' }
+};
+
+const PUNTOS_POR_LARGO = { corto:2, medio:3, largo:4 };
+
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+const memoria = {};
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function pickRot(clave, arr){
+  if(arr.length === 1) return arr[0];
+  let v, intentos = 0;
+  do { v = pick(arr); intentos++; } while(v === memoria[clave] && intentos < 8);
+  memoria[clave] = v;
+  return v;
+}
+function esc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function ciclo(arr, n){
+  const r = [];
+  for(let i = 0; i < n; i++) r.push(arr[i % arr.length]);
+  return r;
+}
+function mezclar(arr){
+  const a = arr.slice();
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function minuscula(s){ return s.charAt(0).toLowerCase() + s.slice(1); }
+function sinPunto(s){ return s.replace(/[.…]+$/,''); }
+function camel(s){
+  return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-zA-Z0-9 ]/g,' ').trim().split(/\s+/)
+    .map(p => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase()).join('');
+}
+
+/* ============================================================
+   ARMADO DEL CUERPO SEGÚN ÁNGULO
+   ============================================================ */
+function cuerpoSegunAngulo(angulo, h, n, tema){
+  const bene = mezclar(h.beneficios);
+  const dol  = mezclar(h.dolor);
+
+  if(angulo === 'tip'){
+    return { lineas: ciclo(bene, n).map((b,i) => (i+1) + '. ' + b) };
+  }
+  if(angulo === 'mito'){
+    return { lineas: ciclo(mezclar(h.mitos), Math.min(n, 3))
+      .map(x => x.m + '\n→ ' + x.r) };
+  }
+  if(angulo === 'error'){
+    const errores = ciclo(dol, Math.max(1, n-1)).map(d => '❌ ' + d);
+    return { lineas: errores.concat(['✅ ' + bene[0]]) };
+  }
+  if(angulo === 'pregunta'){
+    return { lineas: ciclo(bene, n), apertura: pickRot('preg_'+h.nombre, h.preguntas) };
+  }
+  if(angulo === 'historia'){
+    const r = h.relato;
+    return { lineas: [r.inicio, r.nudo, r.desenlace], remate: r.moraleja, ficcion: true };
+  }
+  if(angulo === 'antes'){
+    return { lineas: ciclo(dol, n).map((d,i) =>
+      'Antes: ' + d + '\nAhora: ' + bene[i % bene.length]) };
+  }
+  /* checklist */
+  return { lineas: ciclo(bene, n).map(b => '✅ ' + b) };
+}
+
+/* ============================================================
+   HASHTAGS, CTA, FECHA Y HORA
+   ============================================================ */
+function hashtagsDe(publico, h, tema){
+  const lista = HASHTAGS_BASE.concat(HASHTAGS_PUBLICO[publico], h.hashtags.slice(0,3));
+  if(tema){
+    const t = '#' + camel(tema);
+    if(t.length > 2) lista.push(t);
+  }
+  return lista.filter((x, i) => lista.indexOf(x) === i);   /* sin repetidos */
+}
+function horaSugerida(publico){
+  const bloques = publico === 'vets'
+    ? ['09:00','09:30','10:00','19:00','20:00']
+    : ['11:00','12:00','12:30','18:30','19:30'];
+  return pick(bloques);
+}
+function fechaSugerida(offsetDias){
+  const d = new Date();
+  d.setDate(d.getDate() + (offsetDias == null ? 1 + Math.floor(Math.random()*9) : offsetDias));
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+/* ============================================================
+   GENERADOR PRINCIPAL
+   ============================================================ */
+function elegirPublico(modo){
+  if(modo === 'vets' || modo === 'tutores') return modo;
+  return Math.random() < 0.8 ? 'vets' : 'tutores';   /* mezcla 80/20 de la estrategia */
+}
+function herramientasDe(publico){
+  return Object.keys(HERRAMIENTAS).filter(k => HERRAMIENTAS[k].publico === publico);
+}
+
+function generarPieza(op){
+  const publico = elegirPublico(op.publico);
+  const hid = (op.herramienta && op.herramienta !== 'auto' && HERRAMIENTAS[op.herramienta]
+               && HERRAMIENTAS[op.herramienta].publico === publico)
+    ? op.herramienta
+    : pickRot('herr_'+publico, herramientasDe(publico));
+  const h = HERRAMIENTAS[hid];
+
+  const angulo = (op.angulo && op.angulo !== 'auto')
+    ? op.angulo
+    : pickRot('ang_'+hid, Object.keys(ANGULOS));
+
+  const tema = (op.tema || '').trim();
+  const n = PUNTOS_POR_LARGO[op.largo || 'medio'];
+  const cuerpo = cuerpoSegunAngulo(angulo, h, n, tema);
+
+  /* Versiones cortas de la marca: siempre caben en la plantilla de imagen. */
+  const ganchoCorto = pickRot('g_'+hid, h.ganchos);
+  const cierreCorto = pickRot('c_'+hid, h.cierre);
+
+  const gancho = tema
+    ? pickRot('gt_'+hid, [
+        sinPunto(tema.charAt(0).toUpperCase() + tema.slice(1)) + ': lo que conviene tener resuelto antes.',
+        'Hablemos de ' + minuscula(tema) + ' y de por qué ' + h.corto + ' cambia el resultado.',
+        sinPunto(tema.charAt(0).toUpperCase() + tema.slice(1)) + ', y el detalle que casi nadie revisa.'
+      ])
+    : ganchoCorto;
+
+  const cierre = tema
+    ? 'Cuando aparece ' + minuscula(sinPunto(tema)) + ', lo que marca la diferencia es ' + h.promesa + '.'
+    : cierreCorto;
+
+  const p = {
+    id: Date.now() + '-' + Math.random().toString(36).slice(2,7),
+    formato: op.formato || 'post',
+    publico: publico,
+    herramientaId: hid,
+    herramienta: h.nombre,
+    herramientaCorto: h.corto,
+    emoji: h.emoji,
+    ganchoCorto: ganchoCorto,
+    cierreCorto: cierreCorto,
+    angulo: angulo,
+    anguloNombre: ANGULOS[angulo].nombre,
+    tema: tema,
+    gancho: gancho,
+    apertura: cuerpo.apertura || '',
+    lineas: cuerpo.lineas,
+    remate: cuerpo.remate || '',
+    ficcion: !!cuerpo.ficcion,
+    cierre: cierre,
+    cta: CTA[publico],
+    hashtags: hashtagsDe(publico, h, tema),
+    fecha: fechaSugerida(op.offsetDias),
+    hora: horaSugerida(publico)
+  };
+
+  if(p.formato === 'post')      armarPost(p, h);
+  if(p.formato === 'carrusel')  armarCarrusel(p, h);
+  if(p.formato === 'historia')  armarHistoria(p, h);
+  if(p.formato === 'reel')      armarReel(p, h);
+
+  p.caption = construirCaption(p);
+  p.chequeo = chequear(p);
+  return p;
+}
+
+function construirCaption(p){
+  const armar = conEmoji => {
+    const partes = [(conEmoji ? p.emoji + ' ' : '') + p.gancho];
+    if(p.apertura) partes.push(p.apertura);
+    partes.push(p.lineas.join('\n\n'));
+    if(p.remate) partes.push(p.remate);
+    partes.push(p.cierre);
+    partes.push('👉 ' + p.cta);
+    partes.push(p.hashtags.join(' '));
+    return partes.join('\n\n');
+  };
+  /* Los ángulos con ✅/❌ ya traen emoji: si se pasa de 5, se suelta el del encabezado. */
+  const cap = armar(true);
+  return contarEmoji(cap) > 5 ? armar(false) : cap;
+}
+
+/* ---------- POST ---------- */
+/* Las plantillas de imagen aceptan una línea corta por punto: de los pares
+   «mito / realidad» y «antes / ahora» se queda la mitad que lleva el mensaje. */
+function lineaParaImagen(l){
+  const limpio = l.replace(/^\d+\.\s*/,'');
+  const mito = limpio.split('\n→ ');
+  if(mito.length === 2) return 'Realidad: ' + mito[1];
+  const par = limpio.split('\nAhora: ');
+  if(par.length === 2) return 'Ahora: ' + par[1];
+  return limpio.replace(/\n/g,' ');
+}
+function armarPost(p, h){
+  p.visual = {
+    etiqueta: ETIQUETAS[p.herramientaId],
+    titulo: sinPunto(sinPunto(p.gancho).length <= 90 ? p.gancho : p.ganchoCorto),
+    destacado: DESTACADOS[p.herramientaId],
+    lineas: p.lineas.slice(0,4).map(lineaParaImagen),
+    cierre: sinPunto(sinPunto(p.cierre).length <= 70 ? p.cierre : p.cierreCorto)
+  };
+}
+
+/* ---------- CARRUSEL ---------- */
+function armarCarrusel(p, h){
+  const cards = [{
+    titulo: sinPunto(p.gancho),
+    linea: 'Desliza →',
+    rot: 'Portada'
+  }];
+  p.lineas.forEach((l, i) => {
+    const limpio = l.replace(/^\d+\.\s*/,'');
+    const corte = limpio.split('\n');
+    cards.push({
+      titulo: corte.length > 1 ? sinPunto(corte[0]).slice(0,60) : (i+1) + ' de ' + p.lineas.length,
+      linea: corte.length > 1 ? corte.slice(1).join(' ').replace(/^→ /,'') : limpio,
+      rot: 'Card ' + (i+2)
+    });
+  });
+  if(p.remate) cards.push({ titulo: sinPunto(p.remate), linea: p.cierre, rot:'Remate' });
+  cards.push({ titulo: p.herramientaCorto.charAt(0).toUpperCase() + p.herramientaCorto.slice(1),
+               linea: p.cta, rot:'Cierre' });
+  p.cards = cards;
+}
+
+/* ---------- HISTORIA ---------- */
+const STICKERS = [
+  'Encuesta: «¿te pasa?» → Sí / No',
+  'Slider de emoji para medir reacción',
+  'Caja de preguntas: «cuéntame tu caso»',
+  'Quiz de 2 opciones con la respuesta correcta',
+  'Sticker de link a encuentravet.cl',
+  'Cuenta regresiva para el próximo post'
+];
+function armarHistoria(p, h){
+  const frames = [{ rot:'Frame 1 · Gancho', texto: p.emoji + ' ' + p.gancho,
+                    sticker: pickRot('stk1', STICKERS.slice(0,4)) }];
+  p.lineas.slice(0,3).forEach((l, i) => {
+    frames.push({ rot:'Frame ' + (i+2), texto: l.replace(/^\d+\.\s*/,''), sticker:'' });
+  });
+  frames.push({
+    rot:'Frame ' + (frames.length+1) + ' · Cierre',
+    texto: (p.remate ? p.remate + '\n\n' : '') + p.cierre + '\n\n👉 ' + p.cta,
+    sticker:'Sticker de link a encuentravet.cl'
+  });
+  p.frames = frames;
+}
+
+/* ---------- REEL ---------- */
+function armarReel(p, h){
+  const bloques = [];
+  bloques.push({ t:'0-3 s', pantalla: sinPunto(p.gancho).slice(0,70), voz: p.gancho });
+  let seg = 3;
+  p.lineas.slice(0,3).forEach(l => {
+    const limpio = l.replace(/^\d+\.\s*/,'').replace(/\n→ /,'. ').replace(/\n/g,'. ');
+    const dur = 6;
+    bloques.push({
+      t: seg + '-' + (seg+dur) + ' s',
+      pantalla: sinPunto(limpio).slice(0,60),
+      voz: limpio
+    });
+    seg += dur;
+  });
+  bloques.push({
+    t: seg + '-' + (seg+5) + ' s',
+    pantalla: sinPunto(p.cierre).slice(0,60),
+    voz: p.cierre + ' ' + p.cta.replace('encuentravet.cl','encuentravet punto cl')
+  });
+  p.guion = bloques;
+  p.duracion = seg + 5;
+  /* Voz en off: ~2,5 palabras por segundo. */
+  p.narracion = bloques.map(b => b.voz).join(' ')
+    .replace(/[🔵📅📋🔔💚📍🔎🐾❌✅👉]/g,'').replace(/\s+/g,' ').trim();
+  p.palabras = p.narracion.split(/\s+/).length;
+}
+
+/* ============================================================
+   CHEQUEO DE LAS REGLAS DURAS DE LA MARCA
+   ============================================================ */
+function contarEmoji(txt){
+  const m = txt.match(/\p{Extended_Pictographic}/gu);
+  return m ? m.length : 0;
+}
+function cifrasSospechosas(p){
+  /* Los numeradores de lista («1. », «2. ») no son cifras de la marca: se descartan. */
+  const sinNumerar = p.caption.replace(/^\s*\d+\.\s/gm, '');
+  const numeros = (sinNumerar.match(/\d+/g) || []);
+  const delTema = (p.tema.match(/\d+/g) || []);
+  return numeros.filter(n =>
+    CIFRAS_PERMITIDAS.indexOf(n) === -1 && delTema.indexOf(n) === -1
+  );
+}
+function chequear(p){
+  const cap = p.caption;
+  const items = [];
+  const bloqueHash = p.hashtags.join(' ');
+  const iCta = cap.indexOf(p.cta), iHash = cap.indexOf(bloqueHash);
+  const cierraConCta = iCta !== -1 && iHash !== -1 && iCta < iHash && cap.trim().endsWith(bloqueHash);
+  items.push({ ok: cierraConCta, txt:'El caption cierra con «' + p.cta + '» y después los hashtags.' });
+  items.push({ ok: HASHTAGS_BASE.every(h => cap.indexOf(h) !== -1),
+               txt:'Incluye los hashtags base ' + HASHTAGS_BASE.join(' ') + '.' });
+  items.push({ ok: cap.length <= 1800, txt:'Largo del caption: ' + cap.length + ' de 1800 caracteres.' });
+
+  const em = contarEmoji(cap);
+  items.push({ ok: em >= 2 && em <= 5, txt:'Emoji en el caption: ' + em + ' (la guía pide entre 2 y 5).' });
+
+  const raras = cifrasSospechosas(p);
+  items.push({ ok: raras.length === 0,
+    txt: raras.length === 0
+      ? 'Todas las cifras salen de los datos reales de la marca.'
+      : 'Revisa estas cifras, no están en los datos reales: ' + raras.join(', ') + '.' });
+
+  if(p.visual){
+    const v = p.visual;
+    const largos = [];
+    if(v.etiqueta.length > 30)  largos.push('etiqueta ' + v.etiqueta.length + '/30');
+    if(v.titulo.length > 90)    largos.push('título ' + v.titulo.length + '/90');
+    if(v.destacado.length > 12) largos.push('destacado ' + v.destacado.length + '/12');
+    if(v.cierre.length > 70)    largos.push('cierre ' + v.cierre.length + '/70');
+    v.lineas.forEach((l, i) => { if(l.length > 110) largos.push('línea ' + (i+1) + ' ' + l.length + '/110'); });
+    items.push({ ok: largos.length === 0,
+      txt: largos.length === 0
+        ? 'El texto para la imagen cabe en las plantillas de la marca.'
+        : 'Acorta para la plantilla: ' + largos.join(', ') + '.' });
+  }
+  items.push({ ok:true, txt:'Conecta con una herramienta concreta: ' + p.herramienta + '.' });
+  if(p.ficcion){
+    items.push({ ok:true, txt:'Relato de ficción con personajes inventados: no nombra clínicas ni personas reales.' });
+  }
+  return items;
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function chipPublico(publico){
+  return publico === 'vets'
+    ? '<span class="chip vets">Veterinarios</span>'
+    : '<span class="chip tut">Tutores</span>';
+}
+function nl2br(s){ return esc(s).replace(/\n/g,'<br>'); }
+
+function captionHtml(p){
+  const cuerpo = nl2br(p.caption.replace(p.hashtags.join(' '), ''));
+  return cuerpo + '<span class="hash">' + esc(p.hashtags.join(' ')) + '</span>';
+}
+
+function bloquesFormato(p){
+  if(p.formato === 'post'){
+    const v = p.visual;
+    return '<div class="bloque dest"><div class="rot">Texto para la imagen</div>' +
+      '<p><b>' + esc(v.etiqueta) + '</b> · destacado: <b>' + esc(v.destacado) + '</b></p>' +
+      '<p><b>' + esc(v.titulo) + '</b></p>' +
+      '<ul class="lineas">' + v.lineas.map(l => '<li>' + esc(l) + '</li>').join('') + '</ul>' +
+      '<p style="margin-top:8px">' + esc(v.cierre) + '</p></div>';
+  }
+  if(p.formato === 'carrusel'){
+    return p.cards.map(c =>
+      '<div class="bloque"><div class="rot">' + esc(c.rot) + '</div>' +
+      '<p><b>' + esc(c.titulo) + '</b></p><p>' + esc(c.linea) + '</p></div>').join('');
+  }
+  if(p.formato === 'historia'){
+    return p.frames.map(f =>
+      '<div class="bloque"><div class="rot">' + esc(f.rot) + '</div>' +
+      '<p>' + nl2br(f.texto) + '</p>' +
+      (f.sticker ? '<p style="color:var(--ink2);font-size:14px">Sticker: ' + esc(f.sticker) + '</p>' : '') +
+      '</div>').join('');
+  }
+  /* reel */
+  return p.guion.map(b =>
+    '<div class="bloque"><div class="rot">' + esc(b.t) + '</div>' +
+    '<p><b>En pantalla:</b> ' + esc(b.pantalla) + '</p>' +
+    '<p style="color:var(--ink2)"><b>Voz:</b> ' + esc(b.voz) + '</p></div>').join('') +
+    '<div class="bloque dest"><div class="rot">Voz en off completa · ' + p.palabras +
+    ' palabras ≈ ' + p.duracion + ' s</div><p>' + esc(p.narracion) + '</p></div>';
+}
+
+function chequeoHtml(p){
+  const fallas = p.chequeo.filter(i => !i.ok);
+  return '<div class="chequeo' + (fallas.length ? ' mal' : '') + '">' +
+    '<div class="tit">' + (fallas.length ? 'Revisa antes de publicar' : 'Chequeo de reglas: todo en orden') + '</div>' +
+    '<ul>' + p.chequeo.map(i => '<li>' + (i.ok ? '✅ ' : '⚠️ ') + esc(i.txt) + '</li>').join('') + '</ul></div>';
+}
+
+const NOMBRE_FORMATO = { post:'Post', carrusel:'Carrusel', historia:'Historia', reel:'Reel' };
+
+function piezaHtml(p){
+  return '<article class="pieza" data-id="' + p.id + '">' +
+    '<div class="cab">' +
+      '<span class="chip amar">' + esc(NOMBRE_FORMATO[p.formato]) + '</span>' +
+      chipPublico(p.publico) +
+      '<span class="chip neutro">' + esc(p.herramienta) + '</span>' +
+      '<span class="chip neutro">' + esc(ANGULOS[p.angulo].emoji + ' ' + p.anguloNombre) + '</span>' +
+    '</div>' +
+    '<h3>' + esc(p.gancho) + '</h3>' +
+    bloquesFormato(p) +
+    '<div class="bloque dest"><div class="rot">Caption para Instagram</div>' +
+      '<div class="caption">' + captionHtml(p) + '</div></div>' +
+    chequeoHtml(p) +
+    '<div class="meta-linea">' +
+      '<span>Publicar sugerido: <b>' + esc(p.fecha) + '</b> a las <b>' + esc(p.hora) + '</b></span>' +
+      (p.tema ? '<span>Tema: <b>' + esc(p.tema) + '</b></span>' : '') +
+    '</div>' +
+    '<div class="fila-botones">' +
+      '<button class="btn mini" data-acc="caption">Copiar caption</button>' +
+      '<button class="btn sec mini" data-acc="todo">Copiar pieza completa</button>' +
+      '<button class="btn sec mini" data-acc="otra">Otra variante</button>' +
+      '<button class="btn amar mini" data-acc="guardar">Guardar</button>' +
+    '</div>' +
+  '</article>';
+}
+
+/* ============================================================
+   TEXTO PLANO (copiar y exportar)
+   ============================================================ */
+function piezaTexto(p){
+  const L = [];
+  L.push('# ' + NOMBRE_FORMATO[p.formato] + ' · ' + (p.publico === 'vets' ? 'Veterinarios' : 'Tutores'));
+  L.push('Herramienta: ' + p.herramienta + ' | Ángulo: ' + p.anguloNombre);
+  if(p.tema) L.push('Tema: ' + p.tema);
+  L.push('Publicar: ' + p.fecha + ' ' + p.hora);
+  L.push('');
+  if(p.formato === 'post'){
+    L.push('## Texto para la imagen');
+    L.push('Etiqueta: ' + p.visual.etiqueta + ' | Destacado: ' + p.visual.destacado);
+    L.push('Título: ' + p.visual.titulo);
+    p.visual.lineas.forEach(l => L.push('- ' + l));
+    L.push('Cierre: ' + p.visual.cierre);
+  }
+  if(p.formato === 'carrusel'){
+    L.push('## Carrusel');
+    p.cards.forEach(c => L.push(c.rot + ': ' + c.titulo + ' — ' + c.linea));
+  }
+  if(p.formato === 'historia'){
+    L.push('## Historia');
+    p.frames.forEach(f => {
+      L.push(f.rot + ': ' + f.texto.replace(/\n/g,' '));
+      if(f.sticker) L.push('  Sticker: ' + f.sticker);
+    });
+  }
+  if(p.formato === 'reel'){
+    L.push('## Guion del reel (' + p.duracion + ' s)');
+    p.guion.forEach(b => {
+      L.push(b.t + ' | En pantalla: ' + b.pantalla);
+      L.push('       | Voz: ' + b.voz);
+    });
+    L.push('');
+    L.push('Voz en off (' + p.palabras + ' palabras): ' + p.narracion);
+  }
+  L.push('');
+  L.push('## Caption');
+  L.push(p.caption);
+  return L.join('\n');
+}
+
+/* ============================================================
+   ESTADO Y ALMACENAMIENTO
+   ============================================================ */
+const estado = { publico:'auto', formato:'post', largo:'medio' };
+let piezas = [];   /* piezas visibles en pantalla */
+
+const LS_GUARDADOS = 'evgen_guardados';
+const LS_TEMA = 'evgen_tema';
+function leerGuardados(){
+  try{ return JSON.parse(localStorage.getItem(LS_GUARDADOS) || '[]'); }catch(e){ return []; }
+}
+function escribirGuardados(a){
+  try{ localStorage.setItem(LS_GUARDADOS, JSON.stringify(a)); }
+  catch(e){ toast('No se pudo guardar: memoria del navegador llena'); }
+}
+
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('ver');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove('ver'), 2200);
+}
+function copiar(txt, msg){
+  const ok = () => toast(msg || 'Copiado');
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(ok, () => copiarFallback(txt, ok));
+  } else {
+    copiarFallback(txt, ok);
+  }
+}
+function copiarFallback(txt, ok){
+  const ta = document.createElement('textarea');
+  ta.value = txt;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try{ document.execCommand('copy'); ok(); }
+  catch(e){ toast('Tu navegador no dejó copiar: selecciona el texto a mano'); }
+  document.body.removeChild(ta);
+}
+function descargar(nombre, texto){
+  const blob = new Blob([texto], { type:'text/markdown;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = nombre;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); document.body.removeChild(a); }, 0);
+}
+
+/* ============================================================
+   PINTAR
+   ============================================================ */
+function pintarPiezas(){
+  document.getElementById('zona-resultado').innerHTML = piezas.map(piezaHtml).join('');
+}
+function pintarGuardados(){
+  const g = leerGuardados();
+  document.getElementById('cuenta-guardados').textContent = g.length;
+  const cont = document.getElementById('lista-guardados');
+  if(!g.length){
+    cont.innerHTML = '<p class="vacio">Todavía no guardas nada. Genera una pieza y presiona «Guardar».</p>';
+    return;
+  }
+  cont.innerHTML = g.map(p =>
+    '<div class="guardado-item" data-id="' + p.id + '">' +
+      '<div class="cab">' +
+        '<span class="chip amar">' + esc(NOMBRE_FORMATO[p.formato]) + '</span>' +
+        chipPublico(p.publico) +
+        '<span class="chip neutro">' + esc(p.fecha + ' · ' + p.hora) + '</span>' +
+      '</div>' +
+      '<p style="margin:0 0 8px"><b>' + esc(p.gancho) + '</b></p>' +
+      '<pre>' + esc(p.caption) + '</pre>' +
+      '<div class="fila-botones">' +
+        '<button class="btn sec mini" data-gacc="caption">Copiar caption</button>' +
+        '<button class="btn sec mini" data-gacc="borrar">Borrar</button>' +
+      '</div>' +
+    '</div>').join('');
+}
+function pintarDatos(){
+  document.getElementById('lista-datos').innerHTML =
+    '<li><b>Datos reales que puede usar el generador:</b></li>' +
+    DATOS_REALES.map(d => '<li>' + esc(d) + '</li>').join('');
+}
+
+/* ============================================================
+   SELECTORES
+   ============================================================ */
+function llenarSelectores(){
+  const pub = estado.publico;
+  const sel = document.getElementById('sel-herramienta');
+  const previa = sel.value;
+  const ids = (pub === 'auto')
+    ? Object.keys(HERRAMIENTAS)
+    : herramientasDe(pub === 'vets' ? 'vets' : 'tutores');
+  sel.innerHTML = '<option value="auto">Automático (rota entre todas)</option>' +
+    ids.map(id => '<option value="' + id + '">' + esc(HERRAMIENTAS[id].emoji + ' ' + HERRAMIENTAS[id].nombre) + '</option>').join('');
+  if(ids.indexOf(previa) !== -1) sel.value = previa;
+
+  const sa = document.getElementById('sel-angulo');
+  if(!sa.options.length){
+    sa.innerHTML = '<option value="auto">Automático (rota entre todos)</option>' +
+      Object.keys(ANGULOS).map(k => '<option value="' + k + '">' + esc(ANGULOS[k].emoji + ' ' + ANGULOS[k].nombre) + '</option>').join('');
+  }
+}
+function opciones(extra){
+  const o = {
+    publico: estado.publico,
+    formato: estado.formato,
+    largo: estado.largo,
+    herramienta: document.getElementById('sel-herramienta').value,
+    angulo: document.getElementById('sel-angulo').value,
+    tema: document.getElementById('inp-tema').value
+  };
+  return Object.assign(o, extra || {});
+}
+
+/* ============================================================
+   EVENTOS
+   ============================================================ */
+function conectarSeg(id, clave){
+  document.getElementById(id).addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if(!b) return;
+    [].forEach.call(e.currentTarget.querySelectorAll('button'),
+      x => x.setAttribute('aria-pressed', String(x === b)));
+    estado[clave] = b.dataset.v;
+    if(clave === 'publico') llenarSelectores();
+  });
+}
+conectarSeg('seg-publico','publico');
+conectarSeg('seg-formato','formato');
+conectarSeg('seg-largo','largo');
+
+document.getElementById('btn-generar').addEventListener('click', () => {
+  piezas = [generarPieza(opciones())];
+  pintarPiezas();
+  document.getElementById('zona-resultado').scrollIntoView({ behavior:'smooth', block:'start' });
+});
+
+document.getElementById('btn-lote').addEventListener('click', () => {
+  /* Semana de 5 publicaciones: 4 para veterinarios y 1 para tutores (mezcla 80/20). */
+  const publicos = mezclar(['vets','vets','vets','vets','tutores']);
+  const formatos = mezclar(['post','carrusel','historia','reel','post']);
+  piezas = publicos.map((pub, i) => generarPieza(opciones({
+    publico: pub,
+    formato: formatos[i],
+    herramienta: 'auto',
+    angulo: 'auto',
+    offsetDias: i + 1
+  })));
+  pintarPiezas();
+  toast('Semana lista: 4 piezas para veterinarios y 1 para tutores');
+  document.getElementById('zona-resultado').scrollIntoView({ behavior:'smooth', block:'start' });
+});
+
+document.getElementById('btn-limpiar').addEventListener('click', () => {
+  piezas = [];
+  pintarPiezas();
+  document.getElementById('inp-tema').value = '';
+});
+
+document.getElementById('zona-resultado').addEventListener('click', e => {
+  const b = e.target.closest('button[data-acc]');
+  if(!b) return;
+  const art = b.closest('.pieza');
+  const idx = piezas.findIndex(x => x.id === art.dataset.id);
+  if(idx === -1) return;
+  const p = piezas[idx];
+  if(b.dataset.acc === 'caption') copiar(p.caption, 'Caption copiado');
+  if(b.dataset.acc === 'todo')    copiar(piezaTexto(p), 'Pieza completa copiada');
+  if(b.dataset.acc === 'otra'){
+    piezas[idx] = generarPieza(opciones({
+      publico: p.publico,
+      formato: p.formato,
+      herramienta: p.herramientaId,
+      angulo: document.getElementById('sel-angulo').value
+    }));
+    pintarPiezas();
+  }
+  if(b.dataset.acc === 'guardar'){
+    const g = leerGuardados();
+    if(g.some(x => x.caption === p.caption)){ toast('Esa pieza ya estaba guardada'); return; }
+    g.unshift(p);
+    escribirGuardados(g);
+    pintarGuardados();
+    toast('Guardado');
+  }
+});
+
+document.getElementById('lista-guardados').addEventListener('click', e => {
+  const b = e.target.closest('button[data-gacc]');
+  if(!b) return;
+  const id = b.closest('.guardado-item').dataset.id;
+  const g = leerGuardados();
+  const p = g.find(x => x.id === id);
+  if(!p) return;
+  if(b.dataset.gacc === 'caption') copiar(p.caption, 'Caption copiado');
+  if(b.dataset.gacc === 'borrar'){
+    escribirGuardados(g.filter(x => x.id !== id));
+    pintarGuardados();
+  }
+});
+
+function guardadosMarkdown(){
+  const g = leerGuardados();
+  return '# Contenido EncuentraVet\n\n' + g.map(piezaTexto).join('\n\n---\n\n');
+}
+document.getElementById('btn-copiar-todo').addEventListener('click', () => {
+  if(!leerGuardados().length){ toast('No hay nada guardado'); return; }
+  copiar(guardadosMarkdown(), 'Todo copiado');
+});
+document.getElementById('btn-exportar').addEventListener('click', () => {
+  if(!leerGuardados().length){ toast('No hay nada guardado'); return; }
+  descargar('contenido-encuentravet-' + fechaSugerida(0) + '.md', guardadosMarkdown());
+});
+document.getElementById('btn-vaciar').addEventListener('click', () => {
+  if(!leerGuardados().length){ toast('No hay nada guardado'); return; }
+  if(!confirm('¿Borrar todo el contenido guardado en este navegador?')) return;
+  escribirGuardados([]);
+  pintarGuardados();
+});
+
+document.getElementById('inp-tema').addEventListener('keydown', e => {
+  if(e.key === 'Enter') document.getElementById('btn-generar').click();
+});
+
+/* Tema claro / oscuro */
+document.getElementById('btn-tema').addEventListener('click', () => {
+  const actual = document.documentElement.getAttribute('data-theme');
+  const oscuroSistema = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const nuevo = actual ? (actual === 'dark' ? 'light' : 'dark') : (oscuroSistema ? 'light' : 'dark');
+  document.documentElement.setAttribute('data-theme', nuevo);
+  try{ localStorage.setItem(LS_TEMA, nuevo); }catch(e){}
+});
+try{
+  const t = localStorage.getItem(LS_TEMA);
+  if(t) document.documentElement.setAttribute('data-theme', t);
+}catch(e){}
+
+/* Arranque */
+llenarSelectores();
+pintarDatos();
+pintarGuardados();
+piezas = [generarPieza(opciones())];
+pintarPiezas();
+</script>

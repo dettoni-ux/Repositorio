@@ -22,6 +22,29 @@ el directorio de veterinarios verificados de Chile.
 - **Biblioteca de guardados**: el contenido y los planes que marcas como guardados quedan
   disponibles para copiar o exportar.
 
+## Generador de textos (`generador-encuentravet.html`)
+
+Página aparte, más simple y enfocada solo en **escribir**: no dibuja imágenes ni videos,
+entrega el texto listo para pegar. Cada pieza nace de una herramienta concreta de la
+plataforma (insignia azul, agenda online, ficha clínica, recordatorios, 0% comisión,
+búsqueda por comuna, y del lado de los tutores buscar y reservar, ficha gratis e insignia azul),
+siguiendo la estrategia de `rrss/identidad.md`.
+
+- **Cuatro formatos**: post (con el texto sugerido para la imagen), carrusel card por card,
+  historia frame a frame con stickers, y reel con guion por tiempos y voz en off calculada
+  a 2,5 palabras por segundo.
+- **Siete ángulos**: tip, mito vs realidad, error común, pregunta, historia de ficción,
+  antes/ahora y checklist. Cada clic entrega una variante distinta.
+- **Mezcla 80/20** entre veterinarios y tutores, como pide la estrategia. «Generar semana»
+  arma cinco piezas (cuatro para veterinarios, una para tutores) con fecha y hora sugeridas.
+- **Chequeo de reglas** en cada pieza: que el caption cierre con el CTA del público y después
+  los hashtags, que estén los hashtags base, el largo, la cantidad de emoji, que el texto quepa
+  en las plantillas de imagen y —lo más importante— que **ninguna cifra salga de los datos
+  reales de la marca**. Si aparece un número que no está en esa lista, lo marca para revisión.
+- **Guardados** en el navegador, con copiar caption, copiar la pieza completa y exportar todo a `.md`.
+
+Abrir el archivo en cualquier navegador. Funciona sin servidor, sin dependencias y sin conexión.
+
 ## Pilares de contenido
 
 Educación y bienestar · Confianza y verificación · Cómo funciona · Comunidad y comunas ·
