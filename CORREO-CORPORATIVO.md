@@ -21,7 +21,7 @@ node scripts/verificar-correo-dns.mjs
 |---|---|---|
 | **Nameservers** | `ns1.vercel-dns.com`, `ns2.vercel-dns.com` | El DNS **se administra en Vercel**, no en NIC Chile |
 | **MX** | *(ninguno)* | El dominio **no puede recibir correo** |
-| **SPF** | `v=spf1 include:amazonses.com -all` | Solo autoriza Amazon SES, y en modo estricto |
+| **SPF** | `v=spf1 include:amazonses.com -all` | **Roto**: `amazonses.com` no publica SPF → PermError |
 | **DKIM** | *(ninguno en los selectores estándar)* | Falta firmar el correo saliente |
 | **DMARC** | `v=DMARC1; p=quarantine; rua=mailto:encuentra.vet@gmail.com; fo=1; adkim=r; aspf=r` | Política correcta, pero los reportes no llegan (ver abajo) |
 | **A / wildcard** | `*.encuentravet.cl` → IPs de Vercel | `mail.` y `autodiscover.` responden por el comodín, no son servidores de correo |
@@ -37,12 +37,21 @@ NIC Chile solo se toca si algún día quieres cambiar los nameservers.
 
 ### ⚠️ Dos hallazgos que hay que corregir sí o sí
 
-**1. El SPF actual romperá el correo del proveedor que elijas.**
-`v=spf1 include:amazonses.com -all` autoriza **solo** a Amazon SES (el que usa el sitio para
-sus correos automáticos) y el `-all` final significa *"cualquier otro remitente es falso,
-recházalo"*. Si activas Zoho (o Google) sin tocar este registro, **todo lo que envíes desde
-contacto@encuentravet.cl fallará SPF** y, con `p=quarantine` en DMARC, se irá derecho a spam.
-Hay que **editar** el registro existente (no crear uno nuevo: dos SPF invalidan ambos).
+**1. El SPF actual está roto, y no por el proveedor nuevo.**
+El `-all` final significa *"cualquier remitente que no esté autorizado aquí es falso"*, así que
+si activas Zoho sin tocarlo, todo lo que envíes fallará SPF y con `p=quarantine` se irá a spam.
+Pero hay algo peor y anterior: **`amazonses.com` no publica ningún registro SPF** (verificado
+contra los resolvers de Google y de Cloudflare). Según la RFC 7208 §5.2, un `include:` que
+apunta a un dominio sin SPF devuelve **PermError**, y eso **anula el registro completo**. O sea
+que el SPF de encuentravet.cl no ha estado protegiendo nada desde antes de esta migración.
+
+Además, Amazon SES solo usa tu dominio como remitente de sobre si configuras un *MAIL FROM
+personalizado*, que requiere un MX en un subdominio. No existe ninguno
+(revisé `mail.`, `bounce.` y `correo.`), así que los correos del sitio salen con remitente de
+sobre `@amazonses.com` y **el SPF de tu dominio ni siquiera se consulta para ellos**.
+
+Conclusión: `include:amazonses.com` no aporta nada y sí hace daño. El registro correcto es
+**`v=spf1 include:zohomail.com -all`**.
 
 **2. Los reportes DMARC no te están llegando.**
 El `rua=` apunta a `encuentra.vet@gmail.com`, que es un dominio distinto. La norma (RFC 7489)
@@ -121,7 +130,7 @@ se enruta a Zoho antes de que exista el buzón que lo recibe.
 | 2 | *(vacío)* | MX | `10` | `mx.zoho.com` | **Agregar** |
 | 3 | *(vacío)* | MX | `20` | `mx2.zoho.com` | **Agregar** |
 | 4 | *(vacío)* | MX | `50` | `mx3.zoho.com` | **Agregar** |
-| 5 | *(vacío)* | TXT | — | `v=spf1 include:amazonses.com include:zohomail.com -all` | **EDITAR el SPF existente** |
+| 5 | *(vacío)* | TXT | — | `v=spf1 include:zohomail.com -all` | **EDITAR el SPF existente** |
 | 6 | `zmail._domainkey` | TXT | — | *(la clave DKIM del panel, paso 3.3)* | **Agregar** |
 | 7 | `_dmarc` | TXT | — | `v=DMARC1; p=quarantine; rua=mailto:dmarc@encuentravet.cl; ruf=mailto:dmarc@encuentravet.cl; fo=1; adkim=r; aspf=r; pct=100` | **EDITAR el DMARC existente** |
 
@@ -130,9 +139,10 @@ se enruta a Zoho antes de que exista el buzón que lo recibe.
 - **Prioridades y selector:** las de arriba son las habituales del centro de datos US, pero
   **copia siempre las que muestre tu panel de DNS Mapping** — Zoho varía la prioridad del tercer
   MX (30 o 50) y el nombre del selector DKIM (`zmail` o `zoho`) según la cuenta.
-- **Registro 5 (SPF):** es una **edición del registro existente**, no uno nuevo. Si borras
-  `include:amazonses.com` rompes los correos automáticos del sitio; si creas un segundo SPF,
-  se invalidan los dos y todo tu correo falla la autenticación.
+- **Registro 5 (SPF):** es una **edición del registro existente**, no uno nuevo. Si creas un
+  segundo SPF, los dos se invalidan y todo tu correo falla la autenticación. `include:amazonses.com`
+  se **elimina** a propósito: apunta a un dominio sin SPF y provoca PermError (ver sección 1).
+  Si algún día configuras un MAIL FROM personalizado en SES, ahí sí habría que reincorporarlo.
 - **Registro 7 (DMARC):** también es **edición**. Cambiar el `rua` a una dirección del propio
   dominio es lo que hace que por fin te lleguen los reportes.
 - **No mezcles proveedores:** si algún día pruebas Google, los MX de Zoho se eliminan primero.
@@ -195,7 +205,7 @@ registros DNS:
 |---|---|---|---|
 | *(vacío)* | TXT | — | `google-site-verification=XXXXXXXX` |
 | *(vacío)* | MX | `1` | `smtp.google.com` ← **un solo MX**, no los antiguos `ASPMX…` |
-| *(vacío)* | TXT | — | `v=spf1 include:amazonses.com include:_spf.google.com -all` |
+| *(vacío)* | TXT | — | `v=spf1 include:_spf.google.com -all` |
 | `google._domainkey` | TXT | — | clave DKIM de admin.google.com |
 
 Registro en **https://workspace.google.com/business/signup/welcome** (Business Starter, 1 usuario)
@@ -325,7 +335,7 @@ Marca cada punto antes de darlo por terminado:
 - [ ] Cuenta creada con `contacto@encuentravet.cl` (Zoho Mail Lite, facturación anual)
 - [ ] TXT de verificación agregado en Vercel y **dominio verificado** en el panel
 - [ ] Los 3 MX de Zoho cargados (y **ningún MX de otro proveedor**)
-- [ ] SPF **editado** a `v=spf1 include:amazonses.com include:zohomail.com -all` — un solo registro
+- [ ] SPF **editado** a `v=spf1 include:zohomail.com -all` — un solo registro, sin includes rotos
 - [ ] DKIM generado en el panel, publicado en `zmail._domainkey` y **verificado**
 - [ ] Gmail configurado para recibir (POP) y enviar (SMTP) como contacto@
 - [ ] DMARC editado con `rua=mailto:dmarc@encuentravet.cl`

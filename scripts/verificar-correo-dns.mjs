@@ -63,7 +63,39 @@ else {
   } else {
     mal('el SPF no autoriza a Google ni a Zoho');
   }
-  r.includes('amazonses.com') ? ok('incluye Amazon SES (correos del sitio)') : ojo('ya no incluye amazonses.com: confirma que el sitio no envía por SES');
+  // Los include: se resuelven en cadena. Un include a un dominio sin SPF
+  // devuelve PermError (RFC 7208 §5.2) y anula TODO el registro, y pasadas
+  // 10 consultas DNS ocurre lo mismo.
+  let consultas = 0;
+  const rotos = [];
+  const recorrer = async (dom, nivel) => {
+    let hijo;
+    try {
+      hijo = (await resolver.resolveTxt(dom)).map((q) => q.join(''))
+        .find((t) => t.toLowerCase().startsWith('v=spf1'));
+    } catch { hijo = undefined; }
+    if (!hijo) { rotos.push(dom); return; }
+    for (const term of hijo.split(/\s+/)) {
+      const m = /^(include:|redirect=)(.+)$/i.exec(term);
+      if (/^(a|mx|ptr|exists:)/i.test(term)) consultas++;
+      if (!m) continue;
+      consultas++;
+      if (nivel < 8) await recorrer(m[2], nivel + 1);
+    }
+  };
+  for (const term of r.split(/\s+/)) {
+    const m = /^(include:|redirect=)(.+)$/i.exec(term);
+    if (/^(a|mx|ptr|exists:)/i.test(term)) consultas++;
+    if (!m) continue;
+    consultas++;
+    await recorrer(m[2], 1);
+  }
+  for (const d of rotos) mal(`include:${d} no tiene registro SPF → PermError: anula todo el SPF`);
+  if (!rotos.length) ok('todos los include: resuelven a un SPF válido');
+  consultas <= 10
+    ? ok(`${consultas} de 10 consultas DNS permitidas`)
+    : mal(`${consultas} consultas DNS: supera el límite de 10 → PermError`);
+
   if (r.includes('-all')) ok('termina en -all (rechazo estricto)');
   else if (r.includes('~all')) ojo('termina en ~all (softfail): sirve para probar, endurece a -all al final');
   else mal('no termina en -all ni ~all');
