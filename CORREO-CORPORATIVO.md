@@ -33,10 +33,10 @@ NIC Chile solo se toca si algún día quieres cambiar los nameservers.
 
 ### ⚠️ Dos hallazgos que hay que corregir sí o sí
 
-**1. El SPF actual romperá el correo de Google.**
+**1. El SPF actual romperá el correo del proveedor que elijas.**
 `v=spf1 include:amazonses.com -all` autoriza **solo** a Amazon SES (el que usa el sitio para
 sus correos automáticos) y el `-all` final significa *"cualquier otro remitente es falso,
-recházalo"*. Si activas Google Workspace sin tocar este registro, **todo lo que envíes desde
+recházalo"*. Si activas Zoho (o Google) sin tocar este registro, **todo lo que envíes desde
 contacto@encuentravet.cl fallará SPF** y, con `p=quarantine` en DMARC, se irá derecho a spam.
 Hay que **editar** el registro existente (no crear uno nuevo: dos SPF invalidan ambos).
 
@@ -48,100 +48,148 @@ y Yahoo descartan esos reportes. Se arregla apuntando el `rua=` a una casilla de
 
 ---
 
-## 2. Google Workspace vs Zoho Mail — para tu caso
+## 2. Zoho Mail vs Google Workspace — para tu caso
 
-| | **Google Workspace** (Business Starter) | **Zoho Mail** (Mail Lite) |
-|---|---|---|
-| **Precio** | USD 8,40 / usuario / mes con plan anual ≈ **$8.000–8.500 CLP + IVA** | USD 1 / usuario / mes anual ≈ **$1.000 CLP + IVA** |
-| **Plan gratis** | No (14 días de prueba) | Sí, hasta 5 usuarios — **pero sin IMAP** |
-| **Migración desde Gmail** | Nula: es el mismo Gmail, misma app, mismos atajos | Webmail y app distintos; hay que reaprender |
-| **Alias adicionales** | Hasta 30 alias **gratis** por casilla | Alias incluidos también |
-| **Entregabilidad** | La mejor del mercado; reputación de infraestructura Google | Buena, pero rangos de IP compartidos con más cuentas de bajo costo |
-| **Almacenamiento** | 30 GB por usuario | 5 GB (Lite) / 10 GB |
+Costo real para **una casilla**, que es lo que necesitas:
 
-### Recomendación: **Google Workspace**
+| | **Zoho Mail Lite** | **Zoho gratis** | **Google Workspace Starter** |
+|---|---|---|---|
+| **Precio** | USD 1/usuario/mes anual ≈ **$12.000 CLP al AÑO** | **$0** | USD 8,40/mes ≈ **$102.000 CLP al año + IVA** |
+| **Usarlo desde Gmail** | ✅ Sí (IMAP/POP/SMTP) | ❌ **No** | ✅ Es Gmail |
+| **IMAP / POP / SMTP** | ✅ | ❌ | ✅ |
+| **Almacenamiento** | 5 GB (10 GB por USD 1,25) | 5 GB | 30 GB |
+| **Usuarios** | Los que quieras, sin mínimo | Hasta 5 | Por licencia |
+| **Alias** | ✅ | ✅ | ✅ |
+| **Incluye Drive/Meet/Docs** | ❌ | ❌ | ✅ |
 
-Ya vives en Gmail, así que la migración es prácticamente inexistente: entras con otra cuenta y
-todo funciona igual. Frente a marcas grandes como Zoetis o Salcobrand —que filtran fuerte— salir
-desde infraestructura de Google con SPF y DKIM alineados es la posición más segura, y el plan
-gratuito de Zoho queda descartado porque **sin IMAP no puedes leer ese correo desde la app de
-Gmail**. La diferencia real de costo es de unos **$7.500 CLP al mes**: barato por no arriesgar
-que una cotización caiga en spam.
+Dicho de otra forma: **lo que Google te cobra en un mes, Zoho Lite te lo cobra en un año.**
 
-**Costo total para tu caso: 1 sola licencia (~$8.500 CLP + IVA/mes).** `ventas@` y `marketing@`
-van como **alias gratuitos** de la misma casilla, no como usuarios pagados.
+### Recomendación: **Zoho Mail Lite**
+
+Para 1-3 casillas de correspondencia uno a uno, pagar 8,5 veces más por Google no se justifica.
+Lo que realmente decide si tus correos llegan a la bandeja de entrada de Zoetis o Salcobrand no
+es la marca del proveedor, sino tener **SPF, DKIM y DMARC bien alineados** — y eso lo vamos a
+configurar igual en cualquiera de los dos. La ventaja de entregabilidad de Google existe, pero
+es marginal en este uso y pesa sobre todo en envíos masivos, no en responder cotizaciones.
+
+Las funciones de Google que sí valen (Drive, Meet, Docs) ya las tienes gratis en tu cuenta
+personal, así que estarías pagando dos veces por lo mismo.
+
+**Por qué Lite y no el plan gratis:** el plan gratuito de Zoho **no incluye IMAP, POP ni SMTP
+externo**. Eso significa que quedas encerrado en el webmail y la app de Zoho: no podrías leer ni
+responder contacto@encuentravet.cl desde Gmail. Por **USD 12 al año** (~$1.000 CLP al mes)
+recuperas exactamente eso y sigues trabajando desde la bandeja de Gmail de siempre.
+
+> El plan gratis es una opción legítima **solo si** aceptas usar la app de Zoho en vez de Gmail.
+> Funciona bien y recibe sin problemas; simplemente es otra aplicación.
 
 ---
 
-## 3. Configuración paso a paso
+## 3. Configuración paso a paso (Zoho Mail Lite)
 
 ### 3.1 Crear la cuenta
 
-1. Entra a **https://workspace.google.com/business/signup/welcome**
-2. Plan: **Business Starter**, **1 usuario** (los alias no se pagan).
-3. Cuando pregunte por el dominio, elige *"Sí, tengo un dominio"* → `encuentravet.cl`.
-4. Crea el usuario administrador: **contacto@encuentravet.cl**.
-5. Google te mostrará un código de verificación del tipo
-   `google-site-verification=XXXXXXXX`. **Cópialo, no cierres la ventana.**
-
-> Ojo: el dominio ya tiene un `google-site-verification` de otro producto (Search Console).
-> Ese se **deja tal cual**; el nuevo se agrega como un TXT adicional. Varios TXT conviven sin
-> problema — la regla de "solo uno" aplica únicamente a SPF y a DMARC.
+1. Entra a **https://www.zoho.com/mail/zohomail-pricing.html** y elige **Mail Lite**
+   (5 GB, USD 1/usuario/mes) con facturación **anual**. Cantidad de usuarios: **1**.
+2. Regístrate con la opción **"Sign up with a domain I already own"** → `encuentravet.cl`.
+3. Elige el centro de datos **US (zoho.com)**: es el que corresponde a Chile y determina los
+   valores DNS que verás.
+4. Crea el administrador: **contacto@encuentravet.cl**.
+5. En el panel: **Panel de administración → Dominios → encuentravet.cl → DNS Mapping**.
+   Ahí Zoho te muestra *tus* valores exactos de verificación, MX y DKIM.
 
 ### 3.2 Registros a crear en Vercel
 
-En **Domains → encuentravet.cl → DNS Records**. Para el dominio raíz, el campo *Name* se deja
-**vacío** (Vercel lo interpreta como `@`). Pega los valores **sin comillas**.
+En **Domains → encuentravet.cl → DNS Records**. Para el dominio raíz el campo *Name* va
+**vacío** (Vercel lo toma como `@`). Pega los valores **sin comillas**.
 
 | # | Name | Type | Priority | Value | Acción |
 |---|---|---|---|---|---|
-| 1 | *(vacío)* | TXT | — | `google-site-verification=XXXXXXXX` *(el que te dio Google)* | **Agregar** |
-| 2 | *(vacío)* | MX | `1` | `smtp.google.com` | **Agregar** |
-| 3 | *(vacío)* | TXT | — | `v=spf1 include:amazonses.com include:_spf.google.com -all` | **EDITAR el SPF existente** |
-| 4 | `google._domainkey` | TXT | — | *(la clave DKIM que genera la consola, paso 3.3)* | **Agregar** |
-| 5 | `_dmarc` | TXT | — | `v=DMARC1; p=quarantine; rua=mailto:dmarc@encuentravet.cl; ruf=mailto:dmarc@encuentravet.cl; fo=1; adkim=r; aspf=r; pct=100` | **EDITAR el DMARC existente** |
+| 1 | *(vacío)* | TXT | — | `zoho-verification=zbXXXXXXXX.zmverify.zoho.com` *(el tuyo, del panel)* | **Agregar** |
+| 2 | *(vacío)* | MX | `10` | `mx.zoho.com` | **Agregar** |
+| 3 | *(vacío)* | MX | `20` | `mx2.zoho.com` | **Agregar** |
+| 4 | *(vacío)* | MX | `50` | `mx3.zoho.com` | **Agregar** |
+| 5 | *(vacío)* | TXT | — | `v=spf1 include:amazonses.com include:zohomail.com -all` | **EDITAR el SPF existente** |
+| 6 | `zmail._domainkey` | TXT | — | *(la clave DKIM del panel, paso 3.3)* | **Agregar** |
+| 7 | `_dmarc` | TXT | — | `v=DMARC1; p=quarantine; rua=mailto:dmarc@encuentravet.cl; ruf=mailto:dmarc@encuentravet.cl; fo=1; adkim=r; aspf=r; pct=100` | **EDITAR el DMARC existente** |
 
 **Notas críticas:**
 
-- **Registro 2 (MX):** Google usa hoy **un solo MX**, `smtp.google.com` con prioridad `1`.
-  No agregues además los antiguos `ASPMX.L.GOOGLE.COM` / `ALT1…ALT4`: es uno **o** los otros,
-  nunca ambos.
-- **Registro 3 (SPF):** es una **edición**, no un registro nuevo. Borrar `include:amazonses.com`
-  rompería los correos automáticos del sitio; crear un segundo SPF invalida los dos.
-- **Registro 5 (DMARC):** también es una **edición**. Cambiar el `rua` a una dirección del propio
-  dominio es lo que hace que por fin recibas los reportes.
+- **Prioridades y selector:** las de arriba son las habituales del centro de datos US, pero
+  **copia siempre las que muestre tu panel de DNS Mapping** — Zoho varía la prioridad del tercer
+  MX (30 o 50) y el nombre del selector DKIM (`zmail` o `zoho`) según la cuenta.
+- **Registro 5 (SPF):** es una **edición del registro existente**, no uno nuevo. Si borras
+  `include:amazonses.com` rompes los correos automáticos del sitio; si creas un segundo SPF,
+  se invalidan los dos y todo tu correo falla la autenticación.
+- **Registro 7 (DMARC):** también es **edición**. Cambiar el `rua` a una dirección del propio
+  dominio es lo que hace que por fin te lleguen los reportes.
+- **No mezcles proveedores:** si algún día pruebas Google, los MX de Zoho se eliminan primero.
+  Dos juegos de MX simultáneos hacen que el correo se pierda de forma intermitente.
 
-### 3.3 Activar DKIM (después de crear la cuenta)
+### 3.3 Activar DKIM
 
-DKIM no se puede generar antes: la clave la emite Google.
+La clave la emite Zoho, así que este paso va después de crear la cuenta.
 
-1. **admin.google.com** → **Aplicaciones** → **Google Workspace** → **Gmail** → **Autenticar correo**.
-2. Selecciona `encuentravet.cl` → **Generar nuevo registro** → longitud **2048 bits**, prefijo
-   del selector **`google`**.
-3. Copia el valor `v=DKIM1; k=rsa; p=MIIBIjANBg…` y pégalo en Vercel como el **registro 4**
-   de la tabla (Name: `google._domainkey`).
-4. Espera a que propague (paso 3.4) y **recién ahí** vuelve a esa pantalla y pulsa
-   **Iniciar autenticación**. Si lo activas antes de que el DNS propague, Google falla y hay
-   que reintentar.
+1. **Panel de administración → Seguridad del correo → DKIM → encuentravet.cl → Agregar selector**.
+2. Selector: `zmail`. Zoho genera el valor `v=DKIM1; k=rsa; p=MIIBIjANBg…`
+3. Pégalo en Vercel como el **registro 6** de la tabla (Name: `zmail._domainkey`).
+4. Espera la propagación (paso 3.4) y **recién ahí** vuelve al panel y pulsa **Verificar**.
+   Si verificas antes de que propague, falla y hay que reintentar.
 
 ### 3.4 Verificar la propagación
 
-Antes de apretar "Verificar" en Google, corre:
+Antes de apretar "Verificar" en Zoho:
 
 ```bash
 node scripts/verificar-correo-dns.mjs
 ```
 
-Debe mostrar en verde: MX de Google, SPF con `_spf.google.com`, DKIM `google` publicado y DMARC.
-Si algo sigue en rojo, espera: la propagación toma entre 15 minutos y 2 horas.
-Comandos equivalentes si prefieres hacerlo a mano:
+El script detecta solo si el dominio quedó en Zoho o en Google y revisa el SPF que corresponda.
+Deben quedar en verde: MX de Zoho, SPF con `zohomail.com`, DKIM publicado y DMARC.
+La propagación toma entre 15 minutos y 2 horas. Equivalente manual:
 
 ```bash
 dig +short MX  encuentravet.cl
 dig +short TXT encuentravet.cl
-dig +short TXT google._domainkey.encuentravet.cl
+dig +short TXT zmail._domainkey.encuentravet.cl
 dig +short TXT _dmarc.encuentravet.cl
 ```
+
+### 3.5 Seguir usando Gmail como bandeja única
+
+Esto es lo que compras con el plan Lite. En tu Gmail personal:
+
+- **Recibir:** ⚙️ → **Ver toda la configuración** → **Cuentas e importación** → *Consultar correo
+  de otras cuentas* → **Agregar una cuenta de correo** → `contacto@encuentravet.cl`
+  → servidor **`pop.zoho.com`**, puerto **995**, **SSL activado**.
+- **Enviar:** en la misma pantalla, *Enviar como* → **Agregar otra dirección** →
+  `contacto@encuentravet.cl` → servidor **`smtp.zoho.com`**, puerto **465**, **SSL**,
+  usuario y contraseña de Zoho.
+- **En el celular:** la app de Gmail acepta la cuenta por IMAP (`imap.zoho.com`, puerto 993, SSL).
+
+> **Consejo:** Gmail consulta el POP cada cierto rato y puede demorar hasta una hora. Para que
+> el correo te llegue al instante, activa además en Zoho el **reenvío** hacia tu Gmail
+> (Configuración → Reenvío de correo). Combinado con *Enviar como*, tienes recepción inmediata
+> y respuestas que salen desde contacto@encuentravet.cl con SPF y DKIM correctos.
+
+---
+
+## 3-bis. Si prefieres Google Workspace
+
+Todo lo demás de esta guía (alias, migración, firmas, checklist) aplica igual. Solo cambian los
+registros DNS:
+
+| Name | Type | Priority | Value |
+|---|---|---|---|
+| *(vacío)* | TXT | — | `google-site-verification=XXXXXXXX` |
+| *(vacío)* | MX | `1` | `smtp.google.com` ← **un solo MX**, no los antiguos `ASPMX…` |
+| *(vacío)* | TXT | — | `v=spf1 include:amazonses.com include:_spf.google.com -all` |
+| `google._domainkey` | TXT | — | clave DKIM de admin.google.com |
+
+Registro en **https://workspace.google.com/business/signup/welcome** (Business Starter, 1 usuario)
+y DKIM en **admin.google.com → Aplicaciones → Google Workspace → Gmail → Autenticar correo**
+(2048 bits, selector `google`). El dominio ya tiene un `google-site-verification` de Search
+Console, así que es probable que la verificación salga inmediata.
 
 ---
 
@@ -152,14 +200,15 @@ bandeja, así que no hay nada que revisar por separado.
 
 | Dirección | Tipo | Costo |
 |---|---|---|
-| `contacto@encuentravet.cl` | Casilla principal (usuario) | Licencia pagada |
+| `contacto@encuentravet.cl` | Casilla principal (usuario) | La única licencia pagada |
 | `ventas@encuentravet.cl` | Alias de contacto@ | $0 |
 | `marketing@encuentravet.cl` | Alias de contacto@ | $0 |
 | `dmarc@encuentravet.cl` | Alias de contacto@ (reportes) | $0 |
 
-**Cómo crearlos:** admin.google.com → **Directorio** → **Usuarios** → contacto@ →
-**Información del usuario** → **Direcciones de correo alternativas (alias)** → agregar las tres.
-Tardan unos minutos en activarse.
+**Cómo crearlos en Zoho:** Panel de administración → **Usuarios** → contacto@ → **Alias de
+correo** → agregar las tres. No consumen licencia.
+*(En Google sería: admin.google.com → Directorio → Usuarios → contacto@ → Direcciones de correo
+alternativas.)*
 
 **Para poder responder *desde* cada alias:** en Gmail → ⚙️ **Ver toda la configuración** →
 **Cuentas** → *Enviar como* → **Agregar otra dirección**. Agrega `ventas@` y `marketing@`
@@ -186,19 +235,22 @@ confirmación a la casilla nueva → confírmalo → vuelve y marca
 **"Reenviar una copia del correo entrante a…"** eligiendo **"conservar la copia de Gmail en
 Recibidos"** (así no pierdes nada si algo falla el primer mes).
 
-### 5.2 Bandeja combinada (recomendado además del reenvío)
+### 5.2 Bandeja combinada
 
-En **contacto@encuentravet.cl**: ⚙️ → **Cuentas** → *Consultar correo de otras cuentas* →
-**Agregar una cuenta de correo** → `encuentra.vet@gmail.com`. Trae también el **histórico**,
-no solo lo nuevo, y te deja **enviar como** la dirección antigua cuando convenga responder
-manteniendo el hilo.
+Con el plan Lite todo converge en la bandeja de Gmail que ya usas (paso 3.5): el correo nuevo
+de `contacto@` entra ahí por POP o por reenvío, y respondes desde esa misma dirección vía SMTP
+de Zoho. No tienes que revisar dos aplicaciones.
+
+Si en cambio te quedas en el webmail de Zoho, agrega ahí el Gmail antiguo:
+**Configuración → Correo → Cuentas externas → Agregar cuenta POP**, y también
+**Enviar como** la dirección antigua para responder manteniendo el hilo.
 
 ### 5.3 Plan de transición sugerido
 
 | Momento | Acción |
 |---|---|
 | Semana 1 | Reenvío activo. Firma nueva en todos los correos. |
-| Semanas 1-4 | Responder siempre **desde** contacto@ (aunque llegue al Gmail viejo): entrena a tus contactos. |
+| Semanas 1-4 | Responder siempre **desde** contacto@ (aunque el mensaje haya llegado al Gmail viejo): entrena a tus contactos. |
 | Mes 2 | Actualizar el correo en el sitio, Instagram, fichas de proveedores y firmas de cotizaciones. |
 | Mes 3-6 | Mantener el reenvío. Revisar qué remitentes siguen usando la dirección vieja y avisarles. |
 | Mes 6+ | Respuesta automática en el Gmail antiguo indicando la nueva dirección. **No cierres nunca esa cuenta**: se pierde el acceso a servicios registrados con ella. |
@@ -258,11 +310,12 @@ selecciona todo y copia-pega).
 
 Marca cada punto antes de darlo por terminado:
 
-- [ ] Cuenta Google Workspace creada con `contacto@encuentravet.cl`
-- [ ] TXT de verificación agregado en Vercel y **dominio verificado** en Google
-- [ ] MX `smtp.google.com` prioridad 1 (y **ningún otro MX**)
-- [ ] SPF **editado** a `v=spf1 include:amazonses.com include:_spf.google.com -all` — un solo registro
-- [ ] DKIM generado en la consola, publicado en `google._domainkey` y **autenticación iniciada**
+- [ ] Cuenta creada con `contacto@encuentravet.cl` (Zoho Mail Lite, facturación anual)
+- [ ] TXT de verificación agregado en Vercel y **dominio verificado** en el panel
+- [ ] Los 3 MX de Zoho cargados (y **ningún MX de otro proveedor**)
+- [ ] SPF **editado** a `v=spf1 include:amazonses.com include:zohomail.com -all` — un solo registro
+- [ ] DKIM generado en el panel, publicado en `zmail._domainkey` y **verificado**
+- [ ] Gmail configurado para recibir (POP) y enviar (SMTP) como contacto@
 - [ ] DMARC editado con `rua=mailto:dmarc@encuentravet.cl`
 - [ ] `node scripts/verificar-correo-dns.mjs` **todo en verde**
 - [ ] Alias `ventas@`, `marketing@` y `dmarc@` creados

@@ -27,6 +27,7 @@ else mal('sin respuesta');
 
 // --- MX: recepción de correo ---
 console.log('\nMX (recibir correo)');
+let proveedor = null;
 const mx = await intentar(() => resolver.resolveMx(dominio));
 if (!mx?.length) {
   mal('no hay registros MX: el dominio no puede recibir correo');
@@ -36,8 +37,8 @@ if (!mx?.length) {
   mx.sort((a, b) => a.priority - b.priority)
     .forEach((m) => ok(`prioridad ${m.priority} → ${m.exchange}`));
   if (google && zoho) mal('hay MX de Google y de Zoho a la vez: deja solo un proveedor');
-  else if (google) ok('apuntando a Google Workspace');
-  else if (zoho) ok('apuntando a Zoho Mail');
+  else if (google) { proveedor = 'google'; ok('apuntando a Google Workspace'); }
+  else if (zoho) { proveedor = 'zoho'; ok('apuntando a Zoho Mail'); }
   else ojo('los MX no son de Google ni de Zoho: revisa a qué proveedor apuntan');
 }
 
@@ -51,7 +52,17 @@ else if (spf.length > 1) mal(`hay ${spf.length} registros SPF; debe existir SOLO
 else {
   const r = spf[0];
   console.log(`     ${r}`);
-  r.includes('_spf.google.com') ? ok('incluye Google Workspace') : mal('NO incluye _spf.google.com (el correo saliente de Google fallará SPF)');
+  const tieneGoogle = r.includes('_spf.google.com');
+  const tieneZoho = /include:(spf\.)?zohomail\.com|include:zoho\.(com|eu)/.test(r);
+  if (proveedor === 'google') {
+    tieneGoogle ? ok('incluye Google Workspace') : mal('NO incluye _spf.google.com: tu correo saliente fallará SPF');
+  } else if (proveedor === 'zoho') {
+    tieneZoho ? ok('incluye Zoho Mail') : mal('NO incluye zohomail.com: tu correo saliente fallará SPF');
+  } else if (tieneGoogle || tieneZoho) {
+    ojo('el SPF autoriza un proveedor de correo, pero los MX aún no apuntan a él');
+  } else {
+    mal('el SPF no autoriza a Google ni a Zoho');
+  }
   r.includes('amazonses.com') ? ok('incluye Amazon SES (correos del sitio)') : ojo('ya no incluye amazonses.com: confirma que el sitio no envía por SES');
   if (r.includes('-all')) ok('termina en -all (rechazo estricto)');
   else if (r.includes('~all')) ojo('termina en ~all (softfail): sirve para probar, endurece a -all al final');
