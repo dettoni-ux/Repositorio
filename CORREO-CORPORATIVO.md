@@ -307,7 +307,7 @@ Ya viene con los datos reales.
 Sofía Cisternas
 Socia · Plataforma EncuentraVet
 contacto@encuentravet.cl · +56 9 9007 0115
-www.encuentravet.cl · Instagram: @encuentravet
+www.encuentravet.cl · Instagram: @encuentra.vet
 
 Veterinarios verificados uno a uno — Registro Civil y COLMEVET · 0% comisión
 ```
@@ -340,9 +340,9 @@ Marca cada punto antes de darlo por terminado:
 - [x] SPF **editado** a `v=spf1 include:zohomail.com -all` — un registro, includes válidos, 2/10 consultas
 - [x] DKIM publicado en `zmail._domainkey` — clave RSA de 1024 bits validada criptográficamente
 - [ ] Gmail configurado para recibir (POP) y enviar (SMTP) como contacto@
-- [ ] DMARC editado con `rua=mailto:dmarc@encuentravet.cl`
-- [ ] `node scripts/verificar-correo-dns.mjs` **todo en verde**
-- [ ] Alias `ventas@`, `marketing@` y `dmarc@` creados
+- [x] DMARC editado con `rua=mailto:dmarc@encuentravet.cl` — reportes ahora sí entregables
+- [x] `node scripts/verificar-correo-dns.mjs` **todo en verde**
+- [x] Alias `ventas@`, `marketing@` y `dmarc@` creados
 - [ ] *Enviar como* configurado para ventas@ y marketing@
 - [ ] **Prueba de envío**: mandar un correo a **https://www.mail-tester.com** → objetivo **10/10**
 - [ ] **Prueba de recepción**: escribir desde el Gmail antiguo a contacto@, ventas@ y marketing@
