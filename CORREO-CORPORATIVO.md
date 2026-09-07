@@ -3,6 +3,10 @@
 Guía de configuración del correo con dominio propio para **EncuentraVet**.
 Diagnóstico DNS real ejecutado el **7 de septiembre de 2026**.
 
+> **Decisión tomada:** Zoho Mail Lite (5 GB), 1 usuario, **facturación anual** (USD 12/año).
+> `contacto@` es la casilla; `ventas@`, `marketing@` y `dmarc@` van como alias gratuitos.
+> El correo se sigue leyendo y respondiendo desde Gmail (paso 3.5).
+
 Para volver a revisar el estado en cualquier momento:
 
 ```bash
