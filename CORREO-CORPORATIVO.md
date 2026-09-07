@@ -107,9 +107,17 @@ recuperas exactamente eso y sigues trabajando desde la bandeja de Gmail de siemp
 En **Domains → encuentravet.cl → DNS Records**. Para el dominio raíz el campo *Name* va
 **vacío** (Vercel lo toma como `@`). Pega los valores **sin comillas**.
 
+> **Vercel no permite editar un registro existente**: donde la tabla dice *EDITAR*, hay que
+> **borrar el registro viejo y crear el nuevo**. Hazlo en ese orden y seguido — nunca dejes los
+> dos SPF conviviendo, porque dos registros SPF se invalidan entre sí.
+
+**Orden recomendado.** Primero los registros 1 y 5 (verificación y SPF); con el dominio ya
+verificado y la casilla creada, recién entonces los MX, el DKIM y el DMARC. Así el correo no
+se enruta a Zoho antes de que exista el buzón que lo recibe.
+
 | # | Name | Type | Priority | Value | Acción |
 |---|---|---|---|---|---|
-| 1 | *(vacío)* | TXT | — | `zoho-verification=zbXXXXXXXX.zmverify.zoho.com` *(el tuyo, del panel)* | **Agregar** |
+| 1 | *(vacío)* | TXT | — | `zoho-verification=zb50128109.zmverify.zoho.com` | **Agregar** |
 | 2 | *(vacío)* | MX | `10` | `mx.zoho.com` | **Agregar** |
 | 3 | *(vacío)* | MX | `20` | `mx2.zoho.com` | **Agregar** |
 | 4 | *(vacío)* | MX | `50` | `mx3.zoho.com` | **Agregar** |
