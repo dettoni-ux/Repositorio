@@ -7,6 +7,24 @@ Diagnóstico DNS real ejecutado el **7 de septiembre de 2026**.
 > `contacto@` es la casilla; `ventas@`, `marketing@` y `dmarc@` van como alias gratuitos.
 > El correo se sigue leyendo y respondiendo desde Gmail (paso 3.5).
 
+## ⏳ Lo único que queda por hacer
+
+El DNS está completo y verificado. Lo que sigue son acciones dentro de paneles con sesión
+iniciada (Zoho, Vercel, Gmail), en este orden:
+
+| # | Dónde | Qué | Tiempo |
+|---|---|---|---|
+| 1 | Zoho → Usuarios → contacto@ → Alias | Crear `ventas@`, `marketing@`, `dmarc@` | 2 min |
+| 2 | Vercel → DNS Records | Borrar el TXT `_dmarc` viejo y crear el nuevo (§3.2, registro 7) | 1 min |
+| 3 | Gmail antiguo → Reenvío | Reenviar a contacto@ (§5.1) | 2 min |
+| 4 | Gmail → Cuentas | Recibir por POP y enviar por SMTP de Zoho (§3.5) | 5 min |
+| 5 | Gmail → Firma | Pegar `firma-correo.html` (ábrelo en el navegador) | 2 min |
+| 6 | mail-tester.com | Enviar desde contacto@ y comprobar 10/10 | 2 min |
+
+Después de cada cambio de DNS: `node scripts/verificar-correo-dns.mjs`
+
+---
+
 Para volver a revisar el estado en cualquier momento:
 
 ```bash
