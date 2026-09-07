@@ -332,11 +332,11 @@ selecciona todo y copia-pega).
 
 Marca cada punto antes de darlo por terminado:
 
-- [ ] Cuenta creada con `contacto@encuentravet.cl` (Zoho Mail Lite, facturación anual)
-- [ ] TXT de verificación agregado en Vercel y **dominio verificado** en el panel
-- [ ] Los 3 MX de Zoho cargados (y **ningún MX de otro proveedor**)
-- [ ] SPF **editado** a `v=spf1 include:zohomail.com -all` — un solo registro, sin includes rotos
-- [ ] DKIM generado en el panel, publicado en `zmail._domainkey` y **verificado**
+- [x] Cuenta creada con `contacto@encuentravet.cl` (Zoho Mail Lite, facturación anual)
+- [x] TXT de verificación agregado en Vercel y **dominio verificado** en el panel
+- [x] Los 3 MX de Zoho cargados — 10/20/50, sin MX de otro proveedor
+- [x] SPF **editado** a `v=spf1 include:zohomail.com -all` — un registro, includes válidos, 2/10 consultas
+- [x] DKIM publicado en `zmail._domainkey` — clave RSA de 1024 bits validada criptográficamente
 - [ ] Gmail configurado para recibir (POP) y enviar (SMTP) como contacto@
 - [ ] DMARC editado con `rua=mailto:dmarc@encuentravet.cl`
 - [ ] `node scripts/verificar-correo-dns.mjs` **todo en verde**
