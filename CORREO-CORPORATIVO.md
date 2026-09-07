@@ -197,20 +197,51 @@ dig +short TXT _dmarc.encuentravet.cl
 
 ### 3.5 Seguir usando Gmail como bandeja única
 
-Esto es lo que compras con el plan Lite. En tu Gmail personal:
+Esto es lo que compras con el plan Lite. Son dos mitades independientes: **recibir** en Gmail y
+**responder** desde contacto@.
 
-- **Recibir:** ⚙️ → **Ver toda la configuración** → **Cuentas e importación** → *Consultar correo
-  de otras cuentas* → **Agregar una cuenta de correo** → `contacto@encuentravet.cl`
-  → servidor **`pop.zoho.com`**, puerto **995**, **SSL activado**.
-- **Enviar:** en la misma pantalla, *Enviar como* → **Agregar otra dirección** →
-  `contacto@encuentravet.cl` → servidor **`smtp.zoho.com`**, puerto **465**, **SSL**,
-  usuario y contraseña de Zoho.
-- **En el celular:** la app de Gmail acepta la cuenta por IMAP (`imap.zoho.com`, puerto 993, SSL).
+#### Recibir — reenvío desde Zoho (recomendado)
 
-> **Consejo:** Gmail consulta el POP cada cierto rato y puede demorar hasta una hora. Para que
-> el correo te llegue al instante, activa además en Zoho el **reenvío** hacia tu Gmail
-> (Configuración → Reenvío de correo). Combinado con *Enviar como*, tienes recepción inmediata
-> y respuestas que salen desde contacto@encuentravet.cl con SPF y DKIM correctos.
+En **mail.zoho.com** → ⚙️ **Configuración** → **Reenvío de correo** *(Email Forwarding)* →
+agregar tu Gmail como destino. Zoho manda un código de confirmación; lo apruebas y listo.
+Llega al instante y conserva copia en Zoho.
+
+> **No actives POP además del reenvío.** Cada correo te llegaría dos veces: una por el reenvío
+> y otra cuando Gmail haga su consulta POP. Elige uno de los dos.
+
+La alternativa es **POP** (⚙️ → Cuentas e importación → *Consultar el correo de otras cuentas* →
+`pop.zoho.com`, puerto **995**, SSL). Solo vale la pena si quieres que Gmail arrastre también el
+histórico ya recibido; a cambio, Gmail consulta cada cierto rato y puede tardar hasta una hora.
+
+#### Responder — SMTP de Zoho
+
+Gmail → ⚙️ → **Ver toda la configuración** → **Cuentas e importación** → *Enviar como* →
+**Agregar otra dirección**:
+
+| Campo | Valor |
+|---|---|
+| Nombre | Sofía Cisternas |
+| Dirección | `contacto@encuentravet.cl` |
+| Tratar como alias | ✅ marcado (es tu propia casilla) |
+| Servidor SMTP | `smtp.zoho.com` |
+| Puerto | `465` |
+| Usuario | `contacto@encuentravet.cl` |
+| Contraseña | la de Zoho |
+| Conexión | ✅ SSL |
+
+Gmail envía un código de verificación a contacto@; lo lees (ya te llega por el reenvío) y lo pegas.
+
+Después, en esa misma pantalla: marca contacto@ como **predeterminada** y activa **«Responder
+desde la misma dirección a la que se envió el mensaje»**, para que quien escriba a ventas@ reciba
+la respuesta desde ventas@.
+
+#### En el celular
+
+La app de Gmail acepta la cuenta por IMAP: `imap.zoho.com`, puerto **993**, SSL.
+
+> **Requisito previo:** en Zoho, ⚙️ → **Cuentas de correo** → activar **acceso IMAP/POP**. Viene
+> desactivado por defecto y sin eso Gmail rechaza la conexión. Si tienes verificación en dos
+> pasos, genera una **contraseña de aplicación** en `accounts.zoho.com` y usa esa, no la normal.
 
 ---
 
