@@ -299,50 +299,34 @@ Si en cambio te quedas en el webmail de Zoho, agrega ahí el Gmail antiguo:
 
 ## 6. Firma de correo profesional
 
-Reemplaza `[Tu nombre]`, `[Cargo]` y el teléfono.
+Ya viene con los datos reales.
 
 ### Texto plano
 
 ```
-[Tu nombre]
-[Cargo] · EncuentraVet Chile
-contacto@encuentravet.cl · +56 9 XXXX XXXX
+Sofía Cisternas
+Socia · Plataforma EncuentraVet
+contacto@encuentravet.cl · +56 9 9007 0115
 www.encuentravet.cl · Instagram: @encuentravet
 
-Directorio de veterinarios verificados — 346 comunas de Chile
+Veterinarios verificados uno a uno — Registro Civil y COLMEVET · 0% comisión
 ```
 
-### HTML simple
+> La versión en HTML, lista para copiar con formato, está en `firma-correo.html`.
 
-Pégalo en Gmail → ⚙️ → **Ver toda la configuración** → **General** → **Firma** (Gmail acepta
-HTML pegado desde el navegador; para que conserve el formato, abre el archivo en el navegador,
-selecciona todo y copia-pega).
+### HTML
 
-```html
-<table cellpadding="0" cellspacing="0" style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#2b2b2b;line-height:1.5">
-  <tr>
-    <td style="border-left:3px solid #6D28D9;padding-left:12px">
-      <div style="font-size:15px;font-weight:bold;color:#1a1a1a">[Tu nombre]</div>
-      <div style="color:#555">[Cargo] · <span style="color:#6D28D9;font-weight:bold">EncuentraVet</span> Chile</div>
-      <div style="margin-top:8px">
-        <a href="mailto:contacto@encuentravet.cl" style="color:#2b2b2b;text-decoration:none">contacto@encuentravet.cl</a>
-        &nbsp;·&nbsp; +56 9 XXXX XXXX
-      </div>
-      <div style="margin-top:2px">
-        <a href="https://www.encuentravet.cl" style="color:#6D28D9;text-decoration:none;font-weight:bold">www.encuentravet.cl</a>
-        &nbsp;·&nbsp;
-        <a href="https://instagram.com/encuentravet" style="color:#6D28D9;text-decoration:none">@encuentravet</a>
-      </div>
-      <div style="margin-top:8px;font-size:11px;color:#888">
-        Directorio de veterinarios verificados — 346 comunas de Chile
-      </div>
-    </td>
-  </tr>
-</table>
-```
+El HTML está en **`firma-correo.html`**, con los datos reales ya puestos. Ábrelo en el navegador,
+aprieta **Copiar firma** y pégalo en Gmail → ⚙️ → **Ver toda la configuración** → **General** →
+**Firma**. El botón copia la versión con formato y la de texto plano a la vez, así que Gmail
+conserva la barra morada y los enlaces.
+
+Se mantiene un solo archivo a propósito: si el HTML viviera además dentro de esta guía, las dos
+copias se irían separando con cada cambio.
 
 > Sin imágenes a propósito: los logos incrustados suben la probabilidad de spam en el primer
-> contacto con una marca y muchos clientes los bloquean por defecto.
+> contacto con una marca y muchos clientes los bloquean por defecto. Y en Arial, no en la
+> tipografía de la marca: los clientes de correo descartan las fuentes web.
 
 ---
 
