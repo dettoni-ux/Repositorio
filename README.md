@@ -22,13 +22,13 @@ el directorio de veterinarios verificados de Chile.
 - **Biblioteca de guardados**: el contenido y los planes que marcas como guardados quedan
   disponibles para copiar o exportar.
 
-## Generador de textos (`generador-encuentravet.html`)
+## Generador de contenido (`generador-encuentravet.html`)
 
-Página aparte, más simple y enfocada solo en **escribir**: no dibuja imágenes ni videos,
-entrega el texto listo para pegar. Cada pieza nace de una herramienta concreta de la
-plataforma (insignia azul, agenda online, ficha clínica, recordatorios, 0% comisión,
-búsqueda por comuna, y del lado de los tutores buscar y reservar, ficha gratis e insignia azul),
-siguiendo la estrategia de `rrss/identidad.md`.
+Página aparte que arma la publicación completa —**imagen y caption**— y la deja en una
+**cola de aprobación**: nada sale de ahí sin que lo apruebes. Cada pieza nace de una
+herramienta concreta de la plataforma (insignia azul, agenda online, ficha clínica,
+recordatorios, 0% comisión, búsqueda por comuna, y del lado de los tutores buscar y reservar,
+ficha gratis e insignia azul), siguiendo la estrategia de `rrss/identidad.md`.
 
 - **Cuatro formatos**: post (con el texto sugerido para la imagen), carrusel card por card,
   historia frame a frame con stickers, y reel con guion por tiempos y voz en off calculada
@@ -41,9 +41,18 @@ siguiendo la estrategia de `rrss/identidad.md`.
   los hashtags, que estén los hashtags base, el largo, la cantidad de emoji, que el texto quepa
   en las plantillas de imagen y —lo más importante— que **ninguna cifra salga de los datos
   reales de la marca**. Si aparece un número que no está en esa lista, lo marca para revisión.
-- **Guardados** en el navegador, con copiar caption, copiar la pieza completa y exportar todo a `.md`.
+- **Imágenes en el mismo generador**: dibuja las piezas con las plantillas oficiales de la marca
+  (las mismas `tip` y `hito` de `rrss/plantillas/`, con la paleta de `base.css`), en 1080×1350 para
+  post y carrusel y 1080×1920 para historias y portada de reel. El post permite alternar entre
+  fondo claro y fondo oscuro.
+- **Cola de aprobación** con tres estados —pendiente, aprobada, rechazada— y su miniatura.
+  Solo entra a la cola lo que apruebas o rechazas, así queda el registro de decisiones y no de borradores.
+- **Descargas**: las imágenes aprobadas en JPG y la cola en `.json` con el mismo formato de
+  `piezas/cola-local.json`, para que el publicador del repositorio la tome tal cual.
 
-Abrir el archivo en cualquier navegador. Funciona sin servidor, sin dependencias y sin conexión.
+Abrir el archivo en cualquier navegador. No necesita servidor ni dependencias. Sin conexión
+también funciona: solo las tipografías Poppins y Nunito se cargan de Google Fonts y, si no están,
+las plantillas usan la tipografía del sistema.
 
 ## Pilares de contenido
 

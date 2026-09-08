@@ -1,6 +1,9 @@
 <meta charset="utf-8">
 <title>Generador de contenido · EncuentraVet</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&family=Nunito:wght@400;700;800&display=swap">
 <meta name="description" content="Generador de textos y captions para las redes de EncuentraVet: posts, carruseles, historias y reels con la voz, las reglas y las herramientas de la marca.">
 <style>
   :root{
@@ -112,6 +115,31 @@
   .chequeo ul{margin:0; padding-left:20px}
   .chequeo li{margin-bottom:3px}
 
+  /* Imágenes generadas */
+  .lienzos{display:flex; gap:12px; overflow-x:auto; padding:4px 0 10px; margin:6px 0 4px; scroll-snap-type:x mandatory}
+  .lienzo{margin:0; flex:none; width:210px; display:flex; flex-direction:column; gap:8px; scroll-snap-align:start}
+  .lienzo canvas{width:100%; height:auto; display:block; border-radius:12px; border:1px solid var(--line); background:var(--panel2)}
+  .lienzo figcaption{font-size:12px; color:var(--ink2); font-variant-numeric:tabular-nums}
+  .cargando-img{color:var(--ink2); font-size:14px; margin:10px 0}
+  .chip.estado-pieza.pendiente{background:var(--amarillo-bg); color:var(--amarillo-ink)}
+  .chip.estado-pieza.aprobada{background:var(--tut-bg); color:var(--tut)}
+  .chip.estado-pieza.rechazada{background:var(--alerta-bg); color:var(--alerta)}
+
+  /* Cola de aprobación */
+  .cola-filtros{display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 4px}
+  .cola-f{border:1px solid var(--line); background:var(--panel); color:var(--ink2); border-radius:99px;
+    padding:8px 16px; font:inherit; font-size:14px; font-weight:600; cursor:pointer}
+  .cola-f .n{display:inline-block; min-width:20px; padding:1px 7px; margin-left:5px; border-radius:99px;
+    background:var(--panel2); color:var(--ink2); font-size:12.5px; font-variant-numeric:tabular-nums}
+  .cola-f[aria-pressed="true"]{background:var(--morado); border-color:var(--morado); color:var(--sobre-morado)}
+  .cola-f[aria-pressed="true"] .n{background:rgba(255,255,255,.22); color:var(--sobre-morado)}
+  .cola-item{display:grid; grid-template-columns:120px 1fr; gap:16px; border:1px solid var(--line);
+    border-radius:12px; padding:14px; margin-bottom:10px; background:var(--panel2)}
+  .cola-mini canvas{width:100%; height:auto; display:block; border-radius:8px; border:1px solid var(--line)}
+  .cola-item .cab{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:8px}
+  .cola-item pre{white-space:pre-wrap; margin:0 0 4px; font:inherit; font-size:14px; color:var(--ink2); max-height:110px; overflow:hidden}
+  @media (max-width:560px){ .cola-item{grid-template-columns:1fr} .cola-mini{max-width:180px} }
+
   .guardado-item{border:1px solid var(--line); border-radius:12px; padding:14px; margin-bottom:10px; background:var(--panel2)}
   .guardado-item .cab{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:8px}
   .guardado-item pre{white-space:pre-wrap; margin:0; font:inherit; font-size:14px; color:var(--ink2); max-height:120px; overflow:hidden}
@@ -139,14 +167,14 @@
     <div>
       <div class="kicker">EncuentraVet · encuentravet.cl</div>
       <h1>Generador de contenido</h1>
-      <p>Textos y captions listos para pegar en Instagram. Cada pieza sale amarrada a una herramienta concreta de la plataforma y pasa por el chequeo de las reglas de la marca.</p>
+      <p>Genera la imagen y el caption de cada publicación con las plantillas oficiales de la marca. Todo entra a una cola donde tú apruebas antes de publicar.</p>
     </div>
     <button class="tema-btn" id="btn-tema" type="button">🌗 Tema</button>
   </header>
 
   <main>
     <section class="panel">
-      <h2>Qué quieres escribir</h2>
+      <h2>Qué quieres publicar</h2>
       <p class="sub">Deja «Automático» y el generador respeta la mezcla de la estrategia: 80% para veterinarios, 20% para tutores.</p>
 
       <div class="controles">
@@ -190,7 +218,7 @@
       </div>
 
       <div class="fila-botones">
-        <button class="btn" id="btn-generar" type="button">Generar texto</button>
+        <button class="btn" id="btn-generar" type="button">Generar pieza</button>
         <button class="btn sec" id="btn-lote" type="button">Generar semana (5 piezas)</button>
         <button class="btn sec mini" id="btn-limpiar" type="button">Limpiar</button>
       </div>
@@ -211,15 +239,21 @@
 
     <div id="zona-resultado"></div>
 
-    <section class="panel" id="panel-guardados">
-      <h2>Guardados <span class="chip neutro" id="cuenta-guardados">0</span></h2>
-      <p class="sub">Lo que marques como guardado queda en este navegador. Sirve para armar el calendario de la semana y copiarlo de una vez.</p>
-      <div class="fila-botones">
-        <button class="btn sec mini" id="btn-copiar-todo" type="button">Copiar todo</button>
-        <button class="btn sec mini" id="btn-exportar" type="button">Descargar .md</button>
-        <button class="btn sec mini" id="btn-vaciar" type="button">Vaciar</button>
+    <section class="panel" id="panel-cola">
+      <h2>Cola de aprobación</h2>
+      <p class="sub">Nada se publica sin tu aprobación. Las piezas que apruebas o rechazas quedan aquí con su imagen y su caption; las aprobadas se descargan listas para subir.</p>
+      <div class="cola-filtros" role="group" aria-label="Filtrar la cola">
+        <button class="cola-f" type="button" data-estado="pendiente" aria-pressed="true">Pendientes <span class="n">0</span></button>
+        <button class="cola-f" type="button" data-estado="aprobada" aria-pressed="false">Aprobadas <span class="n">0</span></button>
+        <button class="cola-f" type="button" data-estado="rechazada" aria-pressed="false">Rechazadas <span class="n">0</span></button>
       </div>
-      <div id="lista-guardados"></div>
+      <div class="fila-botones">
+        <button class="btn mini" id="btn-descargar-imgs" type="button">Descargar imágenes aprobadas</button>
+        <button class="btn sec mini" id="btn-exportar" type="button">Descargar cola en .json</button>
+        <button class="btn sec mini" id="btn-copiar-todo" type="button">Copiar aprobadas</button>
+        <button class="btn sec mini" id="btn-vaciar" type="button">Vaciar cola</button>
+      </div>
+      <div id="lista-cola"></div>
     </section>
   </main>
 </div>
@@ -888,7 +922,7 @@ function construirCaption(p){
 /* Las plantillas de imagen aceptan una línea corta por punto: de los pares
    «mito / realidad» y «antes / ahora» se queda la mitad que lleva el mensaje. */
 function lineaParaImagen(l){
-  const limpio = l.replace(/^\d+\.\s*/,'');
+  const limpio = l.replace(/^\d+\.\s*/,'').replace(/^[✅❌]\s*/,'');
   const mito = limpio.split('\n→ ');
   if(mito.length === 2) return 'Realidad: ' + mito[1];
   const par = limpio.split('\nAhora: ');
@@ -1095,8 +1129,11 @@ function piezaHtml(p){
       chipPublico(p.publico) +
       '<span class="chip neutro">' + esc(p.herramienta) + '</span>' +
       '<span class="chip neutro">' + esc(ANGULOS[p.angulo].emoji + ' ' + p.anguloNombre) + '</span>' +
+      '<span class="chip estado-pieza ' + (p.estado||'pendiente') + '">' + esc(ESTADOS[p.estado||'pendiente']) + '</span>' +
+      (enCola(p.id) ? '<span class="chip neutro">en la cola</span>' : '') +
     '</div>' +
     '<h3>' + esc(p.gancho) + '</h3>' +
+    '<div class="lienzos"></div>' +
     bloquesFormato(p) +
     '<div class="bloque dest"><div class="rot">Caption para Instagram</div>' +
       '<div class="caption">' + captionHtml(p) + '</div></div>' +
@@ -1106,10 +1143,12 @@ function piezaHtml(p){
       (p.tema ? '<span>Tema: <b>' + esc(p.tema) + '</b></span>' : '') +
     '</div>' +
     '<div class="fila-botones">' +
-      '<button class="btn mini" data-acc="caption">Copiar caption</button>' +
+      '<button class="btn mini" data-acc="aprobar">✓ Aprobar</button>' +
+      '<button class="btn sec mini" data-acc="rechazar">Rechazar</button>' +
+      '<button class="btn sec mini" data-acc="caption">Copiar caption</button>' +
       '<button class="btn sec mini" data-acc="todo">Copiar pieza completa</button>' +
       '<button class="btn sec mini" data-acc="otra">Otra variante</button>' +
-      '<button class="btn amar mini" data-acc="guardar">Guardar</button>' +
+      (p.formato === 'post' ? '<button class="btn sec mini" data-acc="plantilla">Plantilla: fondo claro</button>' : '') +
     '</div>' +
   '</article>';
 }
@@ -1158,19 +1197,373 @@ function piezaTexto(p){
 }
 
 /* ============================================================
-   ESTADO Y ALMACENAMIENTO
+   PLANTILLAS DE IMAGEN
+   Calcadas de rrss/plantillas/tip.html y hito.html, con la
+   paleta oficial de rrss/plantillas/base.css.
+   ============================================================ */
+const PAL = {
+  morado:'#5B2E7E', morado2:'#6B3593', moradoOsc:'#3C1D55', moradoNoche:'#2C1140',
+  lila:'#EADCF4', lilaClaro:'#F5EFFA', amarillo:'#FFD84D', amarillo2:'#FFE277', blanco:'#FFFFFF'
+};
+const F_TIT = "'Poppins', system-ui, -apple-system, sans-serif";
+const F_TXT = "'Nunito', system-ui, -apple-system, sans-serif";
+
+let fuentesListas = false;
+async function prepararFuentes(){
+  if(fuentesListas) return;
+  try{
+    if(document.fonts && document.fonts.load){
+      await Promise.all([
+        document.fonts.load("800 68px 'Poppins'"),
+        document.fonts.load("600 30px 'Poppins'"),
+        document.fonts.load("700 35px 'Nunito'")
+      ]);
+      await document.fonts.ready;
+    }
+  }catch(e){}
+  fuentesListas = true;
+}
+
+function rr(ctx, x, y, w, h, r){
+  r = Math.min(r, w/2, h/2);
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.arcTo(x+w, y, x+w, y+h, r);
+  ctx.arcTo(x+w, y+h, x, y+h, r);
+  ctx.arcTo(x, y+h, x, y, r);
+  ctx.arcTo(x, y, x+w, y, r);
+  ctx.closePath();
+}
+function grad(ctx, x0, y0, x1, y1, c1, c2){
+  const g = ctx.createLinearGradient(x0, y0, x1, y1);
+  g.addColorStop(0, c1); g.addColorStop(1, c2);
+  return g;
+}
+function envolver(ctx, texto, maxW){
+  const salida = [];
+  String(texto).split('\n').forEach(parrafo => {
+    const palabras = parrafo.split(/\s+/).filter(Boolean);
+    let linea = '';
+    palabras.forEach(pal => {
+      const prueba = linea ? linea + ' ' + pal : pal;
+      if(ctx.measureText(prueba).width > maxW && linea){ salida.push(linea); linea = pal; }
+      else linea = prueba;
+    });
+    salida.push(linea);
+  });
+  return salida.filter(l => l !== '');
+}
+/* Baja el tamaño hasta que el texto quepa en las líneas disponibles. */
+function ajustar(ctx, texto, maxW, px, maxLineas, peso, familia){
+  let tam = px;
+  while(tam > 18){
+    ctx.font = peso + ' ' + tam + 'px ' + familia;
+    if(envolver(ctx, texto, maxW).length <= maxLineas) break;
+    tam -= 3;
+  }
+  ctx.font = peso + ' ' + tam + 'px ' + familia;
+  return { tam: tam, lineas: envolver(ctx, texto, maxW) };
+}
+function pintarLineas(ctx, lineas, x, y, alto, alinear){
+  ctx.textAlign = alinear || 'left';
+  ctx.textBaseline = 'alphabetic';
+  lineas.forEach((l, i) => ctx.fillText(l, x, y + alto*(i+1)));
+  return y + alto*lineas.length;
+}
+function pastilla(ctx, texto, x, y, o){
+  ctx.font = (o.peso||'600') + ' ' + o.px + 'px ' + (o.familia||F_TIT);
+  const w = ctx.measureText(texto).width + o.padX*2;
+  const h = o.px + o.padY*2;
+  const px = o.alinear === 'centro' ? x - w/2 : x;
+  rr(ctx, px, y, w, h, h/2);
+  ctx.fillStyle = o.fondo;
+  ctx.fill();
+  if(o.borde){ ctx.strokeStyle = o.borde; ctx.lineWidth = 2; ctx.stroke(); }
+  ctx.fillStyle = o.color;
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.fillText(texto, px + o.padX, y + h/2 + 1);
+  return { w: w, h: h };
+}
+function patita(ctx, cx, cy, s, color, alpha, rot){
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.translate(cx, cy);
+  ctx.rotate((rot||0) * Math.PI/180);
+  ctx.scale(s/100, s/100);
+  ctx.fillStyle = color;
+  ctx.beginPath(); ctx.ellipse(0, 12, 26, 20, 0, 0, Math.PI*2); ctx.fill();
+  [[-26,-14],[0,-22],[26,-14]].forEach(pt => {
+    ctx.beginPath(); ctx.arc(pt[0], pt[1], 11, 0, Math.PI*2); ctx.fill();
+  });
+  ctx.restore();
+}
+/* Wordmark: «Encuentra» en blanco y «Vet» en amarillo, con la patita. */
+function wordmark(ctx, x, y, px, alinear){
+  ctx.font = '800 ' + px + 'px ' + F_TIT;
+  const a = 'Encuentra', b = 'Vet';
+  const wa = ctx.measureText(a).width, wb = ctx.measureText(b).width;
+  const wp = px * 0.95, total = wp + 14 + wa + wb;
+  const inicio = alinear === 'derecha' ? x - total : (alinear === 'centro' ? x - total/2 : x);
+  patita(ctx, inicio + wp/2, y, wp, PAL.amarillo, 1, -12);
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = PAL.blanco;   ctx.fillText(a, inicio + wp + 14, y);
+  ctx.fillStyle = PAL.amarillo; ctx.fillText(b, inicio + wp + 14 + wa, y);
+  return total;
+}
+function ctaDe(publico){
+  return publico === 'vets' ? 'Crea tu perfil gratis · encuentravet.cl'
+                            : 'Regístrate gratis · encuentravet.cl';
+}
+
+/* ---------- Plantilla TIP (clara, 1080×1350) ---------- */
+function plantillaTip(ctx, W, H, d){
+  ctx.fillStyle = PAL.lilaClaro;
+  ctx.fillRect(0, 0, W, H);
+
+  const altoCab = 160;
+  ctx.fillStyle = grad(ctx, 0, 0, W, altoCab, PAL.morado, PAL.moradoOsc);
+  ctx.fillRect(0, 0, W, altoCab);
+  pastilla(ctx, d.etiqueta, 64, altoCab/2 - 29, {
+    px:30, padX:34, padY:14, fondo: grad(ctx, 64, 0, 500, altoCab, PAL.amarillo, PAL.amarillo2),
+    color: PAL.moradoNoche
+  });
+  wordmark(ctx, W - 64, altoCab/2, 40, 'derecha');
+
+  const altoPie = 168;
+  const x = 64, maxW = W - 128;
+  const t = ajustar(ctx, d.titulo, maxW, 68, 3, '800', F_TIT);
+  ctx.fillStyle = PAL.moradoOsc;
+  let y = pintarLineas(ctx, t.lineas, x, altoCab + 40, t.tam * 1.14);
+
+  y += 40;
+  const espacio = H - altoPie - 30 - y;
+  const n = Math.max(1, d.lineas.length);
+  const altoCaja = Math.min(210, (espacio - 26*(n-1)) / n);
+  d.lineas.forEach(linea => {
+    const l = ajustar(ctx, linea, maxW - 72 - 46, 35, 2, '700', F_TXT);
+    const alto = Math.max(altoCaja, l.lineas.length * l.tam * 1.3 + 46);
+    ctx.save();
+    ctx.shadowColor = 'rgba(44,17,64,.10)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 6;
+    rr(ctx, x, y, maxW, alto, 24);
+    ctx.fillStyle = PAL.blanco; ctx.fill();
+    ctx.restore();
+    patita(ctx, x + 46, y + alto/2, 40, PAL.morado, .9, -10);
+    ctx.fillStyle = PAL.moradoNoche;
+    ctx.font = '700 ' + l.tam + 'px ' + F_TXT;
+    const base = y + alto/2 - (l.lineas.length-1) * l.tam * .65;
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    l.lineas.forEach((ln, i) => ctx.fillText(ln, x + 100, base + i * l.tam * 1.3));
+    y += alto + 26;
+  });
+
+  ctx.fillStyle = grad(ctx, 0, H-altoPie, W, H, PAL.morado, PAL.moradoOsc);
+  ctx.fillRect(0, H - altoPie, W, altoPie);
+  const c = ajustar(ctx, d.cierre, maxW - 340, 34, 2, '800', F_TIT);
+  ctx.fillStyle = PAL.blanco;
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  const baseC = H - altoPie/2 - (c.lineas.length-1) * c.tam * .6;
+  c.lineas.forEach((ln, i) => ctx.fillText(ln, x, baseC + i * c.tam * 1.2));
+  ctx.font = '800 34px ' + F_TIT;
+  ctx.fillStyle = PAL.amarillo;
+  ctx.textAlign = 'right';
+  ctx.fillText('encuentravet.cl', W - 64, H - altoPie/2);
+}
+
+/* ---------- Plantilla HITO (oscura, 1080×1350) ---------- */
+function plantillaHito(ctx, W, H, d){
+  const g = ctx.createLinearGradient(0, 0, W*0.45, H);
+  g.addColorStop(0, PAL.moradoNoche); g.addColorStop(.55, PAL.moradoOsc); g.addColorStop(1, PAL.morado);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+  patita(ctx, 135, 185, 130, PAL.amarillo, .10, 0);
+  patita(ctx, W - 145, H - 265, 170, PAL.lila, .10, 24);
+
+  const cx = W/2, maxW = W - 160;
+  wordmark(ctx, cx, 110, 40, 'centro');
+
+  pastilla(ctx, d.etiqueta, cx, 168, {
+    px:30, padX:34, padY:14, fondo:'rgba(255,255,255,.14)', color: PAL.amarillo2, alinear:'centro'
+  });
+
+  const dest = ajustar(ctx, d.destacado, maxW, 190, 1, '800', F_TIT);
+  const gd = ctx.createLinearGradient(cx - 200, 0, cx + 200, 0);
+  gd.addColorStop(0, PAL.amarillo); gd.addColorStop(1, PAL.amarillo2);
+  ctx.fillStyle = gd;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+  ctx.fillText(dest.lineas[0], cx, 310 + dest.tam);
+
+  let y = 310 + dest.tam + 60;
+  const t = ajustar(ctx, d.titulo, maxW, 58, 3, '800', F_TIT);
+  ctx.fillStyle = PAL.blanco;
+  y = pintarLineas(ctx, t.lineas, cx, y, t.tam * 1.2, 'center');
+
+  y += 50;
+  const topeLineas = H - 300;   /* debajo de esto van el cierre y el CTA */
+  d.lineas.slice(0, 3).forEach(linea => {
+    const l = ajustar(ctx, linea, maxW - 76, 31, 2, '700', F_TXT);
+    const alto = l.lineas.length * l.tam * 1.3 + 40;
+    if(y + alto > topeLineas) return;   /* lo que no cabe, no se dibuja encima */
+    rr(ctx, cx - maxW/2, y, maxW, alto, alto/2 > 44 ? 44 : alto/2);
+    ctx.fillStyle = 'rgba(234,220,244,.14)'; ctx.fill();
+    ctx.strokeStyle = 'rgba(234,220,244,.35)'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = PAL.lila;
+    ctx.font = '700 ' + l.tam + 'px ' + F_TXT;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    const base = y + alto/2 - (l.lineas.length-1) * l.tam * .65;
+    l.lineas.forEach((ln, i) => ctx.fillText(ln, cx, base + i * l.tam * 1.3));
+    y += alto + 20;
+  });
+
+  const c = ajustar(ctx, d.cierre, maxW, 34, 2, '700', F_TXT);
+  ctx.fillStyle = PAL.lila;
+  pintarLineas(ctx, c.lineas, cx, H - 268, c.tam * 1.25, 'center');
+  pastilla(ctx, ctaDe(d.publico), cx, H - 150, {
+    px:33, padX:52, padY:22, fondo: grad(ctx, cx-300, 0, cx+300, 0, PAL.amarillo, PAL.amarillo2),
+    color: PAL.moradoNoche, peso:'800', alinear:'centro'
+  });
+}
+
+/* ---------- Plantilla HISTORIA (vertical, 1080×1920) ---------- */
+function plantillaHistoria(ctx, W, H, d){
+  const g = ctx.createLinearGradient(0, 0, W*0.5, H);
+  g.addColorStop(0, PAL.moradoNoche); g.addColorStop(.6, PAL.moradoOsc); g.addColorStop(1, PAL.morado);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+  patita(ctx, 150, 420, 150, PAL.amarillo, .09, -14);
+  patita(ctx, W - 150, H - 470, 190, PAL.lila, .09, 22);
+
+  const cx = W/2, maxW = W - 180;
+  /* Zona segura: 280 px arriba y abajo quedan libres para la interfaz de Instagram. */
+  wordmark(ctx, cx, 300, 42, 'centro');
+  pastilla(ctx, d.etiqueta, cx, 370, {
+    px:30, padX:34, padY:14, fondo:'rgba(255,255,255,.14)', color: PAL.amarillo2, alinear:'centro'
+  });
+
+  /* El texto se centra entre la etiqueta y la zona del CTA, en vez de flotar arriba. */
+  const t = ajustar(ctx, d.titulo, maxW, 76, 6, '800', F_TIT);
+  const cajas = (d.lineas || []).slice(0, 3).map(linea => {
+    const l = ajustar(ctx, linea, maxW - 76, 36, 3, '700', F_TXT);
+    return { l: l, alto: l.lineas.length * l.tam * 1.35 + 44 };
+  });
+  const altoTitulo = t.lineas.length * t.tam * 1.2;
+  const altoCajas = cajas.reduce((a, c) => a + c.alto + 24, 0);
+  const zonaAlta = 470, zonaBaja = H - 400;
+  const libre = (zonaBaja - zonaAlta) - (altoTitulo + (altoCajas ? altoCajas + 36 : 0));
+  let y = zonaAlta + Math.max(0, libre/2);
+
+  ctx.font = '800 ' + t.tam + 'px ' + F_TIT;
+  ctx.fillStyle = PAL.blanco;
+  y = pintarLineas(ctx, t.lineas, cx, y, t.tam * 1.2, 'center');
+
+  if(cajas.length){
+    y += 36;
+    cajas.forEach(caja => {
+      const l = caja.l, alto = caja.alto;
+      rr(ctx, cx - maxW/2, y, maxW, alto, 32);
+      ctx.fillStyle = 'rgba(234,220,244,.14)'; ctx.fill();
+      ctx.strokeStyle = 'rgba(234,220,244,.35)'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = PAL.lila;
+      ctx.font = '700 ' + l.tam + 'px ' + F_TXT;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      const base = y + alto/2 - (l.lineas.length-1) * l.tam * .675;
+      l.lineas.forEach((ln, i) => ctx.fillText(ln, cx, base + i * l.tam * 1.35));
+      y += alto + 24;
+    });
+  }
+
+  if(d.sticker){
+    ctx.fillStyle = 'rgba(234,220,244,.75)';
+    ctx.font = '700 26px ' + F_TXT;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('Sticker sugerido: ' + d.sticker, cx, H - 380);
+  }
+  pastilla(ctx, ctaDe(d.publico), cx, H - 330, {
+    px:33, padX:52, padY:22, fondo: grad(ctx, cx-300, 0, cx+300, 0, PAL.amarillo, PAL.amarillo2),
+    color: PAL.moradoNoche, peso:'800', alinear:'centro'
+  });
+}
+
+/* ---------- Qué imágenes lleva cada formato ---------- */
+function lienzosDe(p){
+  const v = p.visual || {
+    etiqueta: ETIQUETAS[p.herramientaId],
+    titulo: sinPunto(p.ganchoCorto),
+    destacado: DESTACADOS[p.herramientaId],
+    lineas: p.lineas.slice(0,3).map(lineaParaImagen),
+    cierre: sinPunto(p.cierreCorto)
+  };
+  const base = { publico: p.publico, etiqueta: v.etiqueta, destacado: v.destacado };
+
+  if(p.formato === 'post'){
+    return [{ nombre:'post', plantilla: p.plantilla || 'tip', ancho:1080, alto:1350,
+              datos: Object.assign({}, base, { titulo:v.titulo, lineas:v.lineas, cierre:v.cierre }) }];
+  }
+  if(p.formato === 'carrusel'){
+    return p.cards.map((c, i) => ({
+      nombre: 'card-' + (i+1),
+      plantilla: (i === 0 || i === p.cards.length-1) ? 'hito' : 'tip',
+      ancho:1080, alto:1350,
+      datos: Object.assign({}, base, {
+        titulo: c.titulo,
+        destacado: i === 0 ? v.destacado : String(i) + '/' + (p.cards.length-2),
+        lineas: i === 0 || i === p.cards.length-1 ? [] : [c.linea],
+        cierre: i === p.cards.length-1 ? c.linea : v.cierre
+      })
+    }));
+  }
+  if(p.formato === 'historia'){
+    return p.frames.map((f, i) => ({
+      nombre:'frame-' + (i+1), plantilla:'historia', ancho:1080, alto:1920,
+      datos: Object.assign({}, base, {
+        titulo: f.texto.replace(/\n+/g,' ').replace(/^[^\wÁÉÍÓÚÑáéíóúñ¿¡]+/,'').trim(),
+        lineas: [], sticker: f.sticker
+      })
+    }));
+  }
+  /* reel: portada del video */
+  return [{ nombre:'portada', plantilla:'historia', ancho:1080, alto:1920,
+            datos: Object.assign({}, base, { titulo: sinPunto(p.gancho), lineas: [] }) }];
+}
+
+async function dibujar(spec){
+  await prepararFuentes();
+  const cv = document.createElement('canvas');
+  cv.width = spec.ancho; cv.height = spec.alto;
+  const ctx = cv.getContext('2d');
+  if(spec.plantilla === 'hito')          plantillaHito(ctx, spec.ancho, spec.alto, spec.datos);
+  else if(spec.plantilla === 'historia') plantillaHistoria(ctx, spec.ancho, spec.alto, spec.datos);
+  else                                   plantillaTip(ctx, spec.ancho, spec.alto, spec.datos);
+  return cv;
+}
+
+/* ============================================================
+   ESTADO, COLA DE APROBACIÓN Y ALMACENAMIENTO
    ============================================================ */
 const estado = { publico:'auto', formato:'post', largo:'medio' };
 let piezas = [];   /* piezas visibles en pantalla */
+let filtro = 'pendiente';
 
-const LS_GUARDADOS = 'evgen_guardados';
+const LS_COLA = 'evgen_cola';
 const LS_TEMA = 'evgen_tema';
-function leerGuardados(){
-  try{ return JSON.parse(localStorage.getItem(LS_GUARDADOS) || '[]'); }catch(e){ return []; }
+const ESTADOS = { pendiente:'Pendiente', aprobada:'Aprobada', rechazada:'Rechazada' };
+
+function leerCola(){
+  try{ return JSON.parse(localStorage.getItem(LS_COLA) || '[]'); }catch(e){ return []; }
 }
-function escribirGuardados(a){
-  try{ localStorage.setItem(LS_GUARDADOS, JSON.stringify(a)); }
+function escribirCola(a){
+  /* Solo se guardan los datos: las imágenes se vuelven a dibujar cuando hacen falta. */
+  try{ localStorage.setItem(LS_COLA, JSON.stringify(a)); }
   catch(e){ toast('No se pudo guardar: memoria del navegador llena'); }
+}
+function enCola(id){ return leerCola().find(x => x.id === id); }
+function guardarEnCola(p){
+  const c = leerCola();
+  const i = c.findIndex(x => x.id === p.id);
+  if(i === -1) c.unshift(p); else c[i] = p;
+  escribirCola(c);
+}
+function quitarDeCola(id){
+  escribirCola(leerCola().filter(x => x.id !== id));
 }
 
 function toast(msg){
@@ -1178,7 +1571,7 @@ function toast(msg){
   t.textContent = msg;
   t.classList.add('ver');
   clearTimeout(toast._t);
-  toast._t = setTimeout(() => t.classList.remove('ver'), 2200);
+  toast._t = setTimeout(() => t.classList.remove('ver'), 2600);
 }
 function copiar(txt, msg){
   const ok = () => toast(msg || 'Copiado');
@@ -1199,49 +1592,186 @@ function copiarFallback(txt, ok){
   catch(e){ toast('Tu navegador no dejó copiar: selecciona el texto a mano'); }
   document.body.removeChild(ta);
 }
-function descargar(nombre, texto){
-  /* Dentro de un visor incrustado el navegador bloquea la descarga: se copia en su lugar. */
-  if(window.self !== window.top){
-    copiar(texto, 'Aquí no se puede descargar: lo copié al portapapeles');
+
+/* ---------- Guardar archivos ----------
+   En el visor de claude.ai la página no puede descargar por su cuenta:
+   se pide permiso al visor. Abierto como archivo local, descarga directo. */
+let promesaDescargas = null;
+function capacidadDescargas(){
+  if(promesaDescargas) return promesaDescargas;
+  promesaDescargas = (window.claude && typeof window.claude.use === 'function')
+    ? window.claude.use('downloads').catch(() => null)
+    : Promise.resolve(null);
+  return promesaDescargas;
+}
+async function guardarArchivo(nombre, blob, texto){
+  const cap = await capacidadDescargas();
+  if(cap){
+    try{
+      await cap.save({ filename: nombre, data: blob });
+      toast('Guardado: ' + nombre);
+    }catch(e){
+      const cod = e && e.code;
+      if(cod === 'declined') toast('Descarga cancelada');
+      else if(cod === 'rate_limited') toast('Espera un momento y vuelve a intentar');
+      else if(texto){ copiar(texto, 'No se pudo descargar: lo copié al portapapeles'); }
+      else toast('No se pudo guardar el archivo');
+    }
     return;
   }
-  const blob = new Blob([texto], { type:'text/markdown;charset=utf-8' });
+  if(window.self !== window.top){
+    if(texto) copiar(texto, 'Aquí no se puede descargar: lo copié al portapapeles');
+    else toast('Aquí no se puede descargar: abre el archivo en tu computador');
+    return;
+  }
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = nombre;
   document.body.appendChild(a);
   a.click();
   setTimeout(() => { URL.revokeObjectURL(a.href); document.body.removeChild(a); }, 0);
+  toast('Descargado: ' + nombre);
+}
+function lienzoABlob(cv){
+  return new Promise(res => cv.toBlob(res, 'image/jpeg', 0.92));
 }
 
 /* ============================================================
-   PINTAR
+   PINTAR LAS PIEZAS Y SUS IMÁGENES
    ============================================================ */
 function pintarPiezas(){
   document.getElementById('zona-resultado').innerHTML = piezas.map(piezaHtml).join('');
+  piezas.forEach(p => pintarLienzos(p, document.querySelector('.pieza[data-id="'+p.id+'"] .lienzos')));
 }
-function pintarGuardados(){
-  const g = leerGuardados();
-  document.getElementById('cuenta-guardados').textContent = g.length;
-  const cont = document.getElementById('lista-guardados');
-  if(!g.length){
-    cont.innerHTML = '<p class="vacio">Todavía no guardas nada. Genera una pieza y presiona «Guardar».</p>';
+
+async function pintarLienzos(p, caja){
+  if(!caja) return;
+  const specs = lienzosDe(p);
+  caja.innerHTML = '<p class="cargando-img">Dibujando ' +
+    (specs.length === 1 ? 'la imagen' : 'las ' + specs.length + ' imágenes') + '…</p>';
+  const hechos = [];
+  for(const spec of specs){
+    const cv = await dibujar(spec);
+    hechos.push({ spec: spec, cv: cv });
+  }
+  if(!document.body.contains(caja)) return;
+  caja.innerHTML = '';
+  hechos.forEach(h => {
+    const fig = document.createElement('figure');
+    fig.className = 'lienzo';
+    h.cv.setAttribute('role', 'img');
+    h.cv.setAttribute('aria-label', 'Imagen ' + h.spec.nombre + ': ' + h.spec.datos.titulo);
+    const pie = document.createElement('figcaption');
+    pie.textContent = h.spec.nombre + ' · ' + h.spec.ancho + '×' + h.spec.alto;
+    const btn = document.createElement('button');
+    btn.className = 'btn sec mini';
+    btn.textContent = 'Descargar JPG';
+    btn.addEventListener('click', async () => {
+      const blob = await lienzoABlob(h.cv);
+      guardarArchivo('encuentravet-' + p.formato + '-' + h.spec.nombre + '-' + p.fecha + '.jpg', blob);
+    });
+    fig.appendChild(h.cv);
+    fig.appendChild(pie);
+    fig.appendChild(btn);
+    caja.appendChild(fig);
+  });
+  p._specs = specs;
+}
+
+/* ============================================================
+   COLA DE APROBACIÓN
+   ============================================================ */
+function pintarCola(){
+  const c = leerCola();
+  const cuenta = { pendiente:0, aprobada:0, rechazada:0 };
+  c.forEach(p => { cuenta[p.estado] = (cuenta[p.estado]||0) + 1; });
+  ['pendiente','aprobada','rechazada'].forEach(e => {
+    const n = document.querySelector('.cola-f[data-estado="'+e+'"] .n');
+    if(n) n.textContent = cuenta[e] || 0;
+  });
+  document.querySelectorAll('.cola-f').forEach(b =>
+    b.setAttribute('aria-pressed', String(b.dataset.estado === filtro)));
+
+  const lista = c.filter(p => p.estado === filtro);
+  const cont = document.getElementById('lista-cola');
+  if(!lista.length){
+    cont.innerHTML = '<p class="vacio">No hay piezas ' +
+      ({pendiente:'pendientes', aprobada:'aprobadas', rechazada:'rechazadas'})[filtro] + '.</p>';
     return;
   }
-  cont.innerHTML = g.map(p =>
-    '<div class="guardado-item" data-id="' + p.id + '">' +
-      '<div class="cab">' +
-        '<span class="chip amar">' + esc(NOMBRE_FORMATO[p.formato]) + '</span>' +
-        chipPublico(p.publico) +
-        '<span class="chip neutro">' + esc(p.fecha + ' · ' + p.hora) + '</span>' +
-      '</div>' +
-      '<p style="margin:0 0 8px"><b>' + esc(p.gancho) + '</b></p>' +
-      '<pre>' + esc(p.caption) + '</pre>' +
-      '<div class="fila-botones">' +
-        '<button class="btn sec mini" data-gacc="caption">Copiar caption</button>' +
-        '<button class="btn sec mini" data-gacc="borrar">Borrar</button>' +
+  cont.innerHTML = lista.map(p =>
+    '<div class="cola-item" data-id="' + p.id + '">' +
+      '<div class="cola-mini" data-mini="' + p.id + '"></div>' +
+      '<div>' +
+        '<div class="cab">' +
+          '<span class="chip amar">' + esc(NOMBRE_FORMATO[p.formato]) + '</span>' +
+          chipPublico(p.publico) +
+          '<span class="chip neutro">' + esc(p.fecha + ' · ' + p.hora) + '</span>' +
+        '</div>' +
+        '<p style="margin:0 0 8px"><b>' + esc(p.gancho) + '</b></p>' +
+        '<pre>' + esc(p.caption) + '</pre>' +
+        '<div class="fila-botones">' +
+          (p.estado !== 'aprobada' ? '<button class="btn mini" data-cacc="aprobar">Aprobar</button>' : '') +
+          (p.estado !== 'rechazada' ? '<button class="btn sec mini" data-cacc="rechazar">Rechazar</button>' : '') +
+          '<button class="btn sec mini" data-cacc="caption">Copiar caption</button>' +
+          '<button class="btn sec mini" data-cacc="ver">Ver arriba</button>' +
+          '<button class="btn sec mini" data-cacc="borrar">Quitar</button>' +
+        '</div>' +
       '</div>' +
     '</div>').join('');
+  /* Miniatura: se vuelve a dibujar la primera imagen de cada pieza. */
+  lista.forEach(async p => {
+    const caja = document.querySelector('.cola-mini[data-mini="' + p.id + '"]');
+    if(!caja) return;
+    const cv = await dibujar(lienzosDe(p)[0]);
+    if(document.body.contains(caja)){ caja.innerHTML = ''; caja.appendChild(cv); }
+  });
+}
+
+function cambiarEstado(id, nuevo){
+  const p = enCola(id) || piezas.find(x => x.id === id);
+  if(!p) return;
+  p.estado = nuevo;
+  guardarEnCola(p);
+  const vista = piezas.find(x => x.id === id);
+  if(vista) vista.estado = nuevo;
+  pintarCola();
+  const art = document.querySelector('.pieza[data-id="' + id + '"] .estado-pieza');
+  if(art){
+    art.textContent = ESTADOS[nuevo];
+    art.className = 'chip estado-pieza ' + nuevo;
+  }
+  toast(nuevo === 'aprobada' ? 'Aprobada: queda lista para publicar'
+      : nuevo === 'rechazada' ? 'Rechazada' : 'Vuelve a pendientes');
+}
+
+/* ============================================================
+   EXPORTAR
+   ============================================================ */
+function colaMarkdown(lista){
+  return '# Contenido EncuentraVet\n\n' + lista.map(piezaTexto).join('\n\n---\n\n');
+}
+/* Mismo formato que piezas/cola-local.json, para el publicador del repositorio. */
+function colaJson(lista){
+  return JSON.stringify(lista.map(p => {
+    const v = p.visual || {};
+    return {
+      tipo: p.formato === 'reel' ? 'video' : 'tip',
+      formato: p.formato,
+      publico: p.publico === 'vets' ? 'veterinarios' : 'tutores',
+      herramienta: p.herramienta,
+      fecha_propuesta: p.fecha,
+      hora_propuesta: p.hora,
+      caption: p.caption,
+      visual: {
+        etiqueta: v.etiqueta || ETIQUETAS[p.herramientaId],
+        titulo: v.titulo || sinPunto(p.ganchoCorto),
+        destacado: v.destacado || DESTACADOS[p.herramientaId],
+        lineas: v.lineas || p.lineas.map(lineaParaImagen),
+        cierre: v.cierre || sinPunto(p.cierreCorto)
+      }
+    };
+  }), null, 2);
 }
 function pintarDatos(){
   document.getElementById('lista-datos').innerHTML =
@@ -1280,6 +1810,14 @@ function opciones(extra){
   };
   return Object.assign(o, extra || {});
 }
+/* Una pieza recién generada solo se muestra. Entra a la cola cuando tú
+   la apruebas o la rechazas: así la cola guarda decisiones, no borradores. */
+function nuevaPieza(op){
+  const p = generarPieza(op);
+  p.estado = 'pendiente';
+  p.plantilla = 'tip';
+  return p;
+}
 
 /* ============================================================
    EVENTOS
@@ -1299,8 +1837,9 @@ conectarSeg('seg-formato','formato');
 conectarSeg('seg-largo','largo');
 
 document.getElementById('btn-generar').addEventListener('click', () => {
-  piezas = [generarPieza(opciones())];
+  piezas = [nuevaPieza(opciones())];
   pintarPiezas();
+  pintarCola();
   document.getElementById('zona-resultado').scrollIntoView({ behavior:'smooth', block:'start' });
 });
 
@@ -1308,15 +1847,12 @@ document.getElementById('btn-lote').addEventListener('click', () => {
   /* Semana de 5 publicaciones: 4 para veterinarios y 1 para tutores (mezcla 80/20). */
   const publicos = mezclar(['vets','vets','vets','vets','tutores']);
   const formatos = mezclar(['post','carrusel','historia','reel','post']);
-  piezas = publicos.map((pub, i) => generarPieza(opciones({
-    publico: pub,
-    formato: formatos[i],
-    herramienta: 'auto',
-    angulo: 'auto',
-    offsetDias: i + 1
+  piezas = publicos.map((pub, i) => nuevaPieza(opciones({
+    publico: pub, formato: formatos[i], herramienta:'auto', angulo:'auto', offsetDias: i + 1
   })));
   pintarPiezas();
-  toast('Semana lista: 4 piezas para veterinarios y 1 para tutores');
+  pintarCola();
+  toast('Semana lista: 5 piezas para revisar');
   document.getElementById('zona-resultado').scrollIntoView({ behavior:'smooth', block:'start' });
 });
 
@@ -1333,58 +1869,88 @@ document.getElementById('zona-resultado').addEventListener('click', e => {
   const idx = piezas.findIndex(x => x.id === art.dataset.id);
   if(idx === -1) return;
   const p = piezas[idx];
-  if(b.dataset.acc === 'caption') copiar(p.caption, 'Caption copiado');
-  if(b.dataset.acc === 'todo')    copiar(piezaTexto(p), 'Pieza completa copiada');
-  if(b.dataset.acc === 'otra'){
-    piezas[idx] = generarPieza(opciones({
-      publico: p.publico,
-      formato: p.formato,
-      herramienta: p.herramientaId,
+  const acc = b.dataset.acc;
+  if(acc === 'caption')  copiar(p.caption, 'Caption copiado');
+  if(acc === 'todo')     copiar(piezaTexto(p), 'Pieza completa copiada');
+  if(acc === 'aprobar')  cambiarEstado(p.id, 'aprobada');
+  if(acc === 'rechazar') cambiarEstado(p.id, 'rechazada');
+  if(acc === 'plantilla'){
+    p.plantilla = p.plantilla === 'hito' ? 'tip' : 'hito';
+    if(enCola(p.id)) guardarEnCola(p);   /* solo si ya estaba archivada */
+    pintarLienzos(p, art.querySelector('.lienzos'));
+    b.textContent = p.plantilla === 'hito' ? 'Plantilla: fondo oscuro' : 'Plantilla: fondo claro';
+  }
+  if(acc === 'otra'){
+    piezas[idx] = nuevaPieza(opciones({
+      publico: p.publico, formato: p.formato, herramienta: p.herramientaId,
       angulo: document.getElementById('sel-angulo').value
     }));
     pintarPiezas();
-  }
-  if(b.dataset.acc === 'guardar'){
-    const g = leerGuardados();
-    if(g.some(x => x.caption === p.caption)){ toast('Esa pieza ya estaba guardada'); return; }
-    g.unshift(p);
-    escribirGuardados(g);
-    pintarGuardados();
-    toast('Guardado');
+    pintarCola();
   }
 });
 
-document.getElementById('lista-guardados').addEventListener('click', e => {
-  const b = e.target.closest('button[data-gacc]');
+document.querySelector('.cola-filtros').addEventListener('click', e => {
+  const b = e.target.closest('.cola-f');
   if(!b) return;
-  const id = b.closest('.guardado-item').dataset.id;
-  const g = leerGuardados();
-  const p = g.find(x => x.id === id);
+  filtro = b.dataset.estado;
+  pintarCola();
+});
+
+document.getElementById('lista-cola').addEventListener('click', e => {
+  const b = e.target.closest('button[data-cacc]');
+  if(!b) return;
+  const id = b.closest('.cola-item').dataset.id;
+  const p = enCola(id);
   if(!p) return;
-  if(b.dataset.gacc === 'caption') copiar(p.caption, 'Caption copiado');
-  if(b.dataset.gacc === 'borrar'){
-    escribirGuardados(g.filter(x => x.id !== id));
-    pintarGuardados();
+  const acc = b.dataset.cacc;
+  if(acc === 'aprobar')  cambiarEstado(id, 'aprobada');
+  if(acc === 'rechazar') cambiarEstado(id, 'rechazada');
+  if(acc === 'caption')  copiar(p.caption, 'Caption copiado');
+  if(acc === 'borrar'){ quitarDeCola(id); pintarCola(); }
+  if(acc === 'ver'){
+    piezas = [p];
+    pintarPiezas();
+    document.getElementById('zona-resultado').scrollIntoView({ behavior:'smooth', block:'start' });
   }
 });
 
-function guardadosMarkdown(){
-  const g = leerGuardados();
-  return '# Contenido EncuentraVet\n\n' + g.map(piezaTexto).join('\n\n---\n\n');
-}
+function aprobadas(){ return leerCola().filter(p => p.estado === 'aprobada'); }
+
 document.getElementById('btn-copiar-todo').addEventListener('click', () => {
-  if(!leerGuardados().length){ toast('No hay nada guardado'); return; }
-  copiar(guardadosMarkdown(), 'Todo copiado');
+  const a = aprobadas();
+  if(!a.length){ toast('No hay piezas aprobadas todavía'); return; }
+  copiar(colaMarkdown(a), 'Copiadas ' + a.length + ' piezas aprobadas');
 });
 document.getElementById('btn-exportar').addEventListener('click', () => {
-  if(!leerGuardados().length){ toast('No hay nada guardado'); return; }
-  descargar('contenido-encuentravet-' + fechaSugerida(0) + '.md', guardadosMarkdown());
+  const a = aprobadas();
+  if(!a.length){ toast('No hay piezas aprobadas todavía'); return; }
+  const txt = colaJson(a);
+  guardarArchivo('cola-aprobada-' + fechaSugerida(0) + '.json',
+                 new Blob([txt], { type:'application/json' }), txt);
+});
+document.getElementById('btn-descargar-imgs').addEventListener('click', async e => {
+  const a = aprobadas();
+  if(!a.length){ toast('No hay piezas aprobadas todavía'); return; }
+  e.target.disabled = true;
+  let n = 0;
+  for(const p of a){
+    for(const spec of lienzosDe(p)){
+      const cv = await dibujar(spec);
+      const blob = await lienzoABlob(cv);
+      await guardarArchivo('encuentravet-' + p.fecha + '-' + p.formato + '-' + spec.nombre + '.jpg', blob);
+      n++;
+    }
+  }
+  e.target.disabled = false;
+  toast('Listas ' + n + ' imágenes');
 });
 document.getElementById('btn-vaciar').addEventListener('click', () => {
-  if(!leerGuardados().length){ toast('No hay nada guardado'); return; }
-  if(!confirm('¿Borrar todo el contenido guardado en este navegador?')) return;
-  escribirGuardados([]);
-  pintarGuardados();
+  const c = leerCola();
+  if(!c.length){ toast('La cola ya está vacía'); return; }
+  if(!confirm('¿Borrar las ' + c.length + ' piezas de la cola en este navegador?')) return;
+  escribirCola([]);
+  pintarCola();
 });
 
 document.getElementById('inp-tema').addEventListener('keydown', e => {
@@ -1407,7 +1973,8 @@ try{
 /* Arranque */
 llenarSelectores();
 pintarDatos();
-pintarGuardados();
-piezas = [generarPieza(opciones())];
+pintarCola();
+piezas = [nuevaPieza(opciones())];
 pintarPiezas();
+pintarCola();
 </script>
