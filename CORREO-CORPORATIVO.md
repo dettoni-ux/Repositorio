@@ -5,21 +5,21 @@ Diagnóstico DNS real ejecutado el **7 de septiembre de 2026**.
 
 > **Decisión tomada:** Zoho Mail Lite (5 GB), 1 usuario, **facturación anual** (USD 12/año).
 > `contacto@` es la casilla; `ventas@`, `marketing@` y `dmarc@` van como alias gratuitos.
-> El correo se sigue leyendo y respondiendo desde Gmail (paso 3.5).
+> **Cómo se lee:** app oficial de **Zoho Mail** en el iPhone y `mail.zoho.com` en el
+> computador. Se descartó el reenvío a Gmail: la app da notificaciones push nativas, sin
+> retraso y sin riesgo de duplicados. La ruta por Gmail queda documentada en §3.5 por si
+> algún día se prefiere una bandeja única.
 
 ## ⏳ Lo único que queda por hacer
 
-El DNS está completo y verificado. Lo que sigue son acciones dentro de paneles con sesión
-iniciada (Zoho, Vercel, Gmail), en este orden:
+El correo está funcionando: DNS completo y verificado, casilla recibiendo, alias creados y
+lectura desde la app de Zoho en el iPhone. Queda una sola cosa por comprobar y dos opcionales:
 
-| # | Dónde | Qué | Tiempo |
+| # | Dónde | Qué | Estado |
 |---|---|---|---|
-| 1 | Zoho → Usuarios → contacto@ → Alias | Crear `ventas@`, `marketing@`, `dmarc@` | 2 min |
-| 2 | Vercel → DNS Records | Borrar el TXT `_dmarc` viejo y crear el nuevo (§3.2, registro 7) | 1 min |
-| 3 | Gmail antiguo → Reenvío | Reenviar a contacto@ (§5.1) | 2 min |
-| 4 | Gmail → Cuentas | Recibir por POP y enviar por SMTP de Zoho (§3.5) | 5 min |
-| 5 | Gmail → Firma | Pegar `firma-correo.html` (ábrelo en el navegador) | 2 min |
-| 6 | mail-tester.com | Enviar desde contacto@ y comprobar 10/10 | 2 min |
+| 1 | mail-tester.com | Enviar desde contacto@ y confirmar 10/10 | **Pendiente** — es la única prueba de *envío* que falta |
+| 2 | Gmail antiguo → Reenvío | Reenviar a contacto@ para no perder correos de marcas (§5.1) | Opcional |
+| 3 | Zoho → Firmas | Cargar `firma-correo.html` | Opcional |
 
 Después de cada cambio de DNS: `node scripts/verificar-correo-dns.mjs`
 
@@ -370,13 +370,13 @@ Marca cada punto antes de darlo por terminado:
 - [x] Los 3 MX de Zoho cargados — 10/20/50, sin MX de otro proveedor
 - [x] SPF **editado** a `v=spf1 include:zohomail.com -all` — un registro, includes válidos, 2/10 consultas
 - [x] DKIM publicado en `zmail._domainkey` — clave RSA de 1024 bits validada criptográficamente
-- [ ] Gmail configurado para recibir (POP) y enviar (SMTP) como contacto@
+- [x] Lectura configurada — app de Zoho Mail en iPhone y webmail en el computador
 - [x] DMARC editado con `rua=mailto:dmarc@encuentravet.cl` — reportes ahora sí entregables
 - [x] `node scripts/verificar-correo-dns.mjs` **todo en verde**
 - [x] Alias `ventas@`, `marketing@` y `dmarc@` creados
-- [ ] *Enviar como* configurado para ventas@ y marketing@
+- [ ] *Enviar como* para ventas@ y marketing@ (solo si se usa Gmail)
 - [ ] **Prueba de envío**: mandar un correo a **https://www.mail-tester.com** → objetivo **10/10**
-- [ ] **Prueba de recepción**: escribir desde el Gmail antiguo a contacto@, ventas@ y marketing@
+- [x] **Prueba de recepción**: correo enviado a contacto@ recibido correctamente
 - [ ] Reenvío desde `encuentra.vet@gmail.com` activo y confirmado
 - [ ] Firma cargada en Gmail
 - [ ] Correo actualizado en el sitio, Instagram y fichas de proveedores
