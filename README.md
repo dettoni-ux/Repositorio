@@ -41,10 +41,13 @@ ficha gratis e insignia azul), siguiendo la estrategia de `rrss/identidad.md`.
   los hashtags, que estén los hashtags base, el largo, la cantidad de emoji, que el texto quepa
   en las plantillas de imagen y —lo más importante— que **ninguna cifra salga de los datos
   reales de la marca**. Si aparece un número que no está en esa lista, lo marca para revisión.
-- **Imágenes en el mismo generador**: dibuja las piezas con las plantillas oficiales de la marca
-  (las mismas `tip` y `hito` de `rrss/plantillas/`, con la paleta de `base.css`), en 1080×1350 para
-  post y carrusel y 1080×1920 para historias y portada de reel. El post permite alternar entre
-  fondo claro y fondo oscuro.
+- **Tus fotos y tu logo**: botones para subir las fotos (las hechas con IA, por ejemplo) y el logo
+  en PNG. Quedan guardados en el navegador y el generador les pone encima el texto, la marca y los
+  adornos. Sin fotos cargadas, las piezas salen con el fondo morado de la marca.
+- **Imágenes en el mismo generador**, en 1080×1350 para post y carrusel y 1080×1920 para historias
+  y portada de reel, con tres plantillas: **sobre foto** (foto a sangre completa, titular con bloques
+  fucsia, logo arriba y barra de certificación abajo), **tarjetas** (fondo morado con patitas y puntos
+  en tarjetas blancas) y **número grande**. Cada pieza permite cambiar de plantilla y de foto.
 - **Cola de aprobación** con tres estados —pendiente, aprobada, rechazada— y su miniatura.
   Solo entra a la cola lo que apruebas o rechazas, así queda el registro de decisiones y no de borradores.
 - **Descargas**: las imágenes aprobadas en JPG y la cola en `.json` con el mismo formato de

@@ -115,6 +115,21 @@
   .chequeo ul{margin:0; padding-left:20px}
   .chequeo li{margin-bottom:3px}
 
+  /* Subida de fotos y logo */
+  .subida{display:grid; grid-template-columns:2fr 1fr; gap:18px; margin-top:20px; padding-top:18px; border-top:1px solid var(--line)}
+  @media (max-width:640px){ .subida{grid-template-columns:1fr} }
+  .pista{font-weight:600; text-transform:none; letter-spacing:0; color:var(--ink2); font-size:12px}
+  .thumbs{display:flex; flex-wrap:wrap; gap:8px; min-height:72px; align-content:flex-start}
+  .thumbs .vacio-thumbs{color:var(--ink2); font-size:14px; margin:0; align-self:center}
+  .thumb{width:64px; height:64px; border-radius:10px; border:2px solid var(--line); padding:0;
+    overflow:hidden; cursor:pointer; background:var(--panel2)}
+  .thumb img{width:100%; height:100%; object-fit:cover; display:block}
+  .thumb[aria-pressed="true"]{border-color:var(--morado); box-shadow:0 0 0 3px var(--morado-suave)}
+  .caja-logo{height:72px; border:1px dashed var(--line); border-radius:10px; display:flex; align-items:center;
+    justify-content:center; background:var(--panel2); padding:8px; overflow:hidden}
+  .caja-logo span{color:var(--ink2); font-size:12.5px; text-align:center}
+  .caja-logo img{max-height:100%; max-width:100%; object-fit:contain}
+
   /* Imágenes generadas */
   .lienzos{display:flex; gap:12px; overflow-x:auto; padding:4px 0 10px; margin:6px 0 4px; scroll-snap-type:x mandatory}
   .lienzo{margin:0; flex:none; width:210px; display:flex; flex-direction:column; gap:8px; scroll-snap-align:start}
@@ -217,6 +232,27 @@
         </div>
       </div>
 
+      <div class="subida">
+        <div>
+          <label class="campo">Tus fotos <span class="pista">las que hiciste con IA</span></label>
+          <div class="thumbs" id="thumbs-fotos"></div>
+          <div class="fila-botones" style="margin-top:10px">
+            <label class="btn sec mini" for="inp-fotos" tabindex="0" role="button">Subir fotos</label>
+            <input type="file" id="inp-fotos" accept="image/png,image/jpeg,image/webp" multiple hidden>
+            <button class="btn sec mini" id="btn-quitar-foto" type="button">Quitar la elegida</button>
+          </div>
+        </div>
+        <div>
+          <label class="campo">Logo <span class="pista">PNG con fondo transparente</span></label>
+          <div class="caja-logo" id="caja-logo"><span>Sin logo: se dibuja el de la marca</span></div>
+          <div class="fila-botones" style="margin-top:10px">
+            <label class="btn sec mini" for="inp-logo" tabindex="0" role="button">Subir logo</label>
+            <input type="file" id="inp-logo" accept="image/png,image/webp,image/jpeg" hidden>
+            <button class="btn sec mini" id="btn-quitar-logo" type="button">Quitar</button>
+          </div>
+        </div>
+      </div>
+
       <div class="fila-botones">
         <button class="btn" id="btn-generar" type="button">Generar pieza</button>
         <button class="btn sec" id="btn-lote" type="button">Generar semana (5 piezas)</button>
@@ -269,7 +305,7 @@
 const MARCA = {
   nombre:'EncuentraVet',
   web:'encuentravet.cl',
-  ig:'@encuentravet',
+  ig:'@encuentra.vet',
   slogan:'Veterinarios Certificados. Cerca de ti'
 };
 
@@ -1148,7 +1184,10 @@ function piezaHtml(p){
       '<button class="btn sec mini" data-acc="caption">Copiar caption</button>' +
       '<button class="btn sec mini" data-acc="todo">Copiar pieza completa</button>' +
       '<button class="btn sec mini" data-acc="otra">Otra variante</button>' +
-      (p.formato === 'post' ? '<button class="btn sec mini" data-acc="plantilla">Plantilla: fondo claro</button>' : '') +
+      (p.formato === 'post'
+        ? '<button class="btn sec mini" data-acc="plantilla">Plantilla: ' + esc(NOMBRE_PLANTILLA[plantillaValida(p.plantilla)]) + '</button>'
+        : '') +
+      (fotos.length > 1 ? '<button class="btn sec mini" data-acc="foto">Otra foto</button>' : '') +
     '</div>' +
   '</article>';
 }
@@ -1198,15 +1237,21 @@ function piezaTexto(p){
 
 /* ============================================================
    PLANTILLAS DE IMAGEN
-   Calcadas de rrss/plantillas/tip.html y hito.html, con la
-   paleta oficial de rrss/plantillas/base.css.
+   Identidad real de EncuentraVet Chile: fondo morado, patitas
+   amarillas, «Vet» en fucsia, bloques de resalte y caja blanca
+   con la dirección web.
    ============================================================ */
 const PAL = {
-  morado:'#5B2E7E', morado2:'#6B3593', moradoOsc:'#3C1D55', moradoNoche:'#2C1140',
-  lila:'#EADCF4', lilaClaro:'#F5EFFA', amarillo:'#FFD84D', amarillo2:'#FFE277', blanco:'#FFFFFF'
+  moradoClaro:'#7B3FA8', morado:'#5B2E7E', moradoOsc:'#3C1D55', moradoNoche:'#2C1140',
+  lila:'#EADCF4', lilaClaro:'#F5EFFA',
+  amarillo:'#FFD84D', amarillo2:'#FFE277',
+  rosa:'#EE2A7B', rosaOsc:'#C4145C',
+  blanco:'#FFFFFF'
 };
 const F_TIT = "'Poppins', system-ui, -apple-system, sans-serif";
 const F_TXT = "'Nunito', system-ui, -apple-system, sans-serif";
+const WEB = 'www.encuentravet.cl';
+const HANDLE = '@encuentra.vet';
 
 let fuentesListas = false;
 async function prepararFuentes(){
@@ -1224,6 +1269,7 @@ async function prepararFuentes(){
   fuentesListas = true;
 }
 
+/* ---------- Utilidades de dibujo ---------- */
 function rr(ctx, x, y, w, h, r){
   r = Math.min(r, w/2, h/2);
   ctx.beginPath();
@@ -1271,11 +1317,11 @@ function pintarLineas(ctx, lineas, x, y, alto, alinear){
   return y + alto*lineas.length;
 }
 function pastilla(ctx, texto, x, y, o){
-  ctx.font = (o.peso||'600') + ' ' + o.px + 'px ' + (o.familia||F_TIT);
+  ctx.font = (o.peso||'700') + ' ' + o.px + 'px ' + (o.familia||F_TIT);
   const w = ctx.measureText(texto).width + o.padX*2;
   const h = o.px + o.padY*2;
   const px = o.alinear === 'centro' ? x - w/2 : x;
-  rr(ctx, px, y, w, h, h/2);
+  rr(ctx, px, y, w, h, o.radio == null ? h/2 : o.radio);
   ctx.fillStyle = o.fondo;
   ctx.fill();
   if(o.borde){ ctx.strokeStyle = o.borde; ctx.lineWidth = 2; ctx.stroke(); }
@@ -1291,121 +1337,217 @@ function patita(ctx, cx, cy, s, color, alpha, rot){
   ctx.rotate((rot||0) * Math.PI/180);
   ctx.scale(s/100, s/100);
   ctx.fillStyle = color;
-  ctx.beginPath(); ctx.ellipse(0, 12, 26, 20, 0, 0, Math.PI*2); ctx.fill();
-  [[-26,-14],[0,-22],[26,-14]].forEach(pt => {
-    ctx.beginPath(); ctx.arc(pt[0], pt[1], 11, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(0, 14, 27, 21, 0, 0, Math.PI*2); ctx.fill();
+  [[-30,-14,10],[-11,-27,10.5],[12,-27,10.5],[31,-13,10]].forEach(t => {
+    ctx.beginPath(); ctx.ellipse(t[0], t[1], t[2], t[2]*1.22, 0, 0, Math.PI*2); ctx.fill();
   });
   ctx.restore();
 }
-/* Wordmark: «Encuentra» en blanco y «Vet» en amarillo, con la patita. */
-function wordmark(ctx, x, y, px, alinear){
+function corazon(ctx, cx, cy, s, color){
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(s/100, s/100);
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(0, 38);
+  ctx.bezierCurveTo(-52, -2, -34, -44, 0, -20);
+  ctx.bezierCurveTo(34, -44, 52, -2, 0, 38);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+/* La «C» del logo: un pin de ubicación con la patita y el corazón dentro. */
+function pinC(ctx, cx, cy, r, trazo){
+  ctx.save();
+  ctx.lineWidth = r * 0.40;
+  ctx.strokeStyle = trazo;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, Math.PI*0.36, Math.PI*1.72);
+  ctx.stroke();
+  /* punta inferior del pin */
+  ctx.fillStyle = trazo;
+  ctx.beginPath();
+  ctx.moveTo(cx - r*0.46, cy + r*0.62);
+  ctx.lineTo(cx + r*0.10, cy + r*1.46);
+  ctx.lineTo(cx + r*0.22, cy + r*0.52);
+  ctx.closePath();
+  ctx.fill();
+  corazon(ctx, cx, cy + r*0.20, r*0.78, PAL.rosa);
+  patita(ctx, cx, cy - r*0.34, r*0.62, trazo, 1, 0);
+  ctx.restore();
+}
+/* Logo: En(C)uentraVet Chile — «Vet» en fucsia. Devuelve el ancho usado. */
+function logoMarca(ctx, cx, cy, px, conTagline, alinear){
+  /* Si subiste el logo oficial en PNG, se usa ese. */
+  if(logoImg){
+    const h = px * 1.9, w = h * (logoImg.width / logoImg.height);
+    const x = alinear === 'derecha' ? cx - w : (alinear === 'izquierda' ? cx : cx - w/2);
+    ctx.drawImage(logoImg, x, cy - h/2, w, h);
+    return w;
+  }
   ctx.font = '800 ' + px + 'px ' + F_TIT;
-  const a = 'Encuentra', b = 'Vet';
-  const wa = ctx.measureText(a).width, wb = ctx.measureText(b).width;
-  const wp = px * 0.95, total = wp + 14 + wa + wb;
-  const inicio = alinear === 'derecha' ? x - total : (alinear === 'centro' ? x - total/2 : x);
-  patita(ctx, inicio + wp/2, y, wp, PAL.amarillo, 1, -12);
+  const a = 'En', b = 'uentra', c = 'Vet';
+  const pxChile = px * 0.62;
+  const rPin = px * 0.46;
+  const wa = ctx.measureText(a).width;
+  const wPin = rPin * 2.25;
+  const wb = ctx.measureText(b).width;
+  const wc = ctx.measureText(c).width;
+  ctx.font = '600 ' + pxChile + 'px ' + F_TIT;
+  const wChile = ctx.measureText(' Chile').width;
+  const total = wa + wPin + wb + wc + wChile;
+  let x = alinear === 'derecha' ? cx - total : (alinear === 'izquierda' ? cx : cx - total/2);
+  const xIni = x;
+
   ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-  ctx.fillStyle = PAL.blanco;   ctx.fillText(a, inicio + wp + 14, y);
-  ctx.fillStyle = PAL.amarillo; ctx.fillText(b, inicio + wp + 14 + wa, y);
+  ctx.font = '800 ' + px + 'px ' + F_TIT;
+  ctx.fillStyle = PAL.blanco; ctx.fillText(a, x, cy);           x += wa;
+  pinC(ctx, x + wPin/2, cy - px*0.06, rPin, PAL.blanco);        x += wPin;
+  ctx.fillStyle = PAL.blanco; ctx.fillText(b, x, cy);           x += wb;
+  ctx.fillStyle = PAL.rosa;   ctx.fillText(c, x, cy);           x += wc;
+  ctx.font = '600 ' + pxChile + 'px ' + F_TIT;
+  ctx.fillStyle = PAL.blanco; ctx.fillText(' Chile', x, cy + px*0.06);
+
+  if(conTagline){
+    ctx.font = '700 ' + (px*0.30) + 'px ' + F_TXT;
+    const t1 = 'Veterinarios Certificados. ', t2 = 'Cerca de ti';
+    const w1 = ctx.measureText(t1).width, w2 = ctx.measureText(t2).width;
+    const inicio = alinear === 'derecha' ? xIni + total - (w1+w2)
+                 : (alinear === 'izquierda' ? xIni : cx - (w1 + w2)/2);
+    const yT = cy + px*0.90;
+    ctx.fillStyle = PAL.blanco; ctx.fillText(t1, inicio, yT);
+    ctx.fillStyle = PAL.rosa;   ctx.fillText(t2, inicio + w1, yT);
+  }
   return total;
 }
-function ctaDe(publico){
-  return publico === 'vets' ? 'Crea tu perfil gratis · encuentravet.cl'
-                            : 'Regístrate gratis · encuentravet.cl';
-}
 
-/* ---------- Plantilla TIP (clara, 1080×1350) ---------- */
-function plantillaTip(ctx, W, H, d){
-  ctx.fillStyle = PAL.lilaClaro;
-  ctx.fillRect(0, 0, W, H);
-
-  const altoCab = 160;
-  ctx.fillStyle = grad(ctx, 0, 0, W, altoCab, PAL.morado, PAL.moradoOsc);
-  ctx.fillRect(0, 0, W, altoCab);
-  pastilla(ctx, d.etiqueta, 64, altoCab/2 - 29, {
-    px:30, padX:34, padY:14, fondo: grad(ctx, 64, 0, 500, altoCab, PAL.amarillo, PAL.amarillo2),
-    color: PAL.moradoNoche
-  });
-  wordmark(ctx, W - 64, altoCab/2, 40, 'derecha');
-
-  const altoPie = 168;
-  const x = 64, maxW = W - 128;
-  const t = ajustar(ctx, d.titulo, maxW, 68, 3, '800', F_TIT);
-  ctx.fillStyle = PAL.moradoOsc;
-  let y = pintarLineas(ctx, t.lineas, x, altoCab + 40, t.tam * 1.14);
-
-  y += 40;
-  const espacio = H - altoPie - 30 - y;
-  const n = Math.max(1, d.lineas.length);
-  const altoCaja = Math.min(210, (espacio - 26*(n-1)) / n);
-  d.lineas.forEach(linea => {
-    const l = ajustar(ctx, linea, maxW - 72 - 46, 35, 2, '700', F_TXT);
-    const alto = Math.max(altoCaja, l.lineas.length * l.tam * 1.3 + 46);
-    ctx.save();
-    ctx.shadowColor = 'rgba(44,17,64,.10)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 6;
-    rr(ctx, x, y, maxW, alto, 24);
-    ctx.fillStyle = PAL.blanco; ctx.fill();
-    ctx.restore();
-    patita(ctx, x + 46, y + alto/2, 40, PAL.morado, .9, -10);
-    ctx.fillStyle = PAL.moradoNoche;
-    ctx.font = '700 ' + l.tam + 'px ' + F_TXT;
-    const base = y + alto/2 - (l.lineas.length-1) * l.tam * .65;
-    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-    l.lineas.forEach((ln, i) => ctx.fillText(ln, x + 100, base + i * l.tam * 1.3));
-    y += alto + 26;
-  });
-
-  ctx.fillStyle = grad(ctx, 0, H-altoPie, W, H, PAL.morado, PAL.moradoOsc);
-  ctx.fillRect(0, H - altoPie, W, altoPie);
-  const c = ajustar(ctx, d.cierre, maxW - 340, 34, 2, '800', F_TIT);
-  ctx.fillStyle = PAL.blanco;
-  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-  const baseC = H - altoPie/2 - (c.lineas.length-1) * c.tam * .6;
-  c.lineas.forEach((ln, i) => ctx.fillText(ln, x, baseC + i * c.tam * 1.2));
-  ctx.font = '800 34px ' + F_TIT;
-  ctx.fillStyle = PAL.amarillo;
-  ctx.textAlign = 'right';
-  ctx.fillText('encuentravet.cl', W - 64, H - altoPie/2);
-}
-
-/* ---------- Plantilla HITO (oscura, 1080×1350) ---------- */
-function plantillaHito(ctx, W, H, d){
-  const g = ctx.createLinearGradient(0, 0, W*0.45, H);
-  g.addColorStop(0, PAL.moradoNoche); g.addColorStop(.55, PAL.moradoOsc); g.addColorStop(1, PAL.morado);
+/* Fondo de marca: morado con patitas amarillas repartidas. */
+const PATITAS = [
+  [0.08,0.06,78,-18,1],   [0.30,0.03,62,12,1],    [0.74,0.05,70,-8,1],
+  [0.93,0.09,66,20,1],    [0.05,0.22,58,25,1],    [0.95,0.31,74,-14,1],
+  [0.04,0.55,54,-22,.35], [0.96,0.62,60,16,.35],  [0.09,0.88,80,10,1],
+  [0.90,0.86,72,-16,1],   [0.50,0.97,54,6,.30]
+];
+function fondoMarca(ctx, W, H, oscuro){
+  const g = ctx.createLinearGradient(0, 0, W*0.6, H);
+  if(oscuro){ g.addColorStop(0, PAL.moradoNoche); g.addColorStop(.6, PAL.moradoOsc); g.addColorStop(1, PAL.morado); }
+  else      { g.addColorStop(0, PAL.moradoClaro); g.addColorStop(.55, PAL.morado);   g.addColorStop(1, PAL.moradoOsc); }
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, W, H);
-  patita(ctx, 135, 185, 130, PAL.amarillo, .10, 0);
-  patita(ctx, W - 145, H - 265, 170, PAL.lila, .10, 24);
+  PATITAS.forEach(p => patita(ctx, p[0]*W, p[1]*H, p[2]*(W/1080), PAL.amarillo, p[4], p[3]));
+}
 
-  const cx = W/2, maxW = W - 160;
-  wordmark(ctx, cx, 110, 40, 'centro');
+/* Título blanco con la última línea sobre un bloque fucsia. */
+function tituloResaltado(ctx, texto, cx, y, maxW, px, maxLineas){
+  const t = ajustar(ctx, texto, maxW - 60, px, maxLineas, '800', F_TIT);
+  const alto = t.tam * 1.18;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  t.lineas.forEach((linea, i) => {
+    const cy = y + alto*i + alto/2;
+    const ultima = i === t.lineas.length - 1 && t.lineas.length > 1;
+    if(ultima){
+      ctx.font = '800 ' + t.tam + 'px ' + F_TIT;
+      const w = ctx.measureText(linea).width + 52;
+      rr(ctx, cx - w/2, cy - alto*0.46, w, alto*0.92, alto*0.26);
+      ctx.fillStyle = PAL.rosa;
+      ctx.fill();
+    }
+    ctx.font = '800 ' + t.tam + 'px ' + F_TIT;
+    ctx.fillStyle = PAL.blanco;
+    ctx.fillText(linea, cx, cy);
+  });
+  return y + alto * t.lineas.length;
+}
 
-  pastilla(ctx, d.etiqueta, cx, 168, {
-    px:30, padX:34, padY:14, fondo:'rgba(255,255,255,.14)', color: PAL.amarillo2, alinear:'centro'
+/* Cierre de marca: pastilla amarilla con el CTA y caja blanca con la web. */
+function pieDeMarca(ctx, W, H, publico, yCta){
+  const cx = W/2;
+  const texto = publico === 'vets' ? 'Crea tu perfil gratis en' : 'Regístrate gratis en';
+  pastilla(ctx, texto, cx, yCta, {
+    px:34, padX:44, padY:18, fondo: grad(ctx, cx-260, 0, cx+260, 0, PAL.amarillo, PAL.amarillo2),
+    color: PAL.moradoNoche, peso:'700', alinear:'centro'
+  });
+  const cajaY = yCta + 78, cajaAlto = 106, cajaAncho = W - 200;
+  rr(ctx, cx - cajaAncho/2, cajaY, cajaAncho, cajaAlto, 26);
+  ctx.fillStyle = PAL.blanco;
+  ctx.fill();
+  const w = ajustar(ctx, WEB, cajaAncho - 80, 62, 1, '800', F_TIT);
+  ctx.fillStyle = PAL.morado;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(WEB, cx, cajaY + cajaAlto/2 + 2);
+  ctx.font = '700 26px ' + F_TXT;
+  ctx.fillStyle = 'rgba(255,255,255,.75)';
+  ctx.fillText(HANDLE, cx, cajaY + cajaAlto + 40);
+  return cajaY;
+}
+
+/* ---------- Plantilla ANUNCIO (tarjetas blancas, 1080×1350) ---------- */
+function plantillaAnuncio(ctx, W, H, d){
+  fondoMarca(ctx, W, H, false);
+  const cx = W/2, maxW = W - 150;
+  logoMarca(ctx, cx, 118, 62, true);
+  pastilla(ctx, d.etiqueta, cx, 232, {
+    px:29, padX:34, padY:14, fondo: grad(ctx, cx-220, 0, cx+220, 0, PAL.amarillo, PAL.amarillo2),
+    color: PAL.moradoNoche, alinear:'centro'
   });
 
-  const dest = ajustar(ctx, d.destacado, maxW, 190, 1, '800', F_TIT);
-  const gd = ctx.createLinearGradient(cx - 200, 0, cx + 200, 0);
+  const yCta = H - 296;
+  let y = tituloResaltado(ctx, d.titulo, cx, 330, maxW, 64, 3);
+
+  y += 34;
+  const tope = yCta - 40;
+  const n = Math.max(1, d.lineas.length);
+  const altoCaja = Math.min(205, ((tope - y) - 22*(n-1)) / n);
+  d.lineas.forEach(linea => {
+    const l = ajustar(ctx, linea, maxW - 150, 33, 2, '700', F_TXT);
+    const alto = Math.max(altoCaja, l.lineas.length * l.tam * 1.3 + 44);
+    if(y + alto > tope) return;
+    ctx.save();
+    ctx.shadowColor = 'rgba(20,8,32,.22)'; ctx.shadowBlur = 22; ctx.shadowOffsetY = 8;
+    rr(ctx, cx - maxW/2, y, maxW, alto, 26);
+    ctx.fillStyle = PAL.blanco; ctx.fill();
+    ctx.restore();
+    patita(ctx, cx - maxW/2 + 52, y + alto/2, 40, PAL.rosa, 1, -10);
+    ctx.fillStyle = PAL.moradoOsc;
+    ctx.font = '700 ' + l.tam + 'px ' + F_TXT;
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    const base = y + alto/2 - (l.lineas.length-1) * l.tam * .65;
+    l.lineas.forEach((ln, i) => ctx.fillText(ln, cx - maxW/2 + 100, base + i * l.tam * 1.3));
+    y += alto + 22;
+  });
+
+  pieDeMarca(ctx, W, H, d.publico, yCta);
+}
+
+/* ---------- Plantilla DESTACADO (número gigante, 1080×1350) ---------- */
+function plantillaDestacado(ctx, W, H, d){
+  fondoMarca(ctx, W, H, true);
+  const cx = W/2, maxW = W - 160;
+  logoMarca(ctx, cx, 118, 62, true);
+  pastilla(ctx, d.etiqueta, cx, 232, {
+    px:29, padX:34, padY:14, fondo:'rgba(255,255,255,.16)', color: PAL.amarillo2, alinear:'centro'
+  });
+
+  const dest = ajustar(ctx, d.destacado, maxW, 180, 1, '800', F_TIT);
+  const gd = ctx.createLinearGradient(cx - 220, 0, cx + 220, 0);
   gd.addColorStop(0, PAL.amarillo); gd.addColorStop(1, PAL.amarillo2);
   ctx.fillStyle = gd;
   ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
-  ctx.fillText(dest.lineas[0], cx, 310 + dest.tam);
+  ctx.fillText(dest.lineas[0], cx, 340 + dest.tam);
 
-  let y = 310 + dest.tam + 60;
-  const t = ajustar(ctx, d.titulo, maxW, 58, 3, '800', F_TIT);
-  ctx.fillStyle = PAL.blanco;
-  y = pintarLineas(ctx, t.lineas, cx, y, t.tam * 1.2, 'center');
+  const yCta = H - 296;
+  let y = tituloResaltado(ctx, d.titulo, cx, 340 + dest.tam + 46, maxW, 56, 3);
 
-  y += 50;
-  const topeLineas = H - 300;   /* debajo de esto van el cierre y el CTA */
+  y += 34;
+  const tope = yCta - 40;
   d.lineas.slice(0, 3).forEach(linea => {
-    const l = ajustar(ctx, linea, maxW - 76, 31, 2, '700', F_TXT);
-    const alto = l.lineas.length * l.tam * 1.3 + 40;
-    if(y + alto > topeLineas) return;   /* lo que no cabe, no se dibuja encima */
-    rr(ctx, cx - maxW/2, y, maxW, alto, alto/2 > 44 ? 44 : alto/2);
-    ctx.fillStyle = 'rgba(234,220,244,.14)'; ctx.fill();
-    ctx.strokeStyle = 'rgba(234,220,244,.35)'; ctx.lineWidth = 2; ctx.stroke();
+    const l = ajustar(ctx, linea, maxW - 80, 30, 2, '700', F_TXT);
+    const alto = l.lineas.length * l.tam * 1.3 + 38;
+    if(y + alto > tope) return;
+    rr(ctx, cx - maxW/2, y, maxW, alto, Math.min(42, alto/2));
+    ctx.fillStyle = 'rgba(255,255,255,.13)'; ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,.30)'; ctx.lineWidth = 2; ctx.stroke();
     ctx.fillStyle = PAL.lila;
     ctx.font = '700 ' + l.tam + 'px ' + F_TXT;
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
@@ -1414,76 +1556,352 @@ function plantillaHito(ctx, W, H, d){
     y += alto + 20;
   });
 
-  const c = ajustar(ctx, d.cierre, maxW, 34, 2, '700', F_TXT);
-  ctx.fillStyle = PAL.lila;
-  pintarLineas(ctx, c.lineas, cx, H - 268, c.tam * 1.25, 'center');
-  pastilla(ctx, ctaDe(d.publico), cx, H - 150, {
-    px:33, padX:52, padY:22, fondo: grad(ctx, cx-300, 0, cx+300, 0, PAL.amarillo, PAL.amarillo2),
-    color: PAL.moradoNoche, peso:'800', alinear:'centro'
+  pieDeMarca(ctx, W, H, d.publico, yCta);
+}
+
+/* ---------- Piezas sobre foto ---------- */
+/* Título alineado a la izquierda: las últimas líneas van sobre bloque fucsia. */
+function tituloBloques(ctx, texto, x, y, maxW, px, maxLineas){
+  const t = ajustar(ctx, texto, maxW - 64, px, maxLineas, '800', F_TIT);
+  const alto = t.tam * 1.30;
+  const desde = t.lineas.length > 1 ? Math.ceil(t.lineas.length/2) : t.lineas.length;
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  t.lineas.forEach((linea, i) => {
+    const cy = y + alto*i + alto/2;
+    ctx.font = '800 ' + t.tam + 'px ' + F_TIT;
+    if(i >= desde){
+      const w = ctx.measureText(linea).width + 56;
+      ctx.save();
+      ctx.shadowColor = 'rgba(30,10,45,.35)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 6;
+      rr(ctx, x - 28, cy - alto*0.45, w, alto*0.90, alto*0.24);
+      ctx.fillStyle = PAL.rosa;
+      ctx.fill();
+      ctx.restore();
+      ctx.fillStyle = PAL.blanco;
+    } else {
+      ctx.save();
+      ctx.shadowColor = 'rgba(20,6,32,.55)'; ctx.shadowBlur = 18; ctx.shadowOffsetY = 3;
+      ctx.fillStyle = PAL.blanco;
+      ctx.fillText(linea, x, cy);
+      ctx.restore();
+      return;
+    }
+    ctx.fillText(linea, x, cy);
   });
+  return y + alto * t.lineas.length;
+}
+
+/* Escudo con visto bueno, el sello de «verificado» de la marca. */
+function escudo(ctx, cx, cy, s, fondo, marca){
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(s/100, s/100);
+  ctx.fillStyle = fondo;
+  ctx.beginPath();
+  ctx.moveTo(0, -50);
+  ctx.lineTo(42, -32);
+  ctx.lineTo(42, 8);
+  ctx.quadraticCurveTo(42, 40, 0, 52);
+  ctx.quadraticCurveTo(-42, 40, -42, 8);
+  ctx.lineTo(-42, -32);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = marca;
+  ctx.lineWidth = 12; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.beginPath();
+  ctx.moveTo(-19, 1); ctx.lineTo(-4, 17); ctx.lineTo(21, -17);
+  ctx.stroke();
+  ctx.restore();
+}
+
+/* Trazos decorativos: los palitos rosados de las piezas de la marca. */
+function chispas(ctx, cx, cy, s, color, rot){
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate((rot||0) * Math.PI/180);
+  ctx.strokeStyle = color;
+  ctx.lineCap = 'round';
+  ctx.lineWidth = s * 0.16;
+  [[-1.0,-0.5,-0.35,-0.95],[0.05,-0.75,0.15,-1.35],[0.85,-0.3,1.35,-0.7]].forEach(t => {
+    ctx.beginPath();
+    ctx.moveTo(t[0]*s, t[1]*s);
+    ctx.lineTo(t[2]*s, t[3]*s);
+    ctx.stroke();
+  });
+  ctx.restore();
+}
+
+/* Barra inferior fucsia con el escudo y la llamada a la acción. */
+function barraFucsia(ctx, W, yTop, publico){
+  const cx = W/2, ancho = W - 140, alto = 150;
+  ctx.save();
+  ctx.shadowColor = 'rgba(30,10,45,.35)'; ctx.shadowBlur = 26; ctx.shadowOffsetY = 8;
+  rr(ctx, cx - ancho/2, yTop, ancho, alto, 40);
+  ctx.fillStyle = PAL.rosa;
+  ctx.fill();
+  ctx.restore();
+  const xIcono = cx - ancho/2 + 92;
+  escudo(ctx, xIcono, yTop + alto/2, 78, PAL.blanco, PAL.rosa);
+  const l1 = publico === 'vets' ? 'Crea tu perfil gratis en' : 'Busca veterinarios certificados en';
+  const x = xIcono + 68;
+  const anchoTexto = ancho - (x - (cx - ancho/2)) - 50;
+  const a = ajustar(ctx, l1, anchoTexto, 34, 1, '700', F_TXT);
+  ctx.fillStyle = PAL.blanco;
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.fillText(l1, x, yTop + alto/2 - 26);
+  const b = ajustar(ctx, 'EncuentraVet.', anchoTexto, 46, 1, '800', F_TIT);
+  ctx.fillText('EncuentraVet.', x, yTop + alto/2 + 28);
+}
+
+/* ---------- Plantilla FOTO: la foto de fondo y todo lo demás encima ---------- */
+function plantillaFoto(ctx, W, H, d){
+  if(d.foto){
+    const img = d.foto;
+    const escala = Math.max(W / img.width, H / img.height);
+    const iw = img.width * escala, ih = img.height * escala;
+    ctx.drawImage(img, (W - iw)/2, (H - ih)/2, iw, ih);
+  } else {
+    fondoMarca(ctx, W, H, false);
+  }
+  /* Velos para que el texto se lea sobre cualquier foto. */
+  const arriba = ctx.createLinearGradient(0, 0, 0, H*0.52);
+  arriba.addColorStop(0, 'rgba(24,8,38,.62)');
+  arriba.addColorStop(1, 'rgba(24,8,38,0)');
+  ctx.fillStyle = arriba;
+  ctx.fillRect(0, 0, W, H*0.52);
+  const abajo = ctx.createLinearGradient(0, H*0.60, 0, H);
+  abajo.addColorStop(0, 'rgba(60,29,85,0)');
+  abajo.addColorStop(1, 'rgba(60,29,85,.80)');
+  ctx.fillStyle = abajo;
+  ctx.fillRect(0, H*0.60, W, H*0.40);
+
+  const margen = 70;
+  logoMarca(ctx, W - margen, 118, 54, true, 'derecha');
+
+  const yBarra = H - 236;
+  chispas(ctx, margen + 34, 236, 44, PAL.rosa, -12);
+  tituloBloques(ctx, d.titulo, margen + 28, 268, W - margen*2 - 30, 64, 4);
+
+  patita(ctx, margen + 10, H - 330, 62, 'rgba(255,255,255,.20)', 1, -18);
+  patita(ctx, W - margen - 10, H - 330, 54, 'rgba(255,255,255,.20)', 1, 16);
+  barraFucsia(ctx, W, yBarra, d.publico);
+  ctx.font = '700 26px ' + F_TXT;
+  ctx.fillStyle = 'rgba(255,255,255,.85)';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(WEB + '  ·  ' + HANDLE, W/2, H - 46);
+}
+
+/* ---------- Plantilla HISTORIA CON FOTO (1080×1920) ---------- */
+function plantillaHistoriaFoto(ctx, W, H, d){
+  if(d.foto){
+    const img = d.foto;
+    const escala = Math.max(W / img.width, H / img.height);
+    const iw = img.width * escala, ih = img.height * escala;
+    ctx.drawImage(img, (W - iw)/2, (H - ih)/2, iw, ih);
+  } else {
+    fondoMarca(ctx, W, H, true);
+  }
+  const arriba = ctx.createLinearGradient(0, 0, 0, H*0.42);
+  arriba.addColorStop(0, 'rgba(24,8,38,.70)');
+  arriba.addColorStop(1, 'rgba(24,8,38,0)');
+  ctx.fillStyle = arriba;
+  ctx.fillRect(0, 0, W, H*0.42);
+  const abajo = ctx.createLinearGradient(0, H*0.62, 0, H);
+  abajo.addColorStop(0, 'rgba(60,29,85,0)');
+  abajo.addColorStop(.55, 'rgba(60,29,85,.86)');
+  abajo.addColorStop(1, 'rgba(44,17,64,.97)');
+  ctx.fillStyle = abajo;
+  ctx.fillRect(0, H*0.62, W, H*0.38);
+
+  const margen = 78;
+  logoMarca(ctx, W - margen, 300, 54, true, 'derecha');
+  chispas(ctx, margen + 34, 420, 46, PAL.rosa, -12);
+  tituloBloques(ctx, d.titulo, margen + 28, 452, W - margen*2 - 30, 66, 5);
+
+  const yBarra = H - 560;
+  barraFucsia(ctx, W, yBarra, d.publico);
+  /* El sticker sugerido va en el texto de la pieza, no dentro de la imagen publicable. */
+  patita(ctx, margen, H - 300, 70, 'rgba(255,255,255,.16)', 1, -18);
+  patita(ctx, W - margen, H - 300, 62, 'rgba(255,255,255,.16)', 1, 16);
+  ctx.font = '700 28px ' + F_TXT;
+  ctx.fillStyle = 'rgba(255,255,255,.85)';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(WEB + '  ·  ' + HANDLE, W/2, H - 250);
 }
 
 /* ---------- Plantilla HISTORIA (vertical, 1080×1920) ---------- */
 function plantillaHistoria(ctx, W, H, d){
-  const g = ctx.createLinearGradient(0, 0, W*0.5, H);
-  g.addColorStop(0, PAL.moradoNoche); g.addColorStop(.6, PAL.moradoOsc); g.addColorStop(1, PAL.morado);
-  ctx.fillStyle = g;
-  ctx.fillRect(0, 0, W, H);
-  patita(ctx, 150, 420, 150, PAL.amarillo, .09, -14);
-  patita(ctx, W - 150, H - 470, 190, PAL.lila, .09, 22);
-
-  const cx = W/2, maxW = W - 180;
-  /* Zona segura: 280 px arriba y abajo quedan libres para la interfaz de Instagram. */
-  wordmark(ctx, cx, 300, 42, 'centro');
-  pastilla(ctx, d.etiqueta, cx, 370, {
-    px:30, padX:34, padY:14, fondo:'rgba(255,255,255,.14)', color: PAL.amarillo2, alinear:'centro'
+  fondoMarca(ctx, W, H, true);
+  const cx = W/2, maxW = W - 170;
+  /* Zona segura: la interfaz de Instagram tapa arriba y abajo. */
+  logoMarca(ctx, cx, 300, 60, true);
+  pastilla(ctx, d.etiqueta, cx, 400, {
+    px:29, padX:34, padY:14, fondo:'rgba(255,255,255,.16)', color: PAL.amarillo2, alinear:'centro'
   });
 
-  /* El texto se centra entre la etiqueta y la zona del CTA, en vez de flotar arriba. */
-  const t = ajustar(ctx, d.titulo, maxW, 76, 6, '800', F_TIT);
+  const yCta = H - 470;
   const cajas = (d.lineas || []).slice(0, 3).map(linea => {
-    const l = ajustar(ctx, linea, maxW - 76, 36, 3, '700', F_TXT);
-    return { l: l, alto: l.lineas.length * l.tam * 1.35 + 44 };
+    const l = ajustar(ctx, linea, maxW - 80, 34, 3, '700', F_TXT);
+    return { l: l, alto: l.lineas.length * l.tam * 1.35 + 42 };
   });
-  const altoTitulo = t.lineas.length * t.tam * 1.2;
-  const altoCajas = cajas.reduce((a, c) => a + c.alto + 24, 0);
-  const zonaAlta = 470, zonaBaja = H - 400;
-  const libre = (zonaBaja - zonaAlta) - (altoTitulo + (altoCajas ? altoCajas + 36 : 0));
+  const altoCajas = cajas.reduce((a, c) => a + c.alto + 22, 0);
+  const zonaAlta = 520, zonaBaja = yCta - 60;
+  const t = ajustar(ctx, d.titulo, maxW - 60, 70, 5, '800', F_TIT);
+  const altoTitulo = t.lineas.length * t.tam * 1.18;
+  const libre = (zonaBaja - zonaAlta) - (altoTitulo + (altoCajas ? altoCajas + 30 : 0));
   let y = zonaAlta + Math.max(0, libre/2);
 
-  ctx.font = '800 ' + t.tam + 'px ' + F_TIT;
-  ctx.fillStyle = PAL.blanco;
-  y = pintarLineas(ctx, t.lineas, cx, y, t.tam * 1.2, 'center');
-
+  y = tituloResaltado(ctx, d.titulo, cx, y, maxW, 70, 5);
   if(cajas.length){
-    y += 36;
+    y += 30;
     cajas.forEach(caja => {
       const l = caja.l, alto = caja.alto;
-      rr(ctx, cx - maxW/2, y, maxW, alto, 32);
-      ctx.fillStyle = 'rgba(234,220,244,.14)'; ctx.fill();
-      ctx.strokeStyle = 'rgba(234,220,244,.35)'; ctx.lineWidth = 2; ctx.stroke();
+      rr(ctx, cx - maxW/2, y, maxW, alto, 30);
+      ctx.fillStyle = 'rgba(255,255,255,.13)'; ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,.30)'; ctx.lineWidth = 2; ctx.stroke();
       ctx.fillStyle = PAL.lila;
       ctx.font = '700 ' + l.tam + 'px ' + F_TXT;
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       const base = y + alto/2 - (l.lineas.length-1) * l.tam * .675;
       l.lineas.forEach((ln, i) => ctx.fillText(ln, cx, base + i * l.tam * 1.35));
-      y += alto + 24;
+      y += alto + 22;
     });
   }
+  /* El sticker sugerido va en el texto de la pieza, no dentro de la imagen publicable. */
+  pieDeMarca(ctx, W, H, d.publico, yCta);
+}
 
-  if(d.sticker){
-    ctx.fillStyle = 'rgba(234,220,244,.75)';
-    ctx.font = '700 26px ' + F_TXT;
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText('Sticker sugerido: ' + d.sticker, cx, H - 380);
+/* ---------- Fotos subidas por ti ---------- */
+const LS_FOTOS = 'evgen_fotos';
+const LS_LOGO = 'evgen_logo';
+const MAX_FOTOS = 6;
+let fotos = [];
+let fotoActiva = 0;
+let logoImg = null;
+const cacheImg = {};
+function leerFotos(){
+  try{ return JSON.parse(localStorage.getItem(LS_FOTOS) || '[]'); }catch(e){ return []; }
+}
+function escribirFotos(a){
+  try{ localStorage.setItem(LS_FOTOS, JSON.stringify(a)); return true; }
+  catch(e){ toast('No caben más fotos en la memoria del navegador'); return false; }
+}
+function cargarImagen(src){
+  if(cacheImg[src]) return Promise.resolve(cacheImg[src]);
+  return new Promise(res => {
+    const img = new Image();
+    img.onload = () => { cacheImg[src] = img; res(img); };
+    img.onerror = () => res(null);
+    img.src = src;
+  });
+}
+/* Se reduce en el navegador para que quepa en localStorage. */
+function reducirImagen(file, maxLado, calidad, conservarPng){
+  return new Promise(res => {
+    const fr = new FileReader();
+    fr.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const f = Math.min(1, maxLado / Math.max(img.width, img.height));
+        const cv = document.createElement('canvas');
+        cv.width = Math.round(img.width * f);
+        cv.height = Math.round(img.height * f);
+        cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+        res(conservarPng ? cv.toDataURL('image/png') : cv.toDataURL('image/jpeg', calidad));
+      };
+      img.onerror = () => res(null);
+      img.src = fr.result;
+    };
+    fr.onerror = () => res(null);
+    fr.readAsDataURL(file);
+  });
+}
+
+function pintarFotos(){
+  const caja = document.getElementById('thumbs-fotos');
+  if(!fotos.length){
+    caja.innerHTML = '<p class="vacio-thumbs">Sin fotos todavía: las piezas salen con el fondo morado de la marca.</p>';
+  } else {
+    caja.innerHTML = fotos.map((f, i) =>
+      '<button class="thumb" type="button" data-i="' + i + '" aria-pressed="' + (i === fotoActiva) +
+      '" title="Foto ' + (i+1) + '"><img src="' + f + '" alt="Foto ' + (i+1) + '"></button>').join('');
   }
-  pastilla(ctx, ctaDe(d.publico), cx, H - 330, {
-    px:33, padX:52, padY:22, fondo: grad(ctx, cx-300, 0, cx+300, 0, PAL.amarillo, PAL.amarillo2),
-    color: PAL.moradoNoche, peso:'800', alinear:'centro'
+  const cl = document.getElementById('caja-logo');
+  cl.innerHTML = logoImg
+    ? '<img src="' + logoImg.src + '" alt="Logo cargado">'
+    : '<span>Sin logo: se dibuja el de la marca</span>';
+}
+
+async function inicializarImagenes(){
+  fotos = leerFotos();
+  let guardado = null;
+  try{ guardado = localStorage.getItem(LS_LOGO); }catch(e){}
+  if(guardado) logoImg = await cargarImagen(guardado);
+  pintarFotos();
+}
+
+function conectarSubidas(){
+  document.getElementById('inp-fotos').addEventListener('change', async e => {
+    const archivos = [].slice.call(e.target.files || []);
+    if(!archivos.length) return;
+    const espacio = MAX_FOTOS - fotos.length;
+    if(espacio <= 0){ toast('Ya tienes ' + MAX_FOTOS + ' fotos: quita alguna primero'); e.target.value=''; return; }
+    toast('Preparando ' + Math.min(espacio, archivos.length) + ' foto(s)…');
+    for(const f of archivos.slice(0, espacio)){
+      const dato = await reducirImagen(f, 1500, 0.78);
+      if(!dato) continue;
+      fotos.push(dato);
+      if(!escribirFotos(fotos)){ fotos.pop(); break; }
+    }
+    fotoActiva = fotos.length - 1;
+    e.target.value = '';
+    pintarFotos();
+    pintarPiezas();
+    toast('Listo: las piezas ahora usan tu foto');
+  });
+  document.getElementById('thumbs-fotos').addEventListener('click', e => {
+    const b = e.target.closest('.thumb');
+    if(!b) return;
+    fotoActiva = Number(b.dataset.i);
+    pintarFotos();
+    pintarPiezas();
+  });
+  document.getElementById('btn-quitar-foto').addEventListener('click', () => {
+    if(!fotos.length){ toast('No hay fotos cargadas'); return; }
+    fotos.splice(fotoActiva, 1);
+    escribirFotos(fotos);
+    fotoActiva = Math.max(0, Math.min(fotoActiva, fotos.length - 1));
+    pintarFotos();
+    pintarPiezas();
+  });
+  document.getElementById('inp-logo').addEventListener('change', async e => {
+    const f = (e.target.files || [])[0];
+    e.target.value = '';
+    if(!f) return;
+    const dato = await reducirImagen(f, 700, 0.92, true);
+    if(!dato){ toast('No se pudo leer ese archivo'); return; }
+    try{ localStorage.setItem(LS_LOGO, dato); }
+    catch(err){ toast('El logo no cabe en la memoria del navegador'); return; }
+    logoImg = await cargarImagen(dato);
+    pintarFotos();
+    pintarPiezas();
+    toast('Logo cargado');
+  });
+  document.getElementById('btn-quitar-logo').addEventListener('click', () => {
+    try{ localStorage.removeItem(LS_LOGO); }catch(e){}
+    logoImg = null;
+    pintarFotos();
+    pintarPiezas();
   });
 }
 
 /* ---------- Qué imágenes lleva cada formato ---------- */
+const PLANTILLAS_POST = ['foto','anuncio','destacado'];
+const NOMBRE_PLANTILLA = { foto:'sobre foto', anuncio:'tarjetas', destacado:'número grande' };
+function plantillaValida(nombre){
+  return (nombre === 'foto' && !fotos.length) ? 'anuncio' : (nombre || 'anuncio');
+}
+
 function lienzosDe(p){
   const v = p.visual || {
     etiqueta: ETIQUETAS[p.herramientaId],
@@ -1495,25 +1913,27 @@ function lienzosDe(p){
   const base = { publico: p.publico, etiqueta: v.etiqueta, destacado: v.destacado };
 
   if(p.formato === 'post'){
-    return [{ nombre:'post', plantilla: p.plantilla || 'tip', ancho:1080, alto:1350,
+    return [{ nombre:'post', plantilla: plantillaValida(p.plantilla), ancho:1080, alto:1350,
+              fotoIdx: p.fotoIdx,
               datos: Object.assign({}, base, { titulo:v.titulo, lineas:v.lineas, cierre:v.cierre }) }];
   }
   if(p.formato === 'carrusel'){
     return p.cards.map((c, i) => ({
       nombre: 'card-' + (i+1),
-      plantilla: (i === 0 || i === p.cards.length-1) ? 'hito' : 'tip',
+      plantilla: (i === 0 || i === p.cards.length-1) ? 'destacado' : 'anuncio',
       ancho:1080, alto:1350,
       datos: Object.assign({}, base, {
         titulo: c.titulo,
         destacado: i === 0 ? v.destacado : String(i) + '/' + (p.cards.length-2),
-        lineas: i === 0 || i === p.cards.length-1 ? [] : [c.linea],
+        lineas: (i === 0 || i === p.cards.length-1) ? [] : [c.linea],
         cierre: i === p.cards.length-1 ? c.linea : v.cierre
       })
     }));
   }
   if(p.formato === 'historia'){
     return p.frames.map((f, i) => ({
-      nombre:'frame-' + (i+1), plantilla:'historia', ancho:1080, alto:1920,
+      nombre:'frame-' + (i+1), plantilla: fotos.length ? 'historiaFoto' : 'historia',
+      ancho:1080, alto:1920, fotoIdx: p.fotoIdx,
       datos: Object.assign({}, base, {
         titulo: f.texto.replace(/\n+/g,' ').replace(/^[^\wÁÉÍÓÚÑáéíóúñ¿¡]+/,'').trim(),
         lineas: [], sticker: f.sticker
@@ -1521,7 +1941,8 @@ function lienzosDe(p){
     }));
   }
   /* reel: portada del video */
-  return [{ nombre:'portada', plantilla:'historia', ancho:1080, alto:1920,
+  return [{ nombre:'portada', plantilla: fotos.length ? 'historiaFoto' : 'historia',
+            ancho:1080, alto:1920, fotoIdx: p.fotoIdx,
             datos: Object.assign({}, base, { titulo: sinPunto(p.gancho), lineas: [] }) }];
 }
 
@@ -1530,9 +1951,16 @@ async function dibujar(spec){
   const cv = document.createElement('canvas');
   cv.width = spec.ancho; cv.height = spec.alto;
   const ctx = cv.getContext('2d');
-  if(spec.plantilla === 'hito')          plantillaHito(ctx, spec.ancho, spec.alto, spec.datos);
-  else if(spec.plantilla === 'historia') plantillaHistoria(ctx, spec.ancho, spec.alto, spec.datos);
-  else                                   plantillaTip(ctx, spec.ancho, spec.alto, spec.datos);
+  const conFoto = spec.plantilla === 'foto' || spec.plantilla === 'historiaFoto';
+  if(conFoto && fotos.length){
+    const i = spec.fotoIdx == null ? fotoActiva : spec.fotoIdx;
+    spec.datos.foto = await cargarImagen(fotos[((i % fotos.length) + fotos.length) % fotos.length]);
+  }
+  if(spec.plantilla === 'destacado')          plantillaDestacado(ctx, spec.ancho, spec.alto, spec.datos);
+  else if(spec.plantilla === 'historia')      plantillaHistoria(ctx, spec.ancho, spec.alto, spec.datos);
+  else if(spec.plantilla === 'historiaFoto')  plantillaHistoriaFoto(ctx, spec.ancho, spec.alto, spec.datos);
+  else if(spec.plantilla === 'foto')          plantillaFoto(ctx, spec.ancho, spec.alto, spec.datos);
+  else                                        plantillaAnuncio(ctx, spec.ancho, spec.alto, spec.datos);
   return cv;
 }
 
@@ -1815,7 +2243,8 @@ function opciones(extra){
 function nuevaPieza(op){
   const p = generarPieza(op);
   p.estado = 'pendiente';
-  p.plantilla = 'tip';
+  p.plantilla = fotos.length ? 'foto' : 'anuncio';
+  p.fotoIdx = fotoActiva;
   return p;
 }
 
@@ -1875,10 +2304,17 @@ document.getElementById('zona-resultado').addEventListener('click', e => {
   if(acc === 'aprobar')  cambiarEstado(p.id, 'aprobada');
   if(acc === 'rechazar') cambiarEstado(p.id, 'rechazada');
   if(acc === 'plantilla'){
-    p.plantilla = p.plantilla === 'hito' ? 'tip' : 'hito';
+    const disponibles = PLANTILLAS_POST.filter(x => x !== 'foto' || fotos.length);
+    const i = disponibles.indexOf(plantillaValida(p.plantilla));
+    p.plantilla = disponibles[(i + 1) % disponibles.length];
     if(enCola(p.id)) guardarEnCola(p);   /* solo si ya estaba archivada */
     pintarLienzos(p, art.querySelector('.lienzos'));
-    b.textContent = p.plantilla === 'hito' ? 'Plantilla: fondo oscuro' : 'Plantilla: fondo claro';
+    b.textContent = 'Plantilla: ' + NOMBRE_PLANTILLA[p.plantilla];
+  }
+  if(acc === 'foto'){
+    p.fotoIdx = ((p.fotoIdx == null ? fotoActiva : p.fotoIdx) + 1) % fotos.length;
+    if(enCola(p.id)) guardarEnCola(p);
+    pintarLienzos(p, art.querySelector('.lienzos'));
   }
   if(acc === 'otra'){
     piezas[idx] = nuevaPieza(opciones({
@@ -1974,7 +2410,7 @@ try{
 llenarSelectores();
 pintarDatos();
 pintarCola();
+conectarSubidas();
 piezas = [nuevaPieza(opciones())];
-pintarPiezas();
-pintarCola();
+inicializarImagenes().then(() => pintarPiezas());
 </script>
