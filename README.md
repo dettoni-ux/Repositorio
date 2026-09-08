@@ -42,8 +42,14 @@ ficha gratis e insignia azul), siguiendo la estrategia de `rrss/identidad.md`.
   en las plantillas de imagen y —lo más importante— que **ninguna cifra salga de los datos
   reales de la marca**. Si aparece un número que no está en esa lista, lo marca para revisión.
 - **Tus fotos y tu logo**: botones para subir las fotos (las hechas con IA, por ejemplo) y el logo
-  en PNG. Quedan guardados en el navegador y el generador les pone encima el texto, la marca y los
-  adornos. Sin fotos cargadas, las piezas salen con el fondo morado de la marca.
+  en PNG, con eliminar foto por foto. Quedan guardados en el navegador y el generador les pone
+  encima el texto, la marca y los adornos. Sin fotos cargadas, las piezas salen con el fondo morado.
+- **El texto se coloca donde no tapa**: la foto se analiza en pequeño buscando detalle y tonos de
+  piel, y el titular se pone en la zona más tranquila, evitando caras. Se elige banda (arriba o
+  abajo) y lado, el logo se va a la esquina opuesta y se agrega un velo suave para que se lea sobre
+  cualquier foto. El botón «Texto» permite forzar la posición a mano.
+- **Cambiar el texto**: «Otro texto» redacta otra versión conservando foto, plantilla y posición;
+  «Editar texto» abre un campo para escribir el titular a mano.
 - **Imágenes en el mismo generador**, en 1080×1350 para post y carrusel y 1080×1920 para historias
   y portada de reel, con tres plantillas: **sobre foto** (foto a sangre completa, titular con bloques
   fucsia, logo arriba y barra de certificación abajo), **tarjetas** (fondo morado con patitas y puntos
