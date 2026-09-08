@@ -466,9 +466,25 @@ let marca = cargarMarca();
 function cargarMarca(){
   try{
     const raw = localStorage.getItem('evst_marca');
-    if(raw) return Object.assign({}, MARCA_ORIGINAL, JSON.parse(raw));
+    if(raw) return migrar(Object.assign({}, MARCA_ORIGINAL, JSON.parse(raw)));
   }catch(e){}
   return Object.assign({}, MARCA_ORIGINAL);
+}
+/* Los datos guardados pisan a MARCA_ORIGINAL, así que un dato corregido en el
+   código no llega a quien ya usó la app. Estas migraciones lo arreglan solas;
+   solo tocan el valor equivocado exacto y respetan cualquier edición posterior. */
+const MIGRACIONES = [
+  { campo: 'ig', de: '@encuentravet', a: '@encuentra.vet' }
+];
+function migrar(m){
+  let cambio = false;
+  for(const { campo, de, a } of MIGRACIONES){
+    if(m[campo] === de){ m[campo] = a; cambio = true; }
+  }
+  if(cambio){
+    try{ localStorage.setItem('evst_marca', JSON.stringify(m)); }catch(e){}
+  }
+  return m;
 }
 function guardarMarca(){
   try{ localStorage.setItem('evst_marca', JSON.stringify(marca)); }catch(e){}
