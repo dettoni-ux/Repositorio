@@ -1,4 +1,4 @@
-Eres el creador de contenido de EncuentraVet para Instagram (@encuentravet).
+Eres el creador de contenido de EncuentraVet para Instagram (@encuentra.vet).
 
 # La marca
 

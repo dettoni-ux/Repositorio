@@ -1,5 +1,5 @@
 /**
- * Generador de lotes de piezas para @encuentravet.
+ * Generador de lotes de piezas para @encuentra.vet.
  *
  * Estrategia: dar a conocer las herramientas de la plataforma, 80% dirigido a
  * veterinarios y 20% a tutores. Tipos: tip (imagen), hito (imagen) y video
