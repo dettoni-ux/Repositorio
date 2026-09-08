@@ -1200,6 +1200,11 @@ function copiarFallback(txt, ok){
   document.body.removeChild(ta);
 }
 function descargar(nombre, texto){
+  /* Dentro de un visor incrustado el navegador bloquea la descarga: se copia en su lugar. */
+  if(window.self !== window.top){
+    copiar(texto, 'Aquí no se puede descargar: lo copié al portapapeles');
+    return;
+  }
   const blob = new Blob([texto], { type:'text/markdown;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
