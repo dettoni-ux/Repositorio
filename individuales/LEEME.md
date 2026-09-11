@@ -39,9 +39,18 @@ sangrado) y `?sin-troquel` (hoja completa sin la línea rosada).
 ## Qué falta antes de imprimir
 
 1. **Fotos de fondo** → `individuales/fondos/playa.jpg` y `individuales/fondos/bosque.jpg`
-   Horizontales y grandes (ideal 5000 × 3600 px o más). Ojo: el centro de la
-   pieza queda despejado a propósito, que es donde va el plato, así que conviene
-   una foto con el motivo principal al centro.
+   Horizontales y grandes (5031 × 3614 px es el tamaño exacto a 300 ppp). El
+   centro de la pieza queda despejado a propósito, que es donde va el plato,
+   así que conviene una foto con el motivo principal al centro.
+
+   Para dejar una foto en medida, sin hacer nada a mano:
+
+   ```bash
+   python3 individuales/preparar-foto.py ~/mi-foto.jpg playa              # recorta para llenar
+   python3 individuales/preparar-foto.py ~/mi-foto.jpg playa --expandir   # no recorta: estira los bordes
+   ```
+
+   El script avisa si la foto no alcanza los 300 ppp que pide la imprenta.
 2. **Logo** → `individuales/marca/logo-domos.png` (o `.svg`)
    Si no está, el diseño escribe "DOMOS" con tipografía mientras tanto.
 3. **Datos** → ya están cargados en `individuales/datos.mjs`: Instagram
@@ -59,4 +68,5 @@ desaparece sola al completar los datos.
 | `plantilla.html` | El diseño (forma, estructura y estilos) |
 | `generar.mjs` | Arma el HTML, el PDF y el PNG |
 | `qr.py` | Genera el QR de Instagram en vectorial |
+| `preparar-foto.py` | Deja una foto en la medida exacta del fondo |
 | `fuentes.css` | Tipografías Fraunces y Jost embebidas (no necesita internet) |
