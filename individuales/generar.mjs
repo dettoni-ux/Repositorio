@@ -60,6 +60,15 @@ const archivoLogo = () =>
     .map((n) => `marca/${n}`)
     .find((rel) => fs.existsSync(path.join(AQUI, rel))) || null;
 
+// ---------------------------- iconos de las redes ----------------------------
+// Dibujados a mano en un lienzo de 24 x 24 para que impriman nítidos a
+// cualquier tamaño y no dependan de ninguna descarga.
+const REDES = {
+  facebook: `<svg viewBox="0 0 24 24" fill="#fff"><path d="M13.9 22v-8.1h2.7l.41-3.14H13.9V8.75c0-.91.25-1.53 1.56-1.53h1.67V4.41A22 22 0 0 0 14.7 4.3c-2.41 0-4.06 1.47-4.06 4.17v2.29H7.92v3.14h2.72V22z"/></svg>`,
+  instagram: `<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1"><rect x="3.4" y="3.4" width="17.2" height="17.2" rx="5"/><circle cx="12" cy="12" r="4.1"/><circle cx="17.2" cy="6.8" r=".2" stroke-width="2.6" stroke-linecap="round"/></svg>`,
+  tiktok: `<svg viewBox="0 0 24 24" fill="#fff"><path d="M16.3 2.4h-3.06v13.11a2.43 2.43 0 1 1-2.43-2.43c.25 0 .5.04.73.11v-3.12a5.6 5.6 0 0 0-.73-.05 5.54 5.54 0 1 0 5.54 5.54V8.9a6.7 6.7 0 0 0 3.92 1.26V7.07A3.9 3.9 0 0 1 16.3 3.4z"/></svg>`,
+};
+
 // --------------------------------- piezas ---------------------------------
 const grupoHtml = (g) => `
           <div class="grupo${g.recto ? ' recto' : ''}">
@@ -85,7 +94,7 @@ const logoHtml = () => {
 };
 
 const qrHtml = () => {
-  const url = `https://www.instagram.com/${marca.instagram}/`;
+  const url = `https://www.instagram.com/${marca.usuario}/`;
   const destino = path.join(SALIDA, 'qr-instagram.svg');
   execFileSync('python3', [path.join(AQUI, 'qr.py'), url, destino], { stdio: 'pipe' });
   return fs
@@ -118,7 +127,7 @@ for (const clave of aGenerar) {
     pendientes.push('foto de fondo');
     faltantes.push(`${clave}: falta la foto en individuales/${v.fondo}`);
   }
-  if (!marca.instagram || marca.instagram === 'PENDIENTE') pendientes.push('cuenta de Instagram');
+  if (!marca.usuario || marca.usuario === 'PENDIENTE') pendientes.push('cuenta de Instagram');
   if (!archivoLogo()) pendientes.push('logo');
 
   const reemplazos = {
@@ -145,9 +154,12 @@ for (const clave of aGenerar) {
     COLUMNA_IZQ: columnaHtml(v.columnaIzq),
     COLUMNA_DER: columnaHtml(v.columnaDer),
     SECTOR: v.sector,
+    REDES: marca.redes
+      .map((r) => `<span class="icono">${REDES[r]}</span>`)
+      .join(''),
+    USUARIO: marca.usuario,
     WEB: marca.web,
     QR: qr,
-    INSTAGRAM: marca.instagram,
     AVISO: pendientes.length ? `<div class="aviso">Borrador · falta ${pendientes.join(' · ')}</div>` : '',
   };
 

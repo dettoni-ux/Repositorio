@@ -14,9 +14,10 @@ export const medidas = {
 export const marca = {
   nombre: 'DOMOS',
   lema: 'El Tabo',
-  acento: '#D9722F',           // color de las pastillas
+  acento: '#E4711C',           // naranja del logo (a ojo; se ajusta con el archivo)
   acentoTexto: '#FFFFFF',
-  instagram: 'domoseltabo',
+  usuario: 'domoseltabo',                        // el mismo en las tres redes
+  redes: ['facebook', 'instagram', 'tiktok'],
   web: 'cabañaseneltabo.cl',
   telefonos: ['+56 9 7889 4831', '+56 9 9102 4354'],
 };

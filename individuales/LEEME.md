@@ -53,6 +53,14 @@ sangrado) y `?sin-troquel` (hoja completa sin la línea rosada).
    El script avisa si la foto no alcanza los 300 ppp que pide la imprenta.
 2. **Logo** → `individuales/marca/logo-domos.png` (o `.svg`)
    Si no está, el diseño escribe "DOMOS" con tipografía mientras tanto.
+   El logo va sobre la foto, así que necesita fondo transparente. Si sólo hay
+   un JPG con fondo blanco:
+
+   ```bash
+   python3 individuales/preparar-logo.py ~/logo.jpg
+   ```
+
+   Para imprenta, mejor el vector (.svg, .ai, .pdf) que cualquier JPG.
 3. **Datos** → ya están cargados en `individuales/datos.mjs`: Instagram
    @domoseltabo, los dos teléfonos, cabañaseneltabo.cl y los servicios de cada
    sector. Si quieres sumar horarios o la clave del Wi-Fi, se agregan ahí.
@@ -69,4 +77,5 @@ desaparece sola al completar los datos.
 | `generar.mjs` | Arma el HTML, el PDF y el PNG |
 | `qr.py` | Genera el QR de Instagram en vectorial |
 | `preparar-foto.py` | Deja una foto en la medida exacta del fondo |
+| `preparar-logo.py` | Le saca el fondo blanco al logo |
 | `fuentes.css` | Tipografías Fraunces y Jost embebidas (no necesita internet) |

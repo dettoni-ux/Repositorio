@@ -163,11 +163,15 @@ body.modo-vista, body.modo-vista .pagina { background: transparent; }
   text-shadow: var(--sombra-texto);
 }
 
-.qr-caja {
+.bloque-social {
   position: absolute;
   right: {{PIE_LADO}};
   bottom: {{PIE_ABAJO}};
   width: 46mm;
+}
+
+.qr-caja {
+  width: 100%;
   background: #fff;
   border-radius: 4mm;
   padding: 4mm 4mm 4.5mm;
@@ -185,9 +189,37 @@ body.modo-vista, body.modo-vista .pagina { background: transparent; }
 .qr-caja .cuenta {
   display: block;
   margin-bottom: 3mm;
-  font-size: 4.4mm;
+  font-size: 4.2mm;
   font-weight: 700;
   color: var(--acento);
+}
+
+/* Fila de redes, como la del individual de referencia. */
+.redes {
+  margin-top: 4mm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.6mm;
+}
+.redes .icono {
+  width: 7mm;
+  height: 7mm;
+  flex: none;
+  border-radius: 50%;
+  background: var(--acento);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 .6mm 2mm rgba(0, 0, 0, .25);
+}
+.redes .icono svg { width: 4.4mm; height: 4.4mm; display: block; }
+.redes .usuario {
+  margin-left: 1.4mm;
+  font-size: 4.4mm;
+  font-weight: 700;
+  letter-spacing: .02em;
+  text-shadow: var(--sombra-texto);
 }
 .qr-caja .qr { width: 100%; aspect-ratio: 1; }
 .qr-caja .qr svg { width: 100%; height: 100%; display: block; }
@@ -238,10 +270,13 @@ body.modo-vista .troquel, body.sin-troquel .troquel { display: none; }
         <div class="columna der">{{COLUMNA_DER}}</div>
       </div>
 
-      <div class="qr-caja">
-        <span class="titulo">Síguenos en</span>
-        <span class="cuenta">@{{INSTAGRAM}}</span>
-        <div class="qr">{{QR}}</div>
+      <div class="bloque-social">
+        <div class="qr-caja">
+          <span class="titulo">Síguenos en</span>
+          <span class="cuenta">Instagram</span>
+          <div class="qr">{{QR}}</div>
+        </div>
+        <div class="redes">{{REDES}}<span class="usuario">@{{USUARIO}}</span></div>
       </div>
 
       <div class="web">{{WEB}}</div>
