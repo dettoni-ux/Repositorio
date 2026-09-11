@@ -1,6 +1,7 @@
 # Individuales Domos
 
-Manteles individuales para las mesas, en dos versiones: **Playa Bonita** y **Bosque**.
+Manteles individuales para las mesas de Domos El Tabo, en dos versiones:
+**Playa Bonita** y **Bosque**.
 Mismo diseño y misma forma; cambian la foto de fondo y los textos de cada lugar.
 
 ## La forma
@@ -43,8 +44,9 @@ sangrado) y `?sin-troquel` (hoja completa sin la línea rosada).
    una foto con el motivo principal al centro.
 2. **Logo** → `individuales/marca/logo-domos.png` (o `.svg`)
    Si no está, el diseño escribe "DOMOS" con tipografía mientras tanto.
-3. **Datos** → `individuales/datos.mjs`: cuenta de Instagram, WhatsApp, web,
-   clave del Wi-Fi, horarios y servicios reales.
+3. **Datos** → ya están cargados en `individuales/datos.mjs`: Instagram
+   @domoseltabo, los dos teléfonos, cabañaseneltabo.cl y los servicios de cada
+   sector. Si quieres sumar horarios o la clave del Wi-Fi, se agregan ahí.
 
 Mientras falte alguno, la pieza sale con una marca de "Borrador" abajo, que
 desaparece sola al completar los datos.

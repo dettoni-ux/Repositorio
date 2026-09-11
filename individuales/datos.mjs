@@ -1,6 +1,6 @@
 // ---------------------------------------------------------------------------
 // Toda la información editable del individual vive acá.
-// Cambiá los textos, guardá y volvé a correr:  node individuales/generar.mjs
+// Cambia los textos, guarda y vuelve a correr:  node individuales/generar.mjs
 // ---------------------------------------------------------------------------
 
 // Medidas de la pieza troquelada, en milímetros.
@@ -13,99 +13,65 @@ export const medidas = {
 
 export const marca = {
   nombre: 'DOMOS',
-  lema: 'Glamping & naturaleza',
+  lema: 'El Tabo',
   acento: '#D9722F',           // color de las pastillas
   acentoTexto: '#FFFFFF',
-  instagram: 'PENDIENTE',      // ← usuario real, sin @
-  whatsapp: '+56 9 0000 0000', // ← PENDIENTE
-  web: 'www.domos.cl',         // ← PENDIENTE
+  instagram: 'domoseltabo',
+  web: 'cabañaseneltabo.cl',
+  telefonos: ['+56 9 7889 4831', '+56 9 9102 4354'],
 };
 
-// Cada columna es una lista de grupos: { titulo, items }.
+// Columna de reservas: igual en las dos versiones.
+const reservas = {
+  titulo: 'Reservas',
+  recto: true,
+  items: [
+    ...marca.telefonos.map((t) => ({ texto: t })),
+  ],
+};
+
+// Cada columna es una lista de grupos: { titulo, items, recto }.
 // Un item puede ser texto suelto o { texto, nota } para agregar una bajada.
 export const versiones = {
   playa: {
     archivo: 'individual-domos-playa',
-    lugar: 'Playa Bonita',
+    sector: 'Playa Bonita',
     fondo: 'fondos/playa.jpg',
     // Velo sobre la foto: sube el contraste del texto sin apagar la imagen.
     velo:
       'linear-gradient(180deg, rgba(0,0,0,.34) 0%, rgba(0,0,0,.10) 34%, rgba(0,0,0,.06) 62%, rgba(0,0,0,.28) 100%)',
     columnaIzq: [
       {
-        titulo: 'Tu estadía',
-        items: [
-          { texto: 'Check-in 15:00 h' },
-          { texto: 'Check-out 12:00 h' },
-          { texto: 'Desayuno', nota: '8:30 a 10:30 h' },
-        ],
-      },
-      {
-        titulo: 'Wi-Fi',
-        items: [
-          { texto: 'Domos_Huespedes', nota: 'Clave: PENDIENTE' },
-        ],
-      },
-    ],
-    columnaDer: [
-      {
         titulo: 'Servicios',
         items: [
-          { texto: 'Tinaja caliente', nota: 'con reserva previa' },
-          { texto: 'Quincho equipado' },
-          { texto: 'Estacionamiento privado' },
-        ],
-      },
-      {
-        titulo: 'Cerca tuyo',
-        items: [
-          { texto: 'Playa a 3 min' },
-          { texto: 'Caleta y marisquerías' },
-          { texto: 'Mirador del atardecer' },
+          { texto: 'Frente al mar' },
+          { texto: 'Piscina' },
+          { texto: 'Wi-Fi' },
         ],
       },
     ],
+    columnaDer: [reservas],
   },
 
   bosque: {
     archivo: 'individual-domos-bosque',
-    lugar: 'Bosque',
+    sector: 'Bosque',
     fondo: 'fondos/bosque.jpg',
     velo:
       'linear-gradient(180deg, rgba(0,0,0,.38) 0%, rgba(0,0,0,.14) 34%, rgba(0,0,0,.10) 62%, rgba(0,0,0,.32) 100%)',
     columnaIzq: [
       {
-        titulo: 'Tu estadía',
-        items: [
-          { texto: 'Check-in 15:00 h' },
-          { texto: 'Check-out 12:00 h' },
-          { texto: 'Desayuno', nota: '8:30 a 10:30 h' },
-        ],
-      },
-      {
-        titulo: 'Wi-Fi',
-        items: [
-          { texto: 'Domos_Huespedes', nota: 'Clave: PENDIENTE' },
-        ],
-      },
-    ],
-    columnaDer: [
-      {
         titulo: 'Servicios',
         items: [
-          { texto: 'Tinaja caliente', nota: 'con reserva previa' },
-          { texto: 'Quincho equipado' },
-          { texto: 'Fogata al anochecer' },
-        ],
-      },
-      {
-        titulo: 'Cerca tuyo',
-        items: [
-          { texto: 'Sendero del bosque' },
-          { texto: 'Cascada a 20 min' },
-          { texto: 'Mirador del valle' },
+          { texto: 'Piscina' },
+          { texto: 'Hoguera' },
+          { texto: 'Gimnasio' },
+          { texto: 'Parque infantil' },
+          { texto: 'Sector de hamacas' },
+          { texto: 'Fuente de agua' },
         ],
       },
     ],
+    columnaDer: [reservas],
   },
 };

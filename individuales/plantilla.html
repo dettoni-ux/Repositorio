@@ -93,6 +93,15 @@ body.modo-vista, body.modo-vista .pagina { background: transparent; }
   text-transform: uppercase;
 }
 
+.sector {
+  margin-top: 6mm;
+  font-size: 5.4mm;
+  font-weight: 600;
+  letter-spacing: .36em;
+  text-transform: uppercase;
+  text-shadow: var(--sombra-texto);
+}
+
 /* --------------------------------- columnas -------------------------------- */
 .columnas {
   margin-top: {{COLUMNAS_ARRIBA}};
@@ -128,6 +137,8 @@ body.modo-vista, body.modo-vista .pagina { background: transparent; }
   text-transform: uppercase;
   text-shadow: var(--sombra-texto);
 }
+.grupo.recto li { font-style: normal; letter-spacing: .03em; }
+
 .columna li small {
   display: block;
   margin-top: 1.2mm;
@@ -139,19 +150,18 @@ body.modo-vista, body.modo-vista .pagina { background: transparent; }
 }
 
 /* ----------------------------------- pie ----------------------------------- */
-.contacto {
+.web {
   position: absolute;
-  left: {{PIE_LADO}};
-  bottom: {{PIE_ABAJO}};
-  display: flex;
-  flex-direction: column;
-  gap: 3.2mm;
-  font-size: 4.4mm;
-  font-weight: 500;
+  left: 0;
+  right: 0;
+  bottom: 13mm;
+  text-align: center;
+  font-size: 4.6mm;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
   text-shadow: var(--sombra-texto);
 }
-.contacto .fila { display: flex; align-items: center; gap: 3.4mm; }
-.contacto svg { width: 5mm; height: 5mm; flex: none; }
 
 .qr-caja {
   position: absolute;
@@ -218,20 +228,23 @@ body.modo-vista .troquel, body.sin-troquel .troquel { display: none; }
     <div class="filete"></div>
 
     <div class="contenido">
-      <header class="marca">{{LOGO}}</header>
+      <header class="marca">
+        {{LOGO}}
+        <div class="sector">{{SECTOR}}</div>
+      </header>
 
       <div class="columnas">
         <div class="columna izq">{{COLUMNA_IZQ}}</div>
         <div class="columna der">{{COLUMNA_DER}}</div>
       </div>
 
-      <div class="contacto">{{CONTACTO}}</div>
-
       <div class="qr-caja">
         <span class="titulo">Síguenos en</span>
         <span class="cuenta">@{{INSTAGRAM}}</span>
         <div class="qr">{{QR}}</div>
       </div>
+
+      <div class="web">{{WEB}}</div>
 
       {{AVISO}}
     </div>

@@ -60,16 +60,9 @@ const archivoLogo = () =>
     .map((n) => `marca/${n}`)
     .find((rel) => fs.existsSync(path.join(AQUI, rel))) || null;
 
-// --------------------------------- iconos ---------------------------------
-const trazo = 'fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"';
-const ICONOS = {
-  telefono: `<svg viewBox="0 0 24 24" ${trazo}><path d="M6.5 3.5h3l1.5 4-2 1.4a12 12 0 0 0 5.1 5.1l1.4-2 4 1.5v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.5 5.7a2 2 0 0 1 2-2.2Z"/></svg>`,
-  web: `<svg viewBox="0 0 24 24" ${trazo}><circle cx="12" cy="12" r="9"/><path d="M3.2 9.5h17.6M3.2 14.5h17.6"/><path d="M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18Z"/></svg>`,
-};
-
 // --------------------------------- piezas ---------------------------------
 const grupoHtml = (g) => `
-          <div class="grupo">
+          <div class="grupo${g.recto ? ' recto' : ''}">
             <span class="pastilla">${g.titulo}</span>
             <ul>${g.items
               .map((i) => {
@@ -125,12 +118,12 @@ for (const clave of aGenerar) {
     pendientes.push('foto de fondo');
     faltantes.push(`${clave}: falta la foto en individuales/${v.fondo}`);
   }
-  if (marca.instagram === 'PENDIENTE') pendientes.push('cuenta de Instagram');
+  if (!marca.instagram || marca.instagram === 'PENDIENTE') pendientes.push('cuenta de Instagram');
   if (!archivoLogo()) pendientes.push('logo');
 
   const reemplazos = {
     FUENTES: fuentes,
-    TITULO: `${marca.nombre} ${v.lugar} — individual ${medidas.ancho / 10} x ${medidas.alto / 10} cm`,
+    TITULO: `${marca.nombre} ${v.sector} — individual ${medidas.ancho / 10} x ${medidas.alto / 10} cm`,
     ACENTO: v.acento || marca.acento,
     ACENTO_TEXTO: v.acentoTexto || marca.acentoTexto,
     CURVA: medidas.curva,
@@ -151,10 +144,8 @@ for (const clave of aGenerar) {
     LOGO: logoHtml(),
     COLUMNA_IZQ: columnaHtml(v.columnaIzq),
     COLUMNA_DER: columnaHtml(v.columnaDer),
-    CONTACTO: [
-      `<div class="fila">${ICONOS.telefono}<span>${marca.whatsapp}</span></div>`,
-      `<div class="fila">${ICONOS.web}<span>${marca.web}</span></div>`,
-    ].join('\n        '),
+    SECTOR: v.sector,
+    WEB: marca.web,
     QR: qr,
     INSTAGRAM: marca.instagram,
     AVISO: pendientes.length ? `<div class="aviso">Borrador · falta ${pendientes.join(' · ')}</div>` : '',
