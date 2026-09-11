@@ -9,25 +9,31 @@
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-  --tinta: {{TINTA}};
   --acento: {{ACENTO}};
-  --suave: {{SUAVE}};
-  --panel: {{PANEL}};
-  --hueso: #F7F2E8;
+  --acento-texto: {{ACENTO_TEXTO}};
+  --hueso: #FFFFFF;
+
+  /* Forma del individual: arco de medio punto arriba, base recta abajo. */
+  --curva-h: 50%;      /* radio horizontal del arco = media pieza */
+  --curva-v: {{CURVA}}; /* altura del arco */
+  --esquina: 16mm;     /* redondeo de las esquinas de abajo */
+
+  --sombra-texto: 0 .4mm 1.6mm rgba(0, 0, 0, .55);
 }
 
-@page { size: 426mm 303mm; margin: 0; }
+@page { size: {{PAGINA_ANCHO}} {{PAGINA_ALTO}}; margin: 0; }
 
-html, body { background: #101010; }
+html, body { background: #12100E; }
+body.modo-vista, body.modo-vista .pagina { background: transparent; }
 
-/* Lienzo con sangrado: corte final 420 x 297 mm (A3 apaisado) + 3 mm por lado */
-.sangrado {
+/* Hoja con sangrado. El corte final es la forma de arco (.pieza). */
+.pagina {
   position: relative;
-  width: 426mm;
-  height: 303mm;
+  width: {{PAGINA_ANCHO}};
+  height: {{PAGINA_ALTO}};
   overflow: hidden;
   background: {{FONDO}};
-  background-size: cover;
+  background-size: {{PAGINA_ANCHO}} {{PAGINA_ALTO}};
   background-position: center;
   font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
   color: var(--hueso);
@@ -35,195 +41,211 @@ html, body { background: #101010; }
   print-color-adjust: exact;
 }
 
+/* La pieza: lo que queda después del troquel. */
+.pieza {
+  position: absolute;
+  inset: {{SANGRADO}};
+  overflow: hidden;
+  border-radius:
+    var(--curva-h) var(--curva-h) var(--esquina) var(--esquina) /
+    var(--curva-v) var(--curva-v) var(--esquina) var(--esquina);
+}
+
+/* Copia de la foto alineada con la hoja, para que la vista recortada se vea igual. */
+.foto {
+  position: absolute;
+  inset: calc(-1 * {{SANGRADO}});
+  background: {{FONDO}};
+  background-size: {{PAGINA_ANCHO}} {{PAGINA_ALTO}};
+  background-position: center;
+}
+
 .velo { position: absolute; inset: 0; background: {{VELO}}; }
 
-/* Zona segura: 3 mm de sangrado + 13 mm de margen de seguridad */
-.lienzo {
+/* Filete blanco que sigue el contorno. */
+.filete {
   position: absolute;
-  inset: 16mm;
-  display: flex;
-  gap: 16mm;
+  inset: 5mm;
+  border: .9mm solid rgba(255, 255, 255, .88);
+  border-radius:
+    var(--curva-h) var(--curva-h) 11mm 11mm /
+    calc(var(--curva-v) - 1.2%) calc(var(--curva-v) - 1.2%) 11mm 11mm;
 }
 
-/* ------------------------------ columna izquierda ------------------------------ */
-.izquierda {
-  width: 150mm;
-  flex: none;
-  display: flex;
-  flex-direction: column;
-}
+.contenido { position: absolute; inset: 0; }
 
-.logo { height: 30mm; width: auto; object-fit: contain; object-position: left center; }
+/* ---------------------------------- marca ---------------------------------- */
+.marca { padding-top: {{MARCA_ARRIBA}}; text-align: center; }
+.marca img { height: {{LOGO_ALTO}}; width: auto; object-fit: contain; filter: drop-shadow(0 .6mm 2mm rgba(0,0,0,.35)); }
 
-.marca-texto { line-height: .95; }
+.marca-texto { line-height: 1; text-shadow: var(--sombra-texto); }
 .marca-texto .nombre {
   font-family: 'Fraunces', Georgia, serif;
   font-weight: 700;
-  font-size: 17mm;
-  letter-spacing: .14em;
+  font-size: 18mm;
+  letter-spacing: .16em;
 }
 .marca-texto .lema {
-  margin-top: 3mm;
-  font-size: 3.6mm;
-  font-weight: 300;
-  letter-spacing: .42em;
+  margin-top: 4mm;
+  font-size: 4mm;
+  font-weight: 500;
+  letter-spacing: .44em;
   text-transform: uppercase;
-  color: var(--suave);
 }
 
-.lugar {
-  margin-top: 11mm;
-  font-family: 'Fraunces', Georgia, serif;
-  font-weight: 600;
-  font-size: 10mm;
-  color: var(--acento);
-}
-
-.filete {
-  margin: 7mm 0;
-  width: 34mm;
-  height: .8mm;
-  background: var(--acento);
-  border-radius: 1mm;
-}
-
-.bienvenida {
-  font-size: 5mm;
-  font-weight: 300;
-  line-height: 1.6;
-  max-width: 128mm;
-  color: rgba(247, 242, 232, .92);
-}
-
-.contacto {
-  margin-top: auto;
+/* --------------------------------- columnas -------------------------------- */
+.columnas {
+  margin-top: {{COLUMNAS_ARRIBA}};
+  padding: 0 {{COLUMNAS_LADO}};
   display: flex;
-  flex-direction: column;
-  gap: 3.4mm;
-  font-size: 4.2mm;
-  font-weight: 400;
-}
-.contacto .fila { display: flex; align-items: center; gap: 4mm; }
-.contacto svg { width: 5.2mm; height: 5.2mm; flex: none; color: var(--acento); }
-
-/* ------------------------------ columna derecha ------------------------------ */
-.derecha {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
   justify-content: space-between;
-  gap: 11mm;
+  align-items: flex-start;
 }
 
-.bloques {
-  flex: none;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-auto-rows: min-content;
-  gap: 9mm;
+.columna { width: {{COLUMNA_ANCHO}}; display: flex; flex-direction: column; gap: 11mm; }
+.columna.der { text-align: right; align-items: flex-end; }
+
+.pastilla {
+  display: inline-block;
+  background: var(--acento);
+  color: var(--acento-texto);
+  border-radius: 999px;
+  padding: 2.6mm 8mm 2.2mm;
+  font-size: 4.4mm;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  box-shadow: 0 .8mm 2.4mm rgba(0, 0, 0, .22);
 }
 
-.bloque {
-  background: var(--panel);
-  border: .4mm solid rgba(255, 255, 255, .16);
-  border-radius: 5mm;
-  padding: 8mm 8mm 7.5mm;
+.columna ul { margin-top: 6mm; list-style: none; display: flex; flex-direction: column; gap: 5mm; }
+.columna li {
+  font-size: 5.4mm;
+  font-style: italic;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: .01em;
+  text-transform: uppercase;
+  text-shadow: var(--sombra-texto);
+}
+.columna li small {
+  display: block;
+  margin-top: 1.2mm;
+  font-size: 4mm;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: .04em;
+  text-transform: none;
+}
+
+/* ----------------------------------- pie ----------------------------------- */
+.contacto {
+  position: absolute;
+  left: {{PIE_LADO}};
+  bottom: {{PIE_ABAJO}};
   display: flex;
   flex-direction: column;
+  gap: 3.2mm;
+  font-size: 4.4mm;
+  font-weight: 500;
+  text-shadow: var(--sombra-texto);
 }
+.contacto .fila { display: flex; align-items: center; gap: 3.4mm; }
+.contacto svg { width: 5mm; height: 5mm; flex: none; }
 
-.bloque .cabecera { display: flex; align-items: center; gap: 4mm; }
-.bloque svg { width: 7mm; height: 7mm; flex: none; color: var(--acento); }
-.bloque h2 {
-  font-size: 4.2mm;
-  font-weight: 600;
-  letter-spacing: .2em;
-  text-transform: uppercase;
-  color: var(--acento);
-}
-.bloque ul { margin-top: 5.5mm; list-style: none; display: flex; flex-direction: column; gap: 2.8mm; }
-.bloque li { font-size: 4.5mm; font-weight: 300; line-height: 1.4; }
-.bloque li b { font-weight: 500; color: #fff; }
-
-/* ------------------------------ tira del QR ------------------------------ */
-.tira-qr {
-  display: flex;
-  align-items: center;
-  gap: 9mm;
-  background: var(--panel);
-  border: .4mm solid rgba(255, 255, 255, .16);
-  border-radius: 5mm;
-  padding: 7mm 9mm;
-}
-
-.qr {
-  width: 34mm;
-  height: 34mm;
-  flex: none;
+.qr-caja {
+  position: absolute;
+  right: {{PIE_LADO}};
+  bottom: {{PIE_ABAJO}};
+  width: 46mm;
   background: #fff;
-  border-radius: 3mm;
-  padding: 2.4mm;
+  border-radius: 4mm;
+  padding: 4mm 4mm 4.5mm;
+  text-align: center;
+  box-shadow: 0 1mm 3mm rgba(0, 0, 0, .22);
 }
-.qr svg { width: 100%; height: 100%; display: block; }
-
-.tira-qr .texto { display: flex; flex-direction: column; gap: 2.2mm; }
-.tira-qr .invita {
-  font-size: 3.6mm;
-  font-weight: 600;
-  letter-spacing: .24em;
+.qr-caja .titulo {
+  display: block;
+  font-size: 3.4mm;
+  font-weight: 700;
+  letter-spacing: .1em;
   text-transform: uppercase;
-  color: var(--suave);
+  color: #3B3B3B;
 }
-.tira-qr .cuenta {
-  font-family: 'Fraunces', Georgia, serif;
-  font-weight: 600;
-  font-size: 8mm;
+.qr-caja .cuenta {
+  display: block;
+  margin-bottom: 3mm;
+  font-size: 4.4mm;
+  font-weight: 700;
   color: var(--acento);
 }
-.tira-qr .nota { font-size: 3.8mm; font-weight: 300; color: rgba(247, 242, 232, .82); }
+.qr-caja .qr { width: 100%; aspect-ratio: 1; }
+.qr-caja .qr svg { width: 100%; height: 100%; display: block; }
 
-/* Marca de agua sólo para borradores; desaparece al completar los datos. */
+/* Marca de borrador: desaparece sola al completar los datos. */
 .aviso {
   position: absolute;
-  left: 16mm;
-  bottom: 5mm;
+  left: 0;
+  right: 0;
+  bottom: 7mm;
+  text-align: center;
   font-size: 3.2mm;
-  letter-spacing: .18em;
+  font-weight: 500;
+  letter-spacing: .2em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, .55);
+  color: rgba(255, 255, 255, .75);
+  text-shadow: var(--sombra-texto);
 }
+
+/* Línea de troquel: sólo para la imprenta, se oculta en la vista. */
+.troquel {
+  position: absolute;
+  inset: {{SANGRADO}};
+  border: .3mm dashed rgba(255, 0, 180, .9);
+  border-radius:
+    var(--curva-h) var(--curva-h) var(--esquina) var(--esquina) /
+    var(--curva-v) var(--curva-v) var(--esquina) var(--esquina);
+  pointer-events: none;
+}
+body.modo-vista .troquel, body.sin-troquel .troquel { display: none; }
 </style>
 </head>
 <body>
-<div class="sangrado">
-  <div class="velo"></div>
+<div class="pagina">
+  <div class="pieza">
+    <div class="foto"></div>
+    <div class="velo"></div>
+    <div class="filete"></div>
 
-  <div class="lienzo">
-    <aside class="izquierda">
-      {{LOGO}}
+    <div class="contenido">
+      <header class="marca">{{LOGO}}</header>
 
-      <div class="lugar">{{LUGAR}}</div>
-      <div class="filete"></div>
-      <p class="bienvenida">{{BIENVENIDA}}</p>
+      <div class="columnas">
+        <div class="columna izq">{{COLUMNA_IZQ}}</div>
+        <div class="columna der">{{COLUMNA_DER}}</div>
+      </div>
 
       <div class="contacto">{{CONTACTO}}</div>
-    </aside>
 
-    <section class="derecha">
-      <div class="bloques">{{BLOQUES}}</div>
-
-      <div class="tira-qr">
+      <div class="qr-caja">
+        <span class="titulo">Síguenos en</span>
+        <span class="cuenta">@{{INSTAGRAM}}</span>
         <div class="qr">{{QR}}</div>
-        <div class="texto">
-          <span class="invita">Síguenos en Instagram</span>
-          <span class="cuenta">@{{INSTAGRAM}}</span>
-          <span class="nota">Escanea el código y mira el lugar por dentro.</span>
-        </div>
       </div>
-    </section>
+
+      {{AVISO}}
+    </div>
   </div>
 
-  {{AVISO}}
+  <div class="troquel"></div>
 </div>
+
+<script>
+  // ?vista  → se ve la pieza ya troquelada, sin sangrado ni línea de corte.
+  // ?sin-troquel → hoja completa con sangrado, sin la línea rosada.
+  const q = location.search;
+  if (q.includes('vista')) document.body.classList.add('modo-vista');
+  if (q.includes('sin-troquel')) document.body.classList.add('sin-troquel');
+</script>
 </body>
 </html>
