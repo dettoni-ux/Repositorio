@@ -23,15 +23,37 @@ AQUI = Path(__file__).parent
 UMBRAL_FUERA, UMBRAL_DENTRO = 8, 30
 
 
+def guardar(salida: Image.Image, entrada: Path, ancho: int, alto: int, nota: str) -> int:
+    destino = AQUI / 'marca' / 'logo-domos.png'
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    salida.save(destino)
+
+    print(f'{entrada.name}  {ancho} x {alto} px')
+    print(f'→ {destino.relative_to(AQUI.parent)}  {salida.width} x {salida.height} px · {nota}')
+    if salida.width < 1200:
+        print(f'⚠ Con {salida.width} px de ancho el logo se va a ver blando impreso. '
+              f'Conviene el vector o una copia de 2000 px o más.')
+    return 0
+
+
 def main() -> int:
     if len(sys.argv) < 2:
         print(__doc__)
         return 1
 
     entrada = Path(sys.argv[1])
-    logo = Image.open(entrada).convert('RGB')
-    ancho, alto = logo.size
+    original = Image.open(entrada)
+    ancho, alto = original.size
 
+    # Si ya viene con transparencia, no hay nada que borrar: sólo se recorta.
+    if original.mode in ('RGBA', 'LA') and original.convert('RGBA').getchannel('A').getextrema()[0] < 250:
+        salida = original.convert('RGBA')
+        recorte = salida.getbbox()
+        if recorte:
+            salida = salida.crop(recorte)
+        return guardar(salida, entrada, ancho, alto, 'ya venía con fondo transparente')
+
+    logo = original.convert('RGB')
     pixeles = logo.load()
     alfa = Image.new('L', logo.size)
     ap = alfa.load()
@@ -53,16 +75,7 @@ def main() -> int:
     if recorte:
         salida = salida.crop(recorte)
 
-    destino = AQUI / 'marca' / 'logo-domos.png'
-    destino.parent.mkdir(parents=True, exist_ok=True)
-    salida.save(destino)
-
-    print(f'{entrada.name}  {ancho} x {alto} px')
-    print(f'→ {destino.relative_to(AQUI.parent)}  {salida.width} x {salida.height} px, fondo transparente')
-    if salida.width < 1200:
-        print(f'⚠ Con {salida.width} px de ancho el logo se va a ver blando impreso. '
-              f'Conviene el vector o una copia de 2000 px o más.')
-    return 0
+    return guardar(salida, entrada, ancho, alto, 'fondo blanco recortado')
 
 
 if __name__ == '__main__':

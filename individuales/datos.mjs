@@ -14,7 +14,9 @@ export const medidas = {
 export const marca = {
   nombre: 'DOMOS',
   lema: 'El Tabo',
-  acento: '#E4711C',           // naranja del logo (a ojo; se ajusta con el archivo)
+  acento: '#E36D18',           // naranja tomado del logo
+  verde: '#97C121',
+  turquesa: '#20ABCB',
   acentoTexto: '#FFFFFF',
   usuario: 'domoseltabo',                        // el mismo en las tres redes
   redes: ['facebook', 'instagram', 'tiktok'],

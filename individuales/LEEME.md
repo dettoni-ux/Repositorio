@@ -61,8 +61,11 @@ sangrado) y `?sin-troquel` (hoja completa sin la línea rosada).
    un JPG con fondo blanco:
 
    ```bash
-   python3 individuales/preparar-logo.py ~/logo.jpg
+   python3 individuales/preparar-logo.py individuales/marca/originales/logo.png
    ```
+
+   Sirve igual si el logo ya viene con transparencia (sólo lo recorta) o si
+   viene sobre blanco (le saca el fondo).
 
    Para imprenta, mejor el vector (.svg, .ai, .pdf) que cualquier JPG.
 3. **Datos** → ya están cargados en `individuales/datos.mjs`: Instagram

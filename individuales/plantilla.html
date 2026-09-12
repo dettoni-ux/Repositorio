@@ -75,8 +75,30 @@ body.modo-vista, body.modo-vista .pagina { background: transparent; }
 .contenido { position: absolute; inset: 0; }
 
 /* ---------------------------------- marca ---------------------------------- */
-.marca { padding-top: {{MARCA_ARRIBA}}; text-align: center; }
-.marca img { height: {{LOGO_ALTO}}; width: auto; object-fit: contain; filter: drop-shadow(0 .6mm 2mm rgba(0,0,0,.35)); }
+.marca { position: relative; padding-top: {{MARCA_ARRIBA}}; text-align: center; }
+
+/* Velo suave detrás de la marca: el trazo fino de la cúpula se pierde sobre
+   fondos claros o con follaje, y esto lo sostiene sin dibujar un recuadro. */
+.marca::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: 175mm;
+  height: 98mm;
+  background: radial-gradient(ellipse at center,
+    rgba(0, 0, 0, .42) 0%, rgba(0, 0, 0, .30) 42%, rgba(0, 0, 0, .12) 66%, rgba(0, 0, 0, 0) 78%);
+  pointer-events: none;
+}
+.marca img, .marca .marca-texto, .marca .sector { position: relative; }
+.marca img {
+  max-height: {{LOGO_ALTO}};
+  max-width: {{LOGO_ANCHO}};
+  width: auto;
+  height: auto;
+  filter: drop-shadow(0 .8mm 2.4mm rgba(0, 0, 0, .40));
+}
 
 .marca-texto { line-height: 1; text-shadow: var(--sombra-texto); }
 .marca-texto .nombre {

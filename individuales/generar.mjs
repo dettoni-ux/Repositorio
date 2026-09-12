@@ -30,9 +30,10 @@ const px = (n) => Math.round((n / 25.4) * 96);
 // Proporciones del contenido, calculadas sobre el alto de la pieza para que
 // todo se reacomode solo si cambian las medidas.
 const caja = {
-  marcaArriba: medidas.alto * 0.067,     // aire sobre el logo
-  logoAlto: medidas.alto * 0.113,
-  columnasArriba: medidas.alto * 0.107,  // bajada hasta las pastillas
+  marcaArriba: medidas.alto * 0.047,     // aire sobre el logo
+  logoAlto: medidas.alto * 0.173,        // topes del logo: entra como entre
+  logoAncho: medidas.ancho * 0.255,      // sin deformarse, sea cual sea su forma
+  columnasArriba: medidas.alto * 0.055,  // bajada hasta las pastillas
   columnasLado: medidas.ancho * 0.105,   // margen lateral de las columnas
   columnaAncho: medidas.ancho * 0.281,
   pieLado: medidas.ancho * 0.105,
@@ -141,6 +142,7 @@ for (const clave of aGenerar) {
     SANGRADO: mm(medidas.sangrado),
     MARCA_ARRIBA: mm(caja.marcaArriba),
     LOGO_ALTO: mm(caja.logoAlto),
+    LOGO_ANCHO: mm(caja.logoAncho),
     COLUMNAS_ARRIBA: mm(caja.columnasArriba),
     COLUMNAS_LADO: mm(caja.columnasLado),
     COLUMNA_ANCHO: mm(caja.columnaAncho),

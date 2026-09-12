@@ -4,3 +4,6 @@ salida/
 # fondos/originales/, así que no hace falta cargarlos al repositorio.
 fondos/*.jpg
 fondos/*.jpeg
+
+# El logo recortado también se regenera, desde marca/originales/.
+marca/logo-domos.png
