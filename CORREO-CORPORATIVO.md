@@ -150,7 +150,7 @@ se enruta a Zoho antes de que exista el buzón que lo recibe.
 | 4 | *(vacío)* | MX | `50` | `mx3.zoho.com` | **Agregar** |
 | 5 | *(vacío)* | TXT | — | `v=spf1 include:zohomail.com -all` | **EDITAR el SPF existente** |
 | 6 | `zmail._domainkey` | TXT | — | *(la clave DKIM del panel, paso 3.3)* | **Agregar** |
-| 7 | `_dmarc` | TXT | — | `v=DMARC1; p=quarantine; rua=mailto:dmarc@encuentravet.cl; ruf=mailto:dmarc@encuentravet.cl; fo=1; adkim=r; aspf=r; pct=100` | **EDITAR el DMARC existente** |
+| 7 | `_dmarc` | TXT | — | `v=DMARC1; p=quarantine; adkim=r; aspf=r; pct=100` | **EDITAR el DMARC existente** |
 
 **Notas críticas:**
 
@@ -371,7 +371,7 @@ Marca cada punto antes de darlo por terminado:
 - [x] SPF **editado** a `v=spf1 include:zohomail.com -all` — un registro, includes válidos, 2/10 consultas
 - [x] DKIM publicado en `zmail._domainkey` — clave RSA de 1024 bits validada criptográficamente
 - [x] Lectura configurada — app de Zoho Mail en iPhone y webmail en el computador
-- [x] DMARC editado con `rua=mailto:dmarc@encuentravet.cl` — reportes ahora sí entregables
+- [x] DMARC en `p=quarantine`, sin informes (decisión tomada: generaban ruido diario)
 - [x] `node scripts/verificar-correo-dns.mjs` **todo en verde**
 - [x] Alias `ventas@`, `marketing@` y `dmarc@` creados
 - [ ] *Enviar como* para ventas@ y marketing@ (solo si se usa Gmail)
@@ -390,8 +390,23 @@ Marca cada punto antes de darlo por terminado:
 | [dmarcian.com/dmarc-inspector](https://dmarcian.com/dmarc-inspector/) | Validar la sintaxis del DMARC |
 | Gmail → "Mostrar original" | Confirmar `SPF: PASS`, `DKIM: PASS`, `DMARC: PASS` en un correo real |
 
-### Después: endurecer a `p=reject`
+### Sobre subir a `p=reject`
 
-Cuando lleves **4-6 semanas** con los reportes DMARC llegando limpios a `dmarc@encuentravet.cl`,
-cambia `p=quarantine` por `p=reject` en el registro `_dmarc`. Es la protección máxima contra
-suplantación de tu dominio — importante cuando negocias con marcas grandes.
+**La recomendación es quedarse en `p=quarantine`.**
+
+`p=reject` es la protección máxima, pero decidir el salto a ciegas es arriesgado: si algún
+remitente legítimo quedara sin alinear, sus correos dejarían de entregarse **sin aviso ni rebote
+visible**. Los informes DMARC eran justamente la evidencia para descartar ese escenario, y se
+desactivaron a propósito porque llegaban a diario y no se leían.
+
+`p=quarantine` ya cubre lo que importa: quien intente suplantar el dominio va a la carpeta de
+spam del destinatario. La diferencia con `reject` es si el mensaje falso se rechaza del todo o
+se entrega en spam — relevante para un banco, marginal para EncuentraVet.
+
+El punto a vigilar es el sitio: envía por **Amazon SES** con remitente de sobre `@amazonses.com`,
+así que esos correos solo pasan DMARC si SES los firma con DKIM alineado a `encuentravet.cl`.
+Hoy funcionan con `p=quarantine`; con `p=reject` un fallo ahí sería silencioso y total.
+
+Si en el futuro quieres el salto, el camino es reactivar `rua=` durante un mes, revisar los
+informes con una herramienta que los lea por ti (dmarcian o Postmark tienen resúmenes semanales
+legibles y gratuitos) y recién entonces cambiar la política.

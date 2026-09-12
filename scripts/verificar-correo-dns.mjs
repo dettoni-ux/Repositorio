@@ -144,10 +144,11 @@ else {
   console.log(`     ${dmarc[0]}`);
   const pol = /[;\s]p=([a-z]+)/i.exec(dmarc[0])?.[1];
   if (pol === 'reject') ok('política p=reject (máxima protección)');
-  else if (pol === 'quarantine') ok('política p=quarantine (buena; sube a reject cuando lleves semanas sin fallos)');
+  else if (pol === 'quarantine') ok('política p=quarantine: la suplantación va a spam del destinatario');
   else if (pol === 'none') ojo('política p=none (solo observa, no protege)');
   else mal('sin política p= válida');
-  /rua=/.test(dmarc[0]) ? ok('tiene dirección de reportes (rua)') : ojo('sin rua: no recibirás reportes');
+  if (/rua=/.test(dmarc[0])) ok('tiene dirección de reportes (rua)');
+  else console.log('  ·  sin rua: informes desactivados a propósito (la protección no depende de ellos)');
 }
 
 console.log('\nListo. Los cambios de DNS pueden tardar hasta 1-2 horas en propagarse.\n');
