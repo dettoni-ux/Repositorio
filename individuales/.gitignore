@@ -1,1 +1,6 @@
 salida/
+
+# Los fondos en medida se regeneran con preparar-foto.py a partir de
+# fondos/originales/, así que no hace falta cargarlos al repositorio.
+fondos/*.jpg
+fondos/*.jpeg

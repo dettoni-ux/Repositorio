@@ -50,6 +50,10 @@ sangrado) y `?sin-troquel` (hoja completa sin la línea rosada).
    python3 individuales/preparar-foto.py ~/mi-foto.jpg playa --expandir   # no recorta: estira los bordes
    ```
 
+   Las fotos como vienen de la cámara se guardan en `fondos/originales/`; las
+   que quedan en medida (`fondos/playa.jpg`, `fondos/bosque.jpg`) se regeneran
+   con ese comando y por eso no van al repositorio.
+
    El script avisa si la foto no alcanza los 300 ppp que pide la imprenta.
 2. **Logo** → `individuales/marca/logo-domos.png` (o `.svg`)
    Si no está, el diseño escribe "DOMOS" con tipografía mientras tanto.

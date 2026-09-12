@@ -40,7 +40,8 @@ export const versiones = {
     fondo: 'fondos/playa.jpg',
     // Velo sobre la foto: sube el contraste del texto sin apagar la imagen.
     velo:
-      'linear-gradient(180deg, rgba(0,0,0,.34) 0%, rgba(0,0,0,.10) 34%, rgba(0,0,0,.06) 62%, rgba(0,0,0,.28) 100%)',
+      'linear-gradient(90deg, rgba(0,0,0,.46) 0%, rgba(0,0,0,.20) 22%, rgba(0,0,0,0) 42%, rgba(0,0,0,0) 58%, rgba(0,0,0,.20) 78%, rgba(0,0,0,.46) 100%), ' +
+      'linear-gradient(180deg, rgba(0,0,0,.36) 0%, rgba(0,0,0,.12) 34%, rgba(0,0,0,.08) 62%, rgba(0,0,0,.34) 100%)',
     columnaIzq: [
       {
         titulo: 'Servicios',
@@ -59,7 +60,8 @@ export const versiones = {
     sector: 'Bosque',
     fondo: 'fondos/bosque.jpg',
     velo:
-      'linear-gradient(180deg, rgba(0,0,0,.38) 0%, rgba(0,0,0,.14) 34%, rgba(0,0,0,.10) 62%, rgba(0,0,0,.32) 100%)',
+      'linear-gradient(90deg, rgba(0,0,0,.46) 0%, rgba(0,0,0,.20) 22%, rgba(0,0,0,0) 42%, rgba(0,0,0,0) 58%, rgba(0,0,0,.20) 78%, rgba(0,0,0,.46) 100%), ' +
+      'linear-gradient(180deg, rgba(0,0,0,.40) 0%, rgba(0,0,0,.16) 34%, rgba(0,0,0,.12) 62%, rgba(0,0,0,.38) 100%)',
     columnaIzq: [
       {
         titulo: 'Servicios',
