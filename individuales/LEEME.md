@@ -58,7 +58,7 @@ sangrado) y `?sin-troquel` (hoja completa sin la línea rosada).
    los que están armadas hoy:
 
    ```bash
-   python3 individuales/preparar-foto.py individuales/fondos/originales/playa-1.png playa
+   python3 individuales/preparar-foto.py individuales/fondos/originales/playa-2.png playa
    python3 individuales/preparar-foto.py individuales/fondos/originales/bosque.png bosque --zoom 1.28
    python3 individuales/preparar-logo.py individuales/marca/originales/logo.png
    ```
