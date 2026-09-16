@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """Agrega al folleto de Domos El Tabo - El Bosque una pagina dedicada al
-interior de los domos, con las fotos en grande.
+interior de los domos: living, habitacion matrimonial, cocina y bano.
 
-    python3 armar.py folleto.pdf salida.pdf
-    python3 armar.py folleto.pdf salida.pdf cocina.jpg living.jpg bano.jpg
+    python3 armar.py folleto.pdf salida.pdf living.jpg pieza.jpg cocina.jpg bano.jpg
 
-Sin fotos nuevas reutiliza las tres miniaturas que hoy van apretadas al pie de
-la pagina "EQUIPAMIENTO:" (las saca de ahi y las muestra en grande).
-Con tres fotos nuevas, esas entran en la pagina y las miniaturas desaparecen.
+Las fotos van en ese orden y se pueden dar menos de cuatro: los huecos que
+queden sin foto salen marcados como pendientes, para ver como va quedando la
+pagina. Las tres miniaturas que hoy van apretadas al pie de la pagina
+"EQUIPAMIENTO:" se sacan de ahi en cualquier caso.
 """
 import io
 import os
@@ -22,22 +22,26 @@ ANTON = os.path.join(AQUI, "fuentes", "anton.ttf")
 POPPINS = os.path.join(AQUI, "fuentes", "poppins.ttf")
 
 OLIVA = (0.2706, 0.2392, 0.0902)      # verde oliva del folleto
+OLIVA_CLARO = (0.3098, 0.2745, 0.0902)
 CREMA = (0.9961, 0.9961, 0.9961)      # blanco de los textos
 
 EQUIPAMIENTO = 4                      # indice de la pagina "EQUIPAMIENTO:"
 TITULO = "EL INTERIOR:"
-BAJADA = ["Cocina equipada, vajilla y utensilios:",
-          "solo hay que llegar con las sábanas."]
+BAJADA = ["Tres dormitorios, bano y cocina equipada:",
+          "solo hay que llegar con las sabanas."]
+BAJADA = [t.replace("bano", "ba\u00f1o").replace("sabanas", "s\u00e1banas")
+          for t in BAJADA]
 
 # Las tres miniaturas del pie de EQUIPAMIENTO: xref y marco que ocupan.
 MINIATURAS = [(59, (98.4, 175.7, 144.0, 225.6)),
               (58, (50.5, 175.7, 93.5, 225.6)),
               (57, (0, 175.7, 44.2, 225.6))]
 
-# Huecos de la pagina nueva: (x0, y0, x1, y1) en puntos.
-HUECOS = [(12, 52, 96, 162),          # foto grande, a la izquierda
-          (100, 52, 132, 106),        # arriba a la derecha
-          (100, 110, 132, 162)]       # abajo a la derecha
+# Huecos de la pagina nueva, en puntos: dos filas de dos, con su etiqueta.
+HUECOS = [(12, 50, 69.5, 93), (74.5, 50, 132, 93),
+          (12, 107, 69.5, 150), (74.5, 107, 132, 150)]
+ETIQUETAS = ["Living", "Habitaci\u00f3n matrimonial", "Cocina equipada",
+             "Ba\u00f1o"]
 
 # El arroba del pie va letra por letra; estas son las posiciones exactas que
 # usa el resto del folleto, para que la pagina nueva calce con las demas.
@@ -84,6 +88,16 @@ def preparar(datos, hueco, recorte=(0, 0)):
     return buf.getvalue()
 
 
+def pendiente(pagina, hueco):
+    """Marca un hueco todavia sin foto, para ir viendo como queda la pagina."""
+    r = pymupdf.Rect(*hueco)
+    pagina.draw_rect(r, color=CREMA, fill=OLIVA_CLARO, width=0.5,
+                     dashes="[2 2] 0", stroke_opacity=0.55)
+    pagina.insert_textbox(r + (0, r.height / 2 - 6, 0, 0), "foto pendiente",
+                          fontname="poppins", fontsize=5, color=CREMA,
+                          align=pymupdf.TEXT_ALIGN_CENTER, fill_opacity=0.55)
+
+
 def copiar_adornos(adornos, pagina, saltar):
     """Repite en la pagina nueva los adornos vectoriales del folleto."""
     forma = pagina.new_shape()
@@ -94,6 +108,10 @@ def copiar_adornos(adornos, pagina, saltar):
             continue
         r = dibujo["rect"]
         if any(abs(r.x0 - m[0]) < 1 and abs(r.y0 - m[1]) < 1 for m in saltar):
+            continue
+        # Las rayitas del cuerpo de EQUIPAMIENTO (el subrayado de OBLIGACION)
+        # no son parte del fondo: solo sirven a ese texto.
+        if r.height < 2 and r.y0 > 40:
             continue
         for tipo, *datos in dibujo["items"]:
             if tipo == "l":
@@ -121,13 +139,8 @@ def main():
     doc = pymupdf.open(base)
     equipamiento = doc[EQUIPAMIENTO]
 
-    fotos = ([open(f, "rb").read() for f in nuevas] if nuevas
-             else [doc.extract_image(x)["image"] for x, _ in MINIATURAS])
-    if len(fotos) < 3:
-        sys.exit("Hacen falta 3 fotos del interior.")
-    # Las miniaturas del folleto son capturas de pantalla y hay que sacarles la
-    # barra de botones; las fotos nuevas entran tal cual.
-    recortes = [(0, 0)] * 3 if nuevas else [(0.09, 0.015), (0, 0), (0, 0)]
+    fotos = [open(f, "rb").read() for f in nuevas[:len(HUECOS)]]
+    fotos += [None] * (len(HUECOS) - len(fotos))
 
     # Los adornos se leen antes de tocar el documento: al insertar la pagina
     # nueva las paginas se renumeran y el objeto anterior queda invalido.
@@ -150,13 +163,18 @@ def main():
     pag.insert_text((22.1, 30), TITULO, fontname="anton", fontsize=11.7,
                     color=CREMA)
 
-    for foto, hueco, recorte in zip(fotos[:3], HUECOS, recortes):
-        pag.insert_image(pymupdf.Rect(*hueco),
-                         stream=preparar(foto, hueco, recorte),
-                         keep_proportion=False)
+    for foto, hueco, etiqueta in zip(fotos, HUECOS, ETIQUETAS):
+        x0, y0, x1, y1 = hueco
+        if foto:
+            pag.insert_image(pymupdf.Rect(*hueco), stream=preparar(foto, hueco),
+                             keep_proportion=False)
+        else:
+            pendiente(pag, hueco)
+        pag.insert_text((x0, y1 + 7), etiqueta, fontname="poppins",
+                        fontsize=5, color=CREMA)
 
     for i, linea in enumerate(BAJADA):
-        pag.insert_text((15, 180 + i * 9), linea, fontname="poppins",
+        pag.insert_text((12, 172 + i * 9), linea, fontname="poppins",
                         fontsize=6, color=CREMA)
 
     for letra, x in zip(PIE, PIE_X):
