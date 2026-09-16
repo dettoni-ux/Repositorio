@@ -1,51 +1,62 @@
-# Folleto Domos El Tabo — El Bosque
+# Folletos Domos El Tabo
 
-El folleto original (`original/DOMOS_EL_TABO_BOSQUE.pdf`) mostraba el interior
-en tres miniaturas apretadas al pie de la página **EQUIPAMIENTO:**. `armar.py`
-las saca de ahí y agrega cuatro páginas nuevas, justo después de EQUIPAMIENTO:
-
-| Página | Qué muestra |
-|---|---|
-| LA COCINA | foto a sangre |
-| PIEZA MATRIMONIAL | foto a sangre |
-| DORMITORIO DE ARRIBA | foto a sangre |
-| EL BAÑO | las dos fotos lado a lado |
-
-Resultado: `DOMOS_EL_TABO_BOSQUE-con-interior.pdf`, 14 páginas.
+Los folletos originales (`original/`) mostraban el interior en tres miniaturas
+apretadas al pie de la página **EQUIPAMIENTO:**. `armar.py` las saca de ahí y
+agrega, justo después de esa página, una diapo por ambiente: nunca más de dos
+fotos por diapo, para que se vean grandes.
 
 ```bash
-python3 armar.py original/DOMOS_EL_TABO_BOSQUE.pdf DOMOS_EL_TABO_BOSQUE-con-interior.pdf
+python3 armar.py            # los dos folletos
+python3 armar.py playa      # solo uno (bosque | playa)
 ```
 
-## Cambiar o agregar fotos
+| Folleto | Sale | Páginas nuevas | Total |
+|---|---|---|---|
+| Bosque | `DOMOS_EL_TABO_BOSQUE-con-interior.pdf` | cocina, pieza matrimonial, dormitorio de arriba, baño | 14 |
+| Playa Bonita | `DOMOS_EL_TABO_PLAYA_BONITA-con-interior.pdf` | a pasos del mar, living, pieza matrimonial, dormitorio de arriba, cocina, todo puesto, baño, terraza y quincho | 17 |
 
-Las fotos viven en `fotos/` y las páginas se describen en la lista `PAGINAS`,
-arriba de `armar.py`. Para sumar una página basta agregarle una entrada:
+Las fotos están en `fotos/` (Bosque) y `fotos-playa/` (Playa Bonita).
+
+## Cambiar o agregar diapos
+
+Todo se edita en la lista `FOLLETOS`, arriba de `armar.py`. Una diapo es una
+foto a sangre:
 
 ```python
-{"foto": "living.jpg", "titulo": "EL LIVING", "texto": "Sofá, mesa y..."}
+{"foto": "living.jpg", "titulo": "EL LIVING", "texto": "Sofá, comedor y..."}
 ```
 
-o, para dos fotos lado a lado:
+o dos lado a lado:
 
 ```python
-{"fotos": ["terraza-1.jpg", "terraza-2.jpg"], "titulo": "LA TERRAZA", ...}
+{"fotos": ["bano-1.jpg", "bano-2.jpg"], "titulo": "EL BAÑO", "texto": "..."}
 ```
 
 Cada foto se recorta sola al centro para llenar su hueco, así que conviene que
 el motivo principal esté al medio. El título se achica solo si no cabe a lo
-ancho de la página.
+ancho y la bajada se corta sola en dos líneas.
 
 Tamaño: la página son 144 × 252 puntos, o sea **600 × 1050 px** a 300 ppp para
-una foto a sangre. Las fotos del celular (1333 × 2000) sobran.
+una foto a sangre. Las fotos de cámara (1333 × 2000) sobran.
+
+Para sumar un tercer folleto basta agregarle una entrada a `FOLLETOS` con su
+PDF, su carpeta de fotos y el número de la página de equipamiento (contando
+desde 0).
 
 ## Detalles
 
-- En las páginas a sangre la foto ocupa todo y abajo va una franja verde con el
-  rótulo; el degradado evita el corte seco entre foto y franja.
-- En la página de dos fotos el fondo y los adornos se copian de la página
-  EQUIPAMIENTO, así que queda igual al resto del folleto.
-- Títulos en Anton y textos en Poppins (`fuentes/`, ambas SIL OFL). El folleto
-  original usa Codec Pro para el cuerpo, que es de pago; Poppins es lo más
-  parecido que se puede embeber sin licencia.
+- **Nada de colores a mano:** el color de fondo, los adornos de las esquinas y
+  las miniaturas que hay que sacar se leen del propio folleto. Por eso el del
+  Bosque sale verde oliva y el de Playa Bonita azul.
+- En las diapos a sangre la foto ocupa todo y abajo va una franja con el
+  rótulo. El degradado que une foto y franja va como imagen con transparencia:
+  pintado con rectángulos deja bandas visibles.
+- Al pie de cada diapo nueva va **DOMOS EL TABO · GLAMPING CHILE**, bajo el
+  arroba de Instagram.
+- En Playa Bonita las miniaturas llegaban hasta el borde de abajo y el arroba
+  iba encima de ellas; al taparlas se tapa también, así que el script lo
+  vuelve a escribir y repone las rayas de la esquina.
+- Títulos en Anton y textos en Poppins (`fuentes/`, ambas SIL OFL). Los
+  folletos originales usan Codec Pro para el cuerpo, que es de pago; Poppins es
+  lo más parecido que se puede embeber sin licencia.
 - Dependencias: `pip install pymupdf pillow`.
