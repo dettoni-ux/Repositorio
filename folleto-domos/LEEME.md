@@ -1,40 +1,51 @@
 # Folleto Domos El Tabo — El Bosque
 
-El folleto original (`original/DOMOS_EL_TABO_BOSQUE.pdf`) traía las fotos del
-interior como tres miniaturas apretadas al pie de la página **EQUIPAMIENTO:**.
-`armar.py` las saca de ahí y arma una página nueva, **EL INTERIOR:**, que queda
-justo después de EQUIPAMIENTO, con cuatro fotos rotuladas: living, habitación
-matrimonial, cocina y baño.
+El folleto original (`original/DOMOS_EL_TABO_BOSQUE.pdf`) mostraba el interior
+en tres miniaturas apretadas al pie de la página **EQUIPAMIENTO:**. `armar.py`
+las saca de ahí y agrega cuatro páginas nuevas, justo después de EQUIPAMIENTO:
+
+| Página | Qué muestra |
+|---|---|
+| LA COCINA | foto a sangre |
+| PIEZA MATRIMONIAL | foto a sangre |
+| DORMITORIO DE ARRIBA | foto a sangre |
+| EL BAÑO | las dos fotos lado a lado |
+
+Resultado: `DOMOS_EL_TABO_BOSQUE-con-interior.pdf`, 14 páginas.
 
 ```bash
-python3 armar.py original/DOMOS_EL_TABO_BOSQUE.pdf salida.pdf \
-    living.jpg matrimonial.jpg cocina.jpg bano.jpg
+python3 armar.py original/DOMOS_EL_TABO_BOSQUE.pdf DOMOS_EL_TABO_BOSQUE-con-interior.pdf
 ```
 
-Las fotos van en ese orden. Se pueden entregar menos de cuatro: los huecos sin
-foto salen marcados como "foto pendiente", que sirve para ir viendo cómo queda
-la página mientras llegan las que faltan.
+## Cambiar o agregar fotos
 
-Cada foto se recorta sola al centro para calzar en su hueco (apaisado, 4:3),
-así que conviene que el motivo principal esté al medio. Verticales u
-horizontales da lo mismo; el recorte se encarga.
+Las fotos viven en `fotos/` y las páginas se describen en la lista `PAGINAS`,
+arriba de `armar.py`. Para sumar una página basta agregarle una entrada:
 
-Tamaño recomendado: cada hueco son 57,5 × 43 puntos, o sea **240 × 180 px**
-para que quede a 300 ppp. Cualquier foto de celular sobra.
+```python
+{"foto": "living.jpg", "titulo": "EL LIVING", "texto": "Sofá, mesa y..."}
+```
 
-**Ojo:** `DOMOS_EL_TABO_BOSQUE-con-interior.pdf` es la versión hecha con las
-tres miniaturas que ya venían en el folleto (capturas de pantalla de la cocina).
-Queda pendiente rehacerla con las cuatro fotos reales del domo del Bosque.
+o, para dos fotos lado a lado:
 
-## Cambiar los textos
+```python
+{"fotos": ["terraza-1.jpg", "terraza-2.jpg"], "titulo": "LA TERRAZA", ...}
+```
 
-En `armar.py`, arriba del todo: `TITULO`, `ETIQUETAS` y `BAJADA`.
+Cada foto se recorta sola al centro para llenar su hueco, así que conviene que
+el motivo principal esté al medio. El título se achica solo si no cabe a lo
+ancho de la página.
+
+Tamaño: la página son 144 × 252 puntos, o sea **600 × 1050 px** a 300 ppp para
+una foto a sangre. Las fotos del celular (1333 × 2000) sobran.
 
 ## Detalles
 
-- Fondo, adornos y pie se copian de la página EQUIPAMIENTO, así que la página
-  nueva queda igual al resto del folleto sin tener que redibujar nada.
-- El título va en Anton y los textos en Poppins (`fuentes/`, ambas SIL OFL).
-  El folleto original usa Codec Pro para el cuerpo, que es de pago; Poppins es
-  lo más parecido que se puede embeber sin licencia.
-- Dependencias: `pip install pymupdf pillow numpy`.
+- En las páginas a sangre la foto ocupa todo y abajo va una franja verde con el
+  rótulo; el degradado evita el corte seco entre foto y franja.
+- En la página de dos fotos el fondo y los adornos se copian de la página
+  EQUIPAMIENTO, así que queda igual al resto del folleto.
+- Títulos en Anton y textos en Poppins (`fuentes/`, ambas SIL OFL). El folleto
+  original usa Codec Pro para el cuerpo, que es de pago; Poppins es lo más
+  parecido que se puede embeber sin licencia.
+- Dependencias: `pip install pymupdf pillow`.
