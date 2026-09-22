@@ -58,9 +58,10 @@ FOLLETOS = {
             {"fotos": ["sala-juegos-1.jpg", "sala-juegos-2.jpg"],
              "titulo": "SALA DE JUEGOS",
              "texto": "Entretencion bajo techo para toda la familia."},
-            {"foto": "gimnasio.jpg",
+            {"fotos": ["gimnasio-1.jpg", "gimnasio-2.jpg"],
              "titulo": "EL GIMNASIO",
-             "texto": "Maquinas para no perder el ritmo en vacaciones."},
+             "texto": "Maquinas, mancuernas y bicicletas, para no perder el "
+                      "ritmo en vacaciones."},
             {"foto": "terraza-quitasol.jpg",
              "titulo": "TERRAZA CON QUITASOL",
              "texto": "Sombra y mesa para el almuerzo al aire libre."},
