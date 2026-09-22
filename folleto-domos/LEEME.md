@@ -12,10 +12,15 @@ python3 armar.py playa      # solo uno (bosque | playa)
 
 | Folleto | Sale | Páginas nuevas | Total |
 |---|---|---|---|
-| Bosque | `DOMOS_EL_TABO_BOSQUE-con-interior.pdf` | cocina, pieza matrimonial, dormitorio de arriba, baño | 14 |
+| Bosque | `DOMOS_EL_TABO_BOSQUE-con-interior.pdf` | cocina, pieza matrimonial, dormitorio de arriba, baño, piscina | 15 |
 | Playa Bonita | `DOMOS_EL_TABO_PLAYA_BONITA-con-interior.pdf` | a pasos del mar, living, pieza matrimonial, dormitorio de arriba, cocina, todo puesto, baño, terraza y quincho | 17 |
 
 Las fotos están en `fotos/` (Bosque) y `fotos-playa/` (Playa Bonita).
+
+La diapo de la piscina es **provisoria**: su foto (`fotos/piscina.jpg`) está
+sacada del propio folleto, del fondo de la página "IDEAL PARA", así que por
+ahora la misma imagen aparece dos veces. Con fotos propias de la piscina pasa
+a ser una diapo de dos, como dice el comentario en `armar.py`.
 
 **Diapos en espera.** El folleto del Bosque tiene seis diapos más ya escritas
 en `FOLLETOS` —parque infantil, sala de juegos, gimnasio, terraza con quitasol,
@@ -39,7 +44,10 @@ o dos lado a lado:
 ```
 
 Cada foto se recorta sola al centro para llenar su hueco, así que conviene que
-el motivo principal esté al medio. El título se achica solo si no cabe a lo
+el motivo principal esté al medio. Si lo bueno de la foto está justo abajo y la
+franja se lo come, la diapo acepta `"hasta_franja": True` (la foto llega hasta
+donde empieza la franja en vez de correr por debajo) y `"ancla": 1` (recorta
+desde el borde de abajo; 0 es desde arriba y 0.5 el centro). El título se achica solo si no cabe a lo
 ancho y la bajada se corta sola en dos líneas.
 
 Tamaño: la página son 144 × 252 puntos, o sea **600 × 1050 px** a 300 ppp para

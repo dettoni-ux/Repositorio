@@ -60,7 +60,11 @@ FOLLETOS = {
             {"foto": "terraza-quitasol.jpg",
              "titulo": "TERRAZA CON QUITASOL",
              "texto": "Sombra y mesa para el almuerzo al aire libre."},
-            {"fotos": ["piscina-1.jpg", "piscina-2.jpg"],
+            # Provisoria: la foto sale del propio folleto (es el fondo de la
+            # pagina "IDEAL PARA"), asi que por ahora aparece dos veces.
+            # Cuando lleguen las fotos buenas, esto pasa a ser una diapo de
+            # dos: {"fotos": ["piscina-1.jpg", "piscina-2.jpg"], ...}.
+            {"foto": "piscina.jpg", "hasta_franja": True, "ancla": 1,
              "titulo": "LA PISCINA",
              "texto": "Piscina al aire libre, rodeada de arboles."},
             {"fotos": ["asadera-1.jpg", "asadera-2.jpg"],
@@ -118,8 +122,12 @@ PIE_X = [36, 44, 50, 57, 64, 70, 76, 82, 87, 92, 99, 104]
 PIE_Y = 237
 
 
-def preparar(ruta, hueco):
-    """Deja la foto recortada al centro y en la medida exacta del hueco."""
+def preparar(ruta, hueco, ancla=0.5):
+    """Deja la foto recortada y en la medida exacta del hueco.
+
+    `ancla` dice de que parte de la foto se toma cuando hay que recortarla a
+    lo alto: 0 el borde de arriba, 0.5 el centro, 1 el de abajo.
+    """
     x0, y0, x1, y1 = hueco
     objetivo = (x1 - x0) / (y1 - y0)
     im = Image.open(ruta).convert("RGB")
@@ -129,7 +137,7 @@ def preparar(ruta, hueco):
         im = im.crop((izq, 0, izq + ancho, im.height))
     else:
         alto = round(im.width / objetivo)
-        borde = (im.height - alto) // 2
+        borde = round((im.height - alto) * ancla)
         im = im.crop((0, borde, im.width, borde + alto))
     ideal = round((x1 - x0) / 72 * 300)             # 300 ppp en el tamano final
     if im.width > ideal * 1.4:                      # no cargar el PDF de mas
@@ -209,11 +217,17 @@ def velo(pagina, color, desde, hasta, pasos=256):
 
 
 def pagina_a_sangre(doc, indice, datos, color, fotos):
-    """Una foto ocupando toda la pagina, con el rotulo sobre la franja."""
+    """Una foto ocupando toda la pagina, con el rotulo sobre la franja.
+
+    Con "hasta_franja" la foto llega solo hasta donde empieza la franja, en
+    vez de correr por debajo: sirve cuando lo que hay que mostrar esta en el
+    borde de abajo y la franja se lo comeria.
+    """
     pag = doc.new_page(indice, width=ANCHO, height=ALTO)
-    pag.insert_image(pag.rect, keep_proportion=False,
-                     stream=preparar(os.path.join(fotos, datos["foto"]),
-                                     (0, 0, ANCHO, ALTO)))
+    hueco = (0, 0, ANCHO, FRANJA if datos.get("hasta_franja") else ALTO)
+    pag.insert_image(pymupdf.Rect(*hueco), keep_proportion=False,
+                     stream=preparar(os.path.join(fotos, datos["foto"]), hueco,
+                                     datos.get("ancla", 0.5)))
     velo(pag, color, FRANJA - 30, FRANJA)
     pag.draw_rect(pymupdf.Rect(0, FRANJA, ANCHO, ALTO), color=color, fill=color,
                   width=0)
