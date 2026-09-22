@@ -12,7 +12,7 @@ python3 armar.py playa      # solo uno (bosque | playa)
 
 | Folleto | Sale | Páginas nuevas | Total |
 |---|---|---|---|
-| Bosque | `DOMOS_EL_TABO_BOSQUE-con-interior.pdf` | cocina, pieza matrimonial, dormitorio de arriba, baño, gimnasio, piscina, asaderas | 17 |
+| Bosque | `DOMOS_EL_TABO_BOSQUE-con-interior.pdf` | cocina, pieza matrimonial, dormitorio de arriba, baño, sala de juegos, gimnasio, piscina (dos planas), asaderas | 19 |
 | Playa Bonita | `DOMOS_EL_TABO_PLAYA_BONITA-con-interior.pdf` | a pasos del mar, living, pieza matrimonial, dormitorio de arriba, cocina, todo puesto, baño, terraza y quincho | 17 |
 
 Las fotos están en `fotos/` (Bosque) y `fotos-playa/` (Playa Bonita).
@@ -33,10 +33,9 @@ donde estaban (la página se cuenta desde 0). Acepta `ancla` y `ancla_x` igual q
 folletos guardan la foto de portada acostada y la muestran rotada; el script lo
 detecta y entrega la foto en la misma orientación, si no saldría de lado.
 
-La diapo de la piscina es **provisoria**: su foto (`fotos/piscina.jpg`) está
-sacada del propio folleto, del fondo de la página "IDEAL PARA", así que por
-ahora la misma imagen aparece dos veces. Con fotos propias de la piscina pasa
-a ser una diapo de dos, como dice el comentario en `armar.py`.
+Si a una diapo le falta una de sus dos fotos, se arma igual y el hueco vacío
+queda marcado como "foto pendiente", para no perder el lugar. Solo cuando le
+faltan todas la diapo se salta entera.
 
 **Diapos en espera.** El folleto del Bosque tiene seis diapos más ya escritas
 en `FOLLETOS` —parque infantil, sala de juegos, gimnasio, terraza con quitasol,

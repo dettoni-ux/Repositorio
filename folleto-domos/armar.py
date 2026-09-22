@@ -58,9 +58,9 @@ FOLLETOS = {
             {"fotos": ["juegos-infantiles-1.jpg", "juegos-infantiles-2.jpg"],
              "titulo": "PARQUE INFANTIL",
              "texto": "Juegos al aire libre para los mas chicos."},
-            {"fotos": ["sala-juegos-1.jpg", "sala-juegos-2.jpg"],
+            {"apiladas": ["sala-juegos-1.jpg", "sala-juegos-2.jpg"],
              "titulo": "SALA DE JUEGOS",
-             "texto": "Entretencion bajo techo para toda la familia."},
+             "texto": "Taca-taca y ping pong bajo techo, de 11 a 20 horas."},
             {"fotos": ["gimnasio-1.jpg", "gimnasio-2.jpg"],
              "titulo": "EL GIMNASIO",
              "texto": "Maquinas, mancuernas y bicicletas, para no perder el "
@@ -68,13 +68,14 @@ FOLLETOS = {
             {"foto": "terraza-quitasol.jpg",
              "titulo": "TERRAZA CON QUITASOL",
              "texto": "Sombra y mesa para el almuerzo al aire libre."},
-            # Provisoria: la foto sale del propio folleto (es el fondo de la
-            # pagina "IDEAL PARA"), asi que por ahora aparece dos veces.
-            # Cuando lleguen las fotos buenas, esto pasa a ser una diapo de
-            # dos: {"fotos": ["piscina-1.jpg", "piscina-2.jpg"], ...}.
-            {"foto": "piscina.jpg", "hasta_franja": True, "ancla": 1,
+            # La piscina lleva dos planas: ahora que viene el verano es lo
+            # que mas se mira. La segunda espera una foto vertical.
+            {"apiladas": ["piscina-1.jpg", "piscina-2.jpg"],
              "titulo": "LA PISCINA",
-             "texto": "Piscina al aire libre, rodeada de arboles."},
+             "texto": "Piscina al aire libre entre los pinos, con reposeras."},
+            {"fotos": ["piscina-quitasol.jpg", "piscina-vertical.jpg"],
+             "titulo": "TARDES DE VERANO",
+             "texto": "Sombra de quitasol a un paso del agua."},
             {"foto": "asadera-1.jpg",
              "titulo": "ASADERAS Y TERRAZA",
              "texto": "Parrilla, horno de barro y mesa a la sombra del "
@@ -115,9 +116,13 @@ FOLLETOS = {
     },
 }
 
-# Huecos de la pagina de dos fotos: (x0, y0, x1, y1) en puntos.
+# Huecos de la pagina de dos fotos: (x0, y0, x1, y1) en puntos. Los de al
+# lado son altos, para fotos verticales; los apilados, anchos, para las
+# horizontales, que de otro modo habria que recortar hasta dejarlas irreconocibles.
 HUECOS = [(12, 54, 69.5, 176), (74.5, 54, 132, 176)]
+APILADOS = [(12, 52, 132, 120), (12, 124, 132, 192)]
 TEXTO_2F = 194                         # bajada de la pagina de dos fotos
+TEXTO_APILADAS = 206
 TITULO_2F = 40
 
 FRANJA = 190                           # donde empieza la franja de abajo
@@ -206,6 +211,16 @@ def titular(pagina, texto, x, y, ancho_max=118, cuerpo=11.7):
                      color=CREMA, width=0.75)
 
 
+def pendiente(pagina, hueco, color):
+    """Marca un hueco que todavia espera su foto, para dejarle el lugar."""
+    r = pymupdf.Rect(*hueco)
+    pagina.draw_rect(r, color=CREMA, fill=color, width=0.5, dashes="[2 2] 0",
+                     stroke_opacity=0.5)
+    pagina.insert_textbox(r + (0, r.height / 2 - 6, 0, 0), "foto pendiente",
+                          fontname="poppins", fontsize=5, color=CREMA,
+                          align=pymupdf.TEXT_ALIGN_CENTER, fill_opacity=0.5)
+
+
 def pie(pagina):
     for letra, x in zip(PIE, PIE_X):
         pagina.insert_text((x, PIE_Y), letra, fontname="poppins", fontsize=4.2,
@@ -252,16 +267,23 @@ def pagina_a_sangre(doc, indice, datos, color, fotos):
 
 
 def pagina_dos_fotos(doc, indice, datos, color, fotos, adornos, saltar):
-    """Dos fotos lado a lado sobre el fondo del folleto."""
+    """Dos fotos sobre el fondo del folleto, al lado o una sobre la otra."""
     pag = doc.new_page(indice, width=ANCHO, height=ALTO)
     pag.draw_rect(pag.rect, color=color, fill=color, width=0)
     copiar_adornos(adornos, pag, saltar)
     fuentes(pag)
     titular(pag, datos["titulo"], 15, TITULO_2F)
-    for nombre, hueco in zip(datos["fotos"], HUECOS):
-        pag.insert_image(pymupdf.Rect(*hueco), keep_proportion=False,
-                         stream=preparar(os.path.join(fotos, nombre), hueco))
-    bajada(pag, datos["texto"], 12, TEXTO_2F, 120)
+    apiladas = "apiladas" in datos
+    huecos = APILADOS if apiladas else HUECOS
+    for nombre, hueco in zip(datos.get("apiladas") or datos["fotos"], huecos):
+        ruta = os.path.join(fotos, nombre)
+        if os.path.exists(ruta):
+            pag.insert_image(pymupdf.Rect(*hueco), keep_proportion=False,
+                             stream=preparar(ruta, hueco))
+        else:
+            pendiente(pag, hueco, color)
+    bajada(pag, datos["texto"], 12,
+           TEXTO_APILADAS if apiladas else TEXTO_2F, 120)
     pie(pag)
     espaciado(pag, MARCA, MARCA_Y, cuerpo=3.8, separacion=1.1)
 
@@ -407,12 +429,17 @@ def armar(clave, folleto):
 
     indice, faltan = folleto["equipamiento"] + 1, []
     for datos in folleto["paginas"]:
-        pendientes = [n for n in datos.get("fotos", [datos.get("foto")])
+        nombres = (datos.get("fotos") or datos.get("apiladas")
+                   or [datos["foto"]])
+        pendientes = [n for n in nombres
                       if not os.path.exists(os.path.join(fotos, n))]
-        if pendientes:                 # la diapo espera a que lleguen sus fotos
+        if pendientes:
             faltan.append(f"{datos['titulo']} ({', '.join(pendientes)})")
+        # Con alguna foto la diapo se arma igual y el hueco vacio queda
+        # marcado; sin ninguna, la diapo espera entera.
+        if len(pendientes) == len(nombres):
             continue
-        if "fotos" in datos:
+        if "fotos" in datos or "apiladas" in datos:
             pagina_dos_fotos(doc, indice, datos, color, fotos, adornos, marcos)
         else:
             pagina_a_sangre(doc, indice, datos, color, fotos)
