@@ -17,6 +17,12 @@ python3 armar.py playa      # solo uno (bosque | playa)
 
 Las fotos están en `fotos/` (Bosque) y `fotos-playa/` (Playa Bonita).
 
+**Diapos en espera.** El folleto del Bosque tiene seis diapos más ya escritas
+en `FOLLETOS` —parque infantil, sala de juegos, gimnasio, terraza con quitasol,
+piscina y asaderas— pero sin fotos todavía. Mientras falten, el script las
+salta y avisa cuáles son; basta dejar los archivos en `fotos/` con el nombre
+que dice el aviso y volver a correrlo para que aparezcan.
+
 ## Cambiar o agregar diapos
 
 Todo se edita en la lista `FOLLETOS`, arriba de `armar.py`. Una diapo es una

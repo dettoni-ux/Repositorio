@@ -45,6 +45,27 @@ FOLLETOS = {
             {"fotos": ["bano-ducha.jpg", "bano-wc.jpg"],
              "titulo": "EL BAÑO",
              "texto": "Ducha con agua caliente, lavamanos y ventana."},
+            # De aqui para abajo son las diapos del recinto. Las fotos todavia
+            # no llegan: mientras falten, el script salta la diapo y avisa.
+            # Basta dejar los archivos en fotos/ con estos nombres.
+            {"fotos": ["juegos-infantiles-1.jpg", "juegos-infantiles-2.jpg"],
+             "titulo": "PARQUE INFANTIL",
+             "texto": "Juegos al aire libre para los mas chicos."},
+            {"fotos": ["sala-juegos-1.jpg", "sala-juegos-2.jpg"],
+             "titulo": "SALA DE JUEGOS",
+             "texto": "Entretencion bajo techo para toda la familia."},
+            {"foto": "gimnasio.jpg",
+             "titulo": "EL GIMNASIO",
+             "texto": "Maquinas para no perder el ritmo en vacaciones."},
+            {"foto": "terraza-quitasol.jpg",
+             "titulo": "TERRAZA CON QUITASOL",
+             "texto": "Sombra y mesa para el almuerzo al aire libre."},
+            {"fotos": ["piscina-1.jpg", "piscina-2.jpg"],
+             "titulo": "LA PISCINA",
+             "texto": "Piscina al aire libre, rodeada de arboles."},
+            {"fotos": ["asadera-1.jpg", "asadera-2.jpg"],
+             "titulo": "ASADERAS Y TERRAZA",
+             "texto": "Asadera propia y mesa afuera, listas para el verano."},
         ],
     },
     "playa": {
@@ -322,15 +343,23 @@ def armar(clave, folleto):
     # Los parches tapan parte de los adornos de la esquina: se redibujan.
     copiar_adornos(adornos, equipamiento, solo=parches)
 
-    for i, datos in enumerate(folleto["paginas"]):
-        indice = folleto["equipamiento"] + 1 + i
+    indice, faltan = folleto["equipamiento"] + 1, []
+    for datos in folleto["paginas"]:
+        pendientes = [n for n in datos.get("fotos", [datos.get("foto")])
+                      if not os.path.exists(os.path.join(fotos, n))]
+        if pendientes:                 # la diapo espera a que lleguen sus fotos
+            faltan.append(f"{datos['titulo']} ({', '.join(pendientes)})")
+            continue
         if "fotos" in datos:
             pagina_dos_fotos(doc, indice, datos, color, fotos, adornos, marcos)
         else:
             pagina_a_sangre(doc, indice, datos, color, fotos)
+        indice += 1
 
     doc.save(salida, garbage=3, deflate=True)
     print(f"{clave}: {os.path.basename(salida)} - {doc.page_count} paginas")
+    for pendiente in faltan:
+        print(f"  falta: {pendiente}")
 
 
 def main():
