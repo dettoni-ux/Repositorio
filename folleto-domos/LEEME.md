@@ -65,8 +65,11 @@ donde empieza la franja en vez de correr por debajo) y `"ancla": 1` (recorta
 desde el borde de abajo; 0 es desde arriba y 0.5 el centro). El título se achica solo si no cabe a lo
 ancho y la bajada se corta sola en dos líneas.
 
-Tamaño: la página son 144 × 252 puntos, o sea **600 × 1050 px** a 300 ppp para
-una foto a sangre. Las fotos de cámara (1333 × 2000) sobran.
+Resolución: el folleto se mira en el teléfono, así que las fotos se guardan a
+600 ppp (`PPP` en `armar.py`): una página entera son **1200 × 2100 px**, más
+que Full HD. Conviene que las fotos lleguen de la cámara y no por WhatsApp,
+que las achica a 1000–1600 px; una de 1024 px de ancho a página completa queda
+justo bajo Full HD.
 
 Para sumar un tercer folleto basta agregarle una entrada a `FOLLETOS` con su
 PDF, su carpeta de fotos y el número de la página de equipamiento (contando

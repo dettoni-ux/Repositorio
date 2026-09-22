@@ -23,6 +23,10 @@ ANTON = os.path.join(AQUI, "fuentes", "anton.ttf")
 POPPINS = os.path.join(AQUI, "fuentes", "poppins.ttf")
 
 ANCHO, ALTO = 144, 252                 # medida de las paginas del folleto
+# Resolucion a la que se guardan las fotos. El folleto se mira en el telefono,
+# no en papel: a 300 ppp una pagina entera son 600 px de ancho y en un iPhone
+# se ve pixelada. A 600 ppp son 1200 px, mas que Full HD.
+PPP = 600
 CREMA = (0.9961, 0.9961, 0.9961)       # blanco de los textos
 MARCA = "DOMOS EL TABO  ·  GLAMPING CHILE"
 
@@ -156,13 +160,13 @@ def preparar(ruta, hueco, ancla=0.5, ancla_x=0.5, girar=0):
         alto = round(im.width / objetivo)
         borde = round((im.height - alto) * ancla)
         im = im.crop((0, borde, im.width, borde + alto))
-    ideal = round((x1 - x0) / 72 * 300)             # 300 ppp en el tamano final
+    ideal = round((x1 - x0) / 72 * PPP)             # px que pide el hueco
     if im.width > ideal * 1.4:                      # no cargar el PDF de mas
         im = im.resize((ideal, round(ideal / objetivo)), Image.LANCZOS)
     if girar:
         im = im.transpose(Image.ROTATE_90 if girar == 90 else Image.ROTATE_270)
     buf = io.BytesIO()
-    im.save(buf, "JPEG", quality=88, subsampling=0)
+    im.save(buf, "JPEG", quality=88, subsampling=2)
     return buf.getvalue()
 
 
