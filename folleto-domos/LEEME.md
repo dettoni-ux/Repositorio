@@ -17,6 +17,19 @@ python3 armar.py playa      # solo uno (bosque | playa)
 
 Las fotos están en `fotos/` (Bosque) y `fotos-playa/` (Playa Bonita).
 
+## Cambiar la foto de portada
+
+En la entrada del folleto, la clave `portada`:
+
+```python
+"portada": {"pagina": 0, "foto": "recinto-verde.jpg", "ancla_x": 0.35},
+```
+
+Cambia la foto de fondo de esa página dejando el logo, la franja y los textos
+donde estaban. Acepta `ancla` y `ancla_x` igual que las diapos. Ojo: algunos
+folletos guardan la foto de portada acostada y la muestran rotada; el script lo
+detecta y entrega la foto en la misma orientación, si no saldría de lado.
+
 La diapo de la piscina es **provisoria**: su foto (`fotos/piscina.jpg`) está
 sacada del propio folleto, del fondo de la página "IDEAL PARA", así que por
 ahora la misma imagen aparece dos veces. Con fotos propias de la piscina pasa

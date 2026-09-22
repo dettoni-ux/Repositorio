@@ -32,6 +32,10 @@ FOLLETOS = {
         "salida": "DOMOS_EL_TABO_BOSQUE-con-interior.pdf",
         "fotos": "fotos",
         "equipamiento": 4,
+        # La portada lleva la foto del recinto: los domos de lejos, entre los
+        # pinos. Es apaisada, asi que el recorte se corre un poco a la
+        # izquierda para que entren los dos domos y la pileta.
+        "portada": {"pagina": 0, "foto": "recinto-verde.jpg", "ancla_x": 0.35},
         "paginas": [
             {"foto": "cocina.jpg",
              "titulo": "LA COCINA",
@@ -122,18 +126,20 @@ PIE_X = [36, 44, 50, 57, 64, 70, 76, 82, 87, 92, 99, 104]
 PIE_Y = 237
 
 
-def preparar(ruta, hueco, ancla=0.5):
+def preparar(ruta, hueco, ancla=0.5, ancla_x=0.5, girar=0):
     """Deja la foto recortada y en la medida exacta del hueco.
 
     `ancla` dice de que parte de la foto se toma cuando hay que recortarla a
-    lo alto: 0 el borde de arriba, 0.5 el centro, 1 el de abajo.
+    lo alto: 0 el borde de arriba, 0.5 el centro, 1 el de abajo. `ancla_x`
+    hace lo mismo a lo ancho: 0 la izquierda, 1 la derecha. `girar` deja la
+    foto acostada, para las que el PDF guarda de lado y muestra rotadas.
     """
     x0, y0, x1, y1 = hueco
     objetivo = (x1 - x0) / (y1 - y0)
     im = Image.open(ruta).convert("RGB")
     if im.width / im.height > objetivo:
         ancho = round(im.height * objetivo)
-        izq = (im.width - ancho) // 2
+        izq = round((im.width - ancho) * ancla_x)
         im = im.crop((izq, 0, izq + ancho, im.height))
     else:
         alto = round(im.width / objetivo)
@@ -142,6 +148,8 @@ def preparar(ruta, hueco, ancla=0.5):
     ideal = round((x1 - x0) / 72 * 300)             # 300 ppp en el tamano final
     if im.width > ideal * 1.4:                      # no cargar el PDF de mas
         im = im.resize((ideal, round(ideal / objetivo)), Image.LANCZOS)
+    if girar:
+        im = im.transpose(Image.ROTATE_90 if girar == 90 else Image.ROTATE_270)
     buf = io.BytesIO()
     im.save(buf, "JPEG", quality=88, subsampling=0)
     return buf.getvalue()
@@ -296,6 +304,33 @@ def copiar_adornos(adornos, pagina, saltar=(), solo=None):
     forma.commit()
 
 
+def cambiar_portada(doc, folleto, fotos):
+    """Cambia la foto de fondo de una pagina sin tocar lo que va encima.
+
+    `replace_image` cambia la imagen en su lugar, asi que el logo, la franja
+    y los textos que van arriba quedan igual que estaban.
+    """
+    datos = folleto.get("portada")
+    if not datos or not os.path.exists(os.path.join(fotos, datos["foto"])):
+        return None
+    pagina = doc[datos.get("pagina", 0)]
+    # La foto de fondo es la imagen mas grande de la pagina; la otra es el logo.
+    fondo = max(((r, imagen[0]) for imagen in pagina.get_images(full=True)
+                 for r in pagina.get_image_rects(imagen[0])),
+                key=lambda par: abs(par[0]))
+    marco, xref = fondo
+    # El folleto guarda esa foto acostada y la muestra rotada; como
+    # `replace_image` conserva la colocacion, hay que entregarla igual de
+    # acostada o sale de lado.
+    a, b, c, _ = next(i["transform"][:4] for i in pagina.get_image_info(xrefs=True)
+                      if i["xref"] == xref)
+    girar = 0 if abs(a) >= abs(b) else (90 if b > 0 else 270)
+    pagina.replace_image(xref, stream=preparar(
+        os.path.join(fotos, datos["foto"]), tuple(marco),
+        datos.get("ancla", 0.5), datos.get("ancla_x", 0.5), girar))
+    return datos["foto"]
+
+
 def color_del_folleto(adornos):
     """El color de fondo: el ultimo relleno que cubre la pagina entera."""
     color = None
@@ -325,6 +360,7 @@ def armar(clave, folleto):
     fotos = os.path.join(AQUI, folleto["fotos"])
 
     doc = pymupdf.open(base)
+    portada = cambiar_portada(doc, folleto, fotos)
     equipamiento = doc[folleto["equipamiento"]]
 
     # Todo lo que se lee de la pagina hay que leerlo antes de tocar el
@@ -372,6 +408,8 @@ def armar(clave, folleto):
 
     doc.save(salida, garbage=3, deflate=True)
     print(f"{clave}: {os.path.basename(salida)} - {doc.page_count} paginas")
+    if portada:
+        print(f"  portada: {portada}")
     for pendiente in faltan:
         print(f"  falta: {pendiente}")
 
