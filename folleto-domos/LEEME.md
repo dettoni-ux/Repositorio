@@ -12,21 +12,24 @@ python3 armar.py playa      # solo uno (bosque | playa)
 
 | Folleto | Sale | Páginas nuevas | Total |
 |---|---|---|---|
-| Bosque | `DOMOS_EL_TABO_BOSQUE-con-interior.pdf` | cocina, pieza matrimonial, dormitorio de arriba, baño, piscina | 15 |
+| Bosque | `DOMOS_EL_TABO_BOSQUE-con-interior.pdf` | cocina, pieza matrimonial, dormitorio de arriba, baño, gimnasio, piscina, asaderas | 17 |
 | Playa Bonita | `DOMOS_EL_TABO_PLAYA_BONITA-con-interior.pdf` | a pasos del mar, living, pieza matrimonial, dormitorio de arriba, cocina, todo puesto, baño, terraza y quincho | 17 |
 
 Las fotos están en `fotos/` (Bosque) y `fotos-playa/` (Playa Bonita).
 
-## Cambiar la foto de portada
+## Cambiar fotos de páginas que ya existen
 
-En la entrada del folleto, la clave `portada`:
+En la entrada del folleto, la lista `fondos`:
 
 ```python
-"portada": {"pagina": 0, "foto": "recinto-verde.jpg", "ancla_x": 0.35},
+"fondos": [
+    {"pagina": 0, "foto": "recinto-jardin.jpg"},   # la portada
+    {"pagina": 1, "foto": "domo-noche.jpg"},
+],
 ```
 
-Cambia la foto de fondo de esa página dejando el logo, la franja y los textos
-donde estaban. Acepta `ancla` y `ancla_x` igual que las diapos. Ojo: algunos
+Cambia la foto de fondo de esas páginas dejando el logo, la franja y los textos
+donde estaban (la página se cuenta desde 0). Acepta `ancla` y `ancla_x` igual que las diapos. Ojo: algunos
 folletos guardan la foto de portada acostada y la muestran rotada; el script lo
 detecta y entrega la foto en la misma orientación, si no saldría de lado.
 

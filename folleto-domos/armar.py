@@ -32,10 +32,13 @@ FOLLETOS = {
         "salida": "DOMOS_EL_TABO_BOSQUE-con-interior.pdf",
         "fotos": "fotos",
         "equipamiento": 4,
-        # La portada lleva la foto del recinto: los domos de lejos, entre los
-        # pinos. Es apaisada, asi que el recorte se corre un poco a la
-        # izquierda para que entren los dos domos y la pileta.
-        "portada": {"pagina": 0, "foto": "recinto-verde.jpg", "ancla_x": 0.35},
+        # Fotos de fondo que se reemplazan en paginas que ya existen: la
+        # portada y la pagina siguiente. El logo, la franja y los textos se
+        # quedan donde estaban.
+        "fondos": [
+            {"pagina": 0, "foto": "recinto-jardin.jpg"},
+            {"pagina": 1, "foto": "domo-noche.jpg"},
+        ],
         "paginas": [
             {"foto": "cocina.jpg",
              "titulo": "LA COCINA",
@@ -72,9 +75,10 @@ FOLLETOS = {
             {"foto": "piscina.jpg", "hasta_franja": True, "ancla": 1,
              "titulo": "LA PISCINA",
              "texto": "Piscina al aire libre, rodeada de arboles."},
-            {"fotos": ["asadera-1.jpg", "asadera-2.jpg"],
+            {"foto": "asadera-1.jpg",
              "titulo": "ASADERAS Y TERRAZA",
-             "texto": "Asadera propia y mesa afuera, listas para el verano."},
+             "texto": "Parrilla, horno de barro y mesa a la sombra del "
+                      "quitasol."},
         ],
     },
     "playa": {
@@ -305,15 +309,22 @@ def copiar_adornos(adornos, pagina, saltar=(), solo=None):
     forma.commit()
 
 
-def cambiar_portada(doc, folleto, fotos):
-    """Cambia la foto de fondo de una pagina sin tocar lo que va encima.
+def cambiar_fondos(doc, folleto, fotos):
+    """Cambia fotos de fondo de paginas que ya existen.
 
     `replace_image` cambia la imagen en su lugar, asi que el logo, la franja
     y los textos que van arriba quedan igual que estaban.
     """
-    datos = folleto.get("portada")
-    if not datos or not os.path.exists(os.path.join(fotos, datos["foto"])):
-        return None
+    puestas = []
+    for datos in folleto.get("fondos", []):
+        if cambiar_fondo(doc, datos, fotos):
+            puestas.append(f"pagina {datos.get('pagina', 0) + 1}: {datos['foto']}")
+    return puestas
+
+
+def cambiar_fondo(doc, datos, fotos):
+    if not os.path.exists(os.path.join(fotos, datos["foto"])):
+        return False
     pagina = doc[datos.get("pagina", 0)]
     # La foto de fondo es la imagen mas grande de la pagina; la otra es el logo.
     fondo = max(((r, imagen[0]) for imagen in pagina.get_images(full=True)
@@ -329,7 +340,7 @@ def cambiar_portada(doc, folleto, fotos):
     pagina.replace_image(xref, stream=preparar(
         os.path.join(fotos, datos["foto"]), tuple(marco),
         datos.get("ancla", 0.5), datos.get("ancla_x", 0.5), girar))
-    return datos["foto"]
+    return True
 
 
 def color_del_folleto(adornos):
@@ -361,7 +372,7 @@ def armar(clave, folleto):
     fotos = os.path.join(AQUI, folleto["fotos"])
 
     doc = pymupdf.open(base)
-    portada = cambiar_portada(doc, folleto, fotos)
+    fondos = cambiar_fondos(doc, folleto, fotos)
     equipamiento = doc[folleto["equipamiento"]]
 
     # Todo lo que se lee de la pagina hay que leerlo antes de tocar el
@@ -409,8 +420,8 @@ def armar(clave, folleto):
 
     doc.save(salida, garbage=3, deflate=True)
     print(f"{clave}: {os.path.basename(salida)} - {doc.page_count} paginas")
-    if portada:
-        print(f"  portada: {portada}")
+    for puesta in fondos:
+        print(f"  fondo {puesta}")
     for pendiente in faltan:
         print(f"  falta: {pendiente}")
 
