@@ -52,12 +52,10 @@ FOLLETOS = {
             {"fotos": ["bano-ducha.jpg", "bano-wc.jpg"],
              "titulo": "EL BAÑO",
              "texto": "Ducha con agua caliente, lavamanos y ventana."},
-            # De aqui para abajo son las diapos del recinto. Las fotos todavia
-            # no llegan: mientras falten, el script salta la diapo y avisa.
-            # Basta dejar los archivos en fotos/ con estos nombres.
-            {"fotos": ["juegos-infantiles-1.jpg", "juegos-infantiles-2.jpg"],
+            # De aqui para abajo, las diapos del recinto.
+            {"apiladas": ["juegos-infantiles-1.jpg", "juegos-infantiles-2.jpg"],
              "titulo": "PARQUE INFANTIL",
-             "texto": "Juegos al aire libre para los mas chicos."},
+             "texto": "Resbalines, columpios y juegos entre las palmeras."},
             {"apiladas": ["sala-juegos-1.jpg", "sala-juegos-2.jpg"],
              "titulo": "SALA DE JUEGOS",
              "texto": "Taca-taca y ping pong bajo techo, de 11 a 20 horas."},
@@ -80,6 +78,9 @@ FOLLETOS = {
              "titulo": "ASADERAS Y TERRAZA",
              "texto": "Parrilla, horno de barro y mesa a la sombra del "
                       "quitasol."},
+            {"apiladas": ["hamacas-1.jpg", "hamacas-2.jpg"],
+             "titulo": "SECTOR DE HAMACAS",
+             "texto": "Hamacas entre los pinos, para la siesta de la tarde."},
         ],
     },
     "playa": {

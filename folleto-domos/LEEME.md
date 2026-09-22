@@ -12,7 +12,7 @@ python3 armar.py playa      # solo uno (bosque | playa)
 
 | Folleto | Sale | Páginas nuevas | Total |
 |---|---|---|---|
-| Bosque | `DOMOS_EL_TABO_BOSQUE-con-interior.pdf` | cocina, pieza matrimonial, dormitorio de arriba, baño, sala de juegos, gimnasio, piscina (dos planas), asaderas | 19 |
+| Bosque | `DOMOS_EL_TABO_BOSQUE-con-interior.pdf` | cocina, pieza matrimonial, dormitorio de arriba, baño, parque infantil, sala de juegos, gimnasio, piscina (dos planas), asaderas, hamacas | 21 |
 | Playa Bonita | `DOMOS_EL_TABO_PLAYA_BONITA-con-interior.pdf` | a pasos del mar, living, pieza matrimonial, dormitorio de arriba, cocina, todo puesto, baño, terraza y quincho | 17 |
 
 Las fotos están en `fotos/` (Bosque) y `fotos-playa/` (Playa Bonita).
