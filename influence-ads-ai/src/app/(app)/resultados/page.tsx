@@ -259,3 +259,6 @@ async function Ventas({ ctx, clientId, currency }: { ctx: Ctx; clientId: string;
     </>
   );
 }
+
+// Generación con IA y llamadas a Meta pueden tardar hasta un par de minutos.
+export const maxDuration = 300;

@@ -184,3 +184,6 @@ export default async function DraftPage({ params, searchParams }: { params: Prom
     </>
   );
 }
+
+// Generación con IA y llamadas a Meta pueden tardar hasta un par de minutos.
+export const maxDuration = 300;

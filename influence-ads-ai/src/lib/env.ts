@@ -11,7 +11,8 @@ function read(name: string): string | undefined {
 }
 
 export const env = {
-  appUrl: () => read("APP_URL") ?? "http://localhost:3000",
+  // En Vercel, si no se define APP_URL se usa el dominio de producción del proyecto.
+  appUrl: () => read("APP_URL") ?? (read("VERCEL_PROJECT_PRODUCTION_URL") ? `https://${read("VERCEL_PROJECT_PRODUCTION_URL")}` : "http://localhost:3000"),
   databaseUrl: () => read("DATABASE_URL"),
   encryptionKey: () => read("ENCRYPTION_KEY"),
   storageDir: () => read("STORAGE_DIR") ?? "./storage",

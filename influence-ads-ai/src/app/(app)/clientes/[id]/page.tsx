@@ -5,6 +5,7 @@ import { q } from "@/lib/db";
 import { can } from "@/lib/permissions";
 import { parseProfile } from "@/lib/schemas";
 import { integrationStatus } from "@/lib/env";
+import { storageDriver } from "@/lib/storage";
 import { dateTime } from "@/lib/format";
 import { PageHead, Card, Flash, Badge, Notice, Empty } from "@/components/ui";
 import { ClientForm } from "@/components/client-form";
@@ -73,6 +74,9 @@ export default async function ClienteDetalle({ params, searchParams }: { params:
             <button className="btn primary">Subir</button>
           </form>
         )}
+        {can(ctx.role, "creative.write") && storageDriver() === "db" && (
+          <p className="hint" style={{ marginTop: -6 }}>Máximo ~4 MB por envío en este servidor: sube las fotos de a una si son pesadas.</p>
+        )}
         {assets.length === 0 ? <Empty title="Sin materiales">Sube fotografías reales del producto o servicio: las creatividades con fotos auténticas suelen ser más creíbles.</Empty> : (
           <div className="grid g4">
             {assets.map((a) => (
@@ -105,3 +109,6 @@ export default async function ClienteDetalle({ params, searchParams }: { params:
     </>
   );
 }
+
+// Generación con IA y llamadas a Meta pueden tardar hasta un par de minutos.
+export const maxDuration = 300;

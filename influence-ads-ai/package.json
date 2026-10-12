@@ -16,7 +16,8 @@
     "db:seed-admin": "tsx scripts/seed-admin.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "vercel-build": "tsx scripts/migrate.ts && next build"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.133.0",

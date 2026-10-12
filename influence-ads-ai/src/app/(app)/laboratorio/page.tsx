@@ -53,3 +53,6 @@ export default async function Laboratorio({ searchParams }: { searchParams: Prom
     </>
   );
 }
+
+// Generación con IA y llamadas a Meta pueden tardar hasta un par de minutos.
+export const maxDuration = 300;

@@ -230,11 +230,13 @@ export function CreativeEditor(props: {
     setMsg(null);
     try {
       draw(true);
-      const blob: Blob | null = await new Promise((r) => canvasRef.current!.toBlob(r, "image/png"));
+      let blob: Blob | null = await new Promise((r) => canvasRef.current!.toBlob(r, "image/png"));
+      // Las fotos pesan mucho en PNG: sobre ~3,5 MB se exporta como JPEG de alta calidad (Meta lo admite).
+      if (blob && blob.size > 3.5 * 1024 * 1024) blob = await new Promise((r) => canvasRef.current!.toBlob(r, "image/jpeg", 0.92));
       draw(false);
       if (!blob) throw new Error("No se pudo exportar la imagen.");
       const fd = new FormData();
-      fd.set("file", blob, "pieza.png");
+      fd.set("file", blob, blob.type === "image/jpeg" ? "pieza.jpg" : "pieza.png");
       fd.set("layout", JSON.stringify(layout));
       fd.set("withText", String(layout.template !== "sin-texto"));
       fd.set("layers", JSON.stringify(layersRef.current.filter((l) => l.text !== "Logo")));

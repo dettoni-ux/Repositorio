@@ -38,3 +38,5 @@ export async function GET(req: NextRequest) {
     return back("error", msg);
   }
 }
+
+export const maxDuration = 120;

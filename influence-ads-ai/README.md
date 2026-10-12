@@ -53,6 +53,8 @@ npm run build && npm start          # app en http://localhost:3000
 npm run worker                      # en otro proceso
 ```
 
+**Vercel:** ver [`docs/VERCEL.md`](docs/VERCEL.md).
+
 La primera visita abre `/configurar` para crear la agencia y el usuario propietario.
 
 ### Variables de entorno
@@ -68,6 +70,8 @@ La primera visita abre `/configurar` para crear la agencia y el usuario propieta
 | `ANTHROPIC_API_KEY` | Para IA | Estrategia, conceptos y textos |
 | `REPLICATE_API_TOKEN`, `REPLICATE_IMAGE_MODEL` | No | Fondos generados con IA |
 | `STORAGE_DIR` | No | Directorio de archivos (fuera del repo en producción) |
+| `STORAGE_DRIVER` | No | `fs` (disco) o `db` (PostgreSQL). En Vercel se usa `db` automáticamente |
+| `CRON_SECRET` | En Vercel | Protege la tarea programada `/api/cron` |
 
 Si falta una integración, la app lo indica en lenguaje simple y sigue funcionando en lo demás. **Nunca muestra datos de demostración como reales.**
 
