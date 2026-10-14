@@ -32,3 +32,7 @@ Para veterinarios (B2B) · Humor y tendencias.
 Abrir `estudio-encuentravet.html` en cualquier navegador. No requiere servidor, dependencias
 ni conexión a servicios externos (las tipografías de Google Fonts son opcionales: hay respaldo del sistema).
 Los datos de marca y los guardados se almacenan en `localStorage` del navegador.
+
+## Influence Ads AI
+
+Plataforma de media buying multicuenta con IA en [`influence-ads-ai/`](influence-ads-ai/README.md) (Next.js + PostgreSQL). Es independiente del resto de este repositorio.
