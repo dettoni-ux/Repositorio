@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Banners Influence Chile — EncuentraVet</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Playfair+Display:ital,wght@1,600;1,700&family=Poppins:wght@400;500;600;700;800&display=swap">
+<style>
+  *{margin:0; padding:0; box-sizing:border-box}
+  body{background:#120325; font-family:'Poppins',system-ui,sans-serif; padding:40px; display:flex; flex-direction:column; gap:40px; align-items:flex-start}
+  .rotulo{color:#C9B6DE; font-size:13px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; margin-bottom:10px}
+
+  /* ---------- base común de todos los banners ---------- */
+  .b{
+    position:relative; overflow:hidden; flex:none;
+    background:linear-gradient(118deg,#6B1F9E 0%,#8A23A0 46%,#C2299B 100%);
+    font-family:'Poppins',system-ui,sans-serif; color:#fff;
+    display:flex; align-items:center;
+  }
+  .b .blob{position:absolute; border-radius:50%; background:rgba(255,255,255,.07); pointer-events:none}
+  .b .marco{position:absolute; inset:10px; border:2px solid rgba(255,212,71,.40); border-radius:18px; pointer-events:none}
+  .b .chispa{position:absolute; color:#FFD447; pointer-events:none; line-height:1}
+
+  .marca{font-family:'Anton',sans-serif; letter-spacing:.06em; line-height:1; white-space:nowrap}
+  .marca .cl{color:#FFD447}
+  .pill{
+    display:inline-flex; align-items:center; border:2px solid #FFD447; border-radius:999px;
+    color:#FFD447; font-weight:600; white-space:nowrap;
+  }
+  .hook{font-family:'Anton',sans-serif; line-height:1.02; letter-spacing:.02em; text-transform:uppercase}
+  .hook .marca-am{color:#FFD447}
+  .sub{font-family:'Playfair Display',Georgia,serif; font-style:italic; font-weight:700; color:#FFD447; line-height:1.12}
+  .linea{font-weight:500; color:rgba(255,255,255,.93); line-height:1.3}
+  .linea b{font-weight:800; color:#fff}
+  .cta{
+    background:#FFD447; color:#4A1178; font-weight:800; border-radius:999px;
+    display:inline-flex; align-items:center; justify-content:center; gap:10px;
+    white-space:nowrap; box-shadow:0 10px 26px rgba(20,2,40,.34);
+  }
+  .nota{color:rgba(255,255,255,.78); font-weight:500; white-space:nowrap}
+  .chips{display:flex; gap:8px; flex-wrap:nowrap}
+  .chip{
+    background:rgba(255,255,255,.14); border:1.5px solid rgba(255,212,71,.5); border-radius:999px;
+    color:#fff; font-weight:700; white-space:nowrap;
+  }
+  .chip i{font-style:normal; color:#FFD447}
+
+  /* ================= PORTADA · computador · 1600x200 (8:1) ================= */
+  .portada-pc{width:1600px; height:200px; padding:0 44px; gap:34px}
+  .portada-pc .blob-1{width:360px; height:360px; top:-170px; right:360px}
+  .portada-pc .blob-2{width:240px; height:240px; bottom:-150px; left:300px}
+  .portada-pc .marca{font-size:30px}
+  .portada-pc .izq{display:flex; flex-direction:column; gap:9px; flex:none}
+  .portada-pc .pill{padding:5px 14px; font-size:11.5px; letter-spacing:.14em}
+  .portada-pc .centro{flex:1; min-width:0}
+  .portada-pc .hook{font-size:43px}
+  .portada-pc .linea{font-size:16.5px; margin-top:7px}
+  .portada-pc .der{flex:none; display:flex; flex-direction:column; align-items:center; gap:7px}
+  .portada-pc .cta{height:62px; padding:0 34px; font-size:20px; letter-spacing:.02em}
+  .portada-pc .nota{font-size:12.5px}
+
+  /* ================= PORTADA · teléfono · 800x300 (8:3) ================= */
+  .portada-cel{width:800px; height:300px; padding:26px 32px; flex-direction:column; align-items:flex-start; justify-content:center; gap:0}
+  .portada-cel .blob-1{width:300px; height:300px; top:-120px; right:-90px}
+  .portada-cel .blob-2{width:210px; height:210px; bottom:-120px; left:-70px}
+  .portada-cel .fila{display:flex; align-items:center; gap:14px; width:100%}
+  .portada-cel .marca{font-size:24px}
+  .portada-cel .pill{padding:5px 13px; font-size:10.5px; letter-spacing:.14em}
+  .portada-cel .hook{font-size:40px; margin-top:12px}
+  .portada-cel .sub{font-size:28px; margin-top:3px}
+  .portada-cel .cta{height:58px; padding:0 28px; font-size:19px; margin-top:16px}
+  .portada-cel .nota{font-size:12.5px; margin-top:9px}
+
+  /* ============ PERFIL DEL VETERINARIO · computador · 1600x320 (5:1) ============ */
+  .perfil-pc{width:1600px; height:320px; padding:0 52px; gap:40px}
+  .perfil-pc .blob-1{width:460px; height:460px; top:-220px; right:330px}
+  .perfil-pc .blob-2{width:300px; height:300px; bottom:-190px; left:380px}
+  .perfil-pc .izq{display:flex; flex-direction:column; gap:12px; flex:none}
+  .perfil-pc .marca{font-size:38px}
+  .perfil-pc .pill{padding:7px 17px; font-size:12.5px; letter-spacing:.14em}
+  .perfil-pc .centro{flex:1; min-width:0}
+  .perfil-pc .hook{font-size:52px}
+  .perfil-pc .sub{font-size:34px; margin-top:4px}
+  .perfil-pc .chips{margin-top:14px}
+  .perfil-pc .chip{padding:7px 16px; font-size:14.5px}
+  .perfil-pc .der{flex:none; display:flex; flex-direction:column; align-items:center; gap:9px}
+  .perfil-pc .cta{height:70px; padding:0 40px; font-size:23px}
+  .perfil-pc .nota{font-size:13.5px}
+
+  /* ============ PERFIL DEL VETERINARIO · teléfono · 800x400 (2:1) ============ */
+  .perfil-cel{width:800px; height:400px; padding:28px 34px; flex-direction:column; align-items:flex-start; justify-content:center}
+  .perfil-cel .blob-1{width:330px; height:330px; top:-140px; right:-100px}
+  .perfil-cel .blob-2{width:230px; height:230px; bottom:-130px; left:-80px}
+  .perfil-cel .fila{display:flex; align-items:center; gap:14px; width:100%}
+  .perfil-cel .marca{font-size:26px}
+  .perfil-cel .pill{padding:5px 14px; font-size:11px; letter-spacing:.14em}
+  .perfil-cel .hook{font-size:43px; margin-top:14px}
+  .perfil-cel .sub{font-size:29px; margin-top:3px}
+  .perfil-cel .chips{margin-top:14px}
+  .perfil-cel .chip{padding:7px 14px; font-size:13.5px}
+  .perfil-cel .cta{height:60px; padding:0 30px; font-size:19.5px; margin-top:16px}
+  .perfil-cel .nota{font-size:12.5px; margin-top:8px}
+
+  /* ============ PANEL DEL PROPIETARIO · computador · 1600x320 (5:1) ============ */
+  .panel-pc{width:1600px; height:320px; padding:0 52px; gap:40px}
+  .panel-pc .blob-1{width:460px; height:460px; top:-230px; right:300px}
+  .panel-pc .blob-2{width:280px; height:280px; bottom:-180px; left:420px}
+  .panel-pc .izq{display:flex; flex-direction:column; gap:12px; flex:none}
+  .panel-pc .marca{font-size:38px}
+  .panel-pc .pill{padding:7px 17px; font-size:12.5px; letter-spacing:.14em}
+  .panel-pc .centro{flex:1; min-width:0}
+  .panel-pc .hook{font-size:50px}
+  .panel-pc .sub{font-size:33px; margin-top:4px}
+  .panel-pc .linea{font-size:17px; margin-top:12px}
+  .panel-pc .der{flex:none; display:flex; flex-direction:column; align-items:center; gap:9px}
+  .panel-pc .cta{height:70px; padding:0 40px; font-size:23px}
+  .panel-pc .nota{font-size:13.5px}
+
+  /* ============ PANEL DEL PROPIETARIO · teléfono · 800x400 (2:1) ============ */
+  .panel-cel{width:800px; height:400px; padding:28px 34px; flex-direction:column; align-items:flex-start; justify-content:center}
+  .panel-cel .blob-1{width:330px; height:330px; top:-150px; right:-110px}
+  .panel-cel .blob-2{width:230px; height:230px; bottom:-130px; left:-80px}
+  .panel-cel .fila{display:flex; align-items:center; gap:14px; width:100%}
+  .panel-cel .marca{font-size:26px}
+  .panel-cel .pill{padding:5px 14px; font-size:11px; letter-spacing:.14em}
+  .panel-cel .hook{font-size:41px; margin-top:14px}
+  .panel-cel .sub{font-size:28px; margin-top:3px}
+  .panel-cel .linea{font-size:15.5px; margin-top:12px}
+  .panel-cel .cta{height:60px; padding:0 30px; font-size:19.5px; margin-top:16px}
+  .panel-cel .nota{font-size:12.5px; margin-top:8px}
+</style>
+</head>
+<body>
+
+<!-- ══════════ PORTADA · COMPUTADOR · 1600×200 ══════════ -->
+<div>
+  <p class="rotulo">Portada · computador · 1600 × 200</p>
+  <div class="b portada-pc" id="portada-pc">
+    <div class="blob blob-1"></div><div class="blob blob-2"></div>
+    <div class="marco"></div>
+    <span class="chispa" style="top:26px; left:620px; font-size:17px">✦</span>
+    <span class="chispa" style="bottom:30px; left:1180px; font-size:13px">✦</span>
+    <div class="izq">
+      <div class="marca">INFLUENCE<span class="cl"> CHILE</span></div>
+      <span class="pill">AGENCIA DE CONTENIDO</span>
+    </div>
+    <div class="centro">
+      <div class="hook">¿No sabes qué publicar? <span class="marca-am">Nosotros sí.</span></div>
+      <p class="linea">Creamos y publicamos <b>8 reels + 8 posts + 8 historias</b> al mes. Tú no subes nada.</p>
+    </div>
+    <div class="der">
+      <span class="cta">QUIERO MÁS CLIENTES →</span>
+      <span class="nota">Diagnóstico sin costo</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ PORTADA · TELÉFONO · 800×300 ══════════ -->
+<div>
+  <p class="rotulo">Portada · teléfono · 800 × 300</p>
+  <div class="b portada-cel" id="portada-cel">
+    <div class="blob blob-1"></div><div class="blob blob-2"></div>
+    <div class="marco"></div>
+    <span class="chispa" style="top:28px; right:120px; font-size:16px">✦</span>
+    <div class="fila">
+      <div class="marca">INFLUENCE<span class="cl"> CHILE</span></div>
+      <span class="pill">AGENCIA DE CONTENIDO</span>
+    </div>
+    <div class="hook">Tu negocio crece.</div>
+    <div class="sub">tus redes, en abandono…</div>
+    <span class="cta">DELÉGALAS →</span>
+    <span class="nota">Tú no subes nada · nosotros publicamos</span>
+  </div>
+</div>
+
+<!-- ══════════ PERFIL DEL VETERINARIO · COMPUTADOR · 1600×320 ══════════ -->
+<div>
+  <p class="rotulo">Perfil del veterinario · computador · 1600 × 320</p>
+  <div class="b perfil-pc" id="perfil-pc">
+    <div class="blob blob-1"></div><div class="blob blob-2"></div>
+    <div class="marco"></div>
+    <span class="chispa" style="top:40px; left:640px; font-size:20px">✦</span>
+    <span class="chispa" style="bottom:44px; left:1150px; font-size:15px">✦</span>
+    <div class="izq">
+      <div class="marca">INFLUENCE<span class="cl"> CHILE</span></div>
+      <span class="pill">AGENCIA DE CONTENIDO</span>
+    </div>
+    <div class="centro">
+      <div class="hook">Tienes el título.</div>
+      <div class="sub">te falta que te conozcan.</div>
+      <div class="chips">
+        <span class="chip"><i>8</i> reels editados</span>
+        <span class="chip"><i>8</i> posts diseñados</span>
+        <span class="chip"><i>8</i> historias</span>
+        <span class="chip"><i>✓</i> Meta Ads incluidas</span>
+      </div>
+    </div>
+    <div class="der">
+      <span class="cta">QUIERO MÁS PACIENTES →</span>
+      <span class="nota">Diagnóstico sin costo · cupos al mes</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ PERFIL DEL VETERINARIO · TELÉFONO · 800×400 ══════════ -->
+<div>
+  <p class="rotulo">Perfil del veterinario · teléfono · 800 × 400</p>
+  <div class="b perfil-cel" id="perfil-cel">
+    <div class="blob blob-1"></div><div class="blob blob-2"></div>
+    <div class="marco"></div>
+    <span class="chispa" style="top:30px; right:130px; font-size:17px">✦</span>
+    <div class="fila">
+      <div class="marca">INFLUENCE<span class="cl"> CHILE</span></div>
+      <span class="pill">AGENCIA DE CONTENIDO</span>
+    </div>
+    <div class="hook">Tienes el título.</div>
+    <div class="sub">te falta que te conozcan.</div>
+    <div class="chips">
+      <span class="chip"><i>8</i> reels</span>
+      <span class="chip"><i>8</i> posts</span>
+      <span class="chip"><i>8</i> historias</span>
+    </div>
+    <span class="cta">QUIERO MÁS PACIENTES →</span>
+    <span class="nota">Tú no subes nada · nosotros publicamos</span>
+  </div>
+</div>
+
+<!-- ══════════ PANEL DEL PROPIETARIO · COMPUTADOR · 1600×320 ══════════ -->
+<div>
+  <p class="rotulo">Panel del propietario · computador · 1600 × 320</p>
+  <div class="b panel-pc" id="panel-pc">
+    <div class="blob blob-1"></div><div class="blob blob-2"></div>
+    <div class="marco"></div>
+    <span class="chispa" style="top:46px; left:700px; font-size:19px">✦</span>
+    <span class="chispa" style="bottom:40px; left:1210px; font-size:14px">✦</span>
+    <div class="izq">
+      <div class="marca">INFLUENCE<span class="cl"> CHILE</span></div>
+      <span class="pill">AGENCIA DE CONTENIDO</span>
+    </div>
+    <div class="centro">
+      <div class="hook">Publicar todos los días</div>
+      <div class="sub">no debería ser otra pega.</div>
+      <p class="linea">Estrategia, calendario, <b>24 piezas al mes</b> y community manager. Tú apruebas, nosotros publicamos.</p>
+    </div>
+    <div class="der">
+      <span class="cta">DELÉGALAS →</span>
+      <span class="nota">Diagnóstico sin costo</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ PANEL DEL PROPIETARIO · TELÉFONO · 800×400 ══════════ -->
+<div>
+  <p class="rotulo">Panel del propietario · teléfono · 800 × 400</p>
+  <div class="b panel-cel" id="panel-cel">
+    <div class="blob blob-1"></div><div class="blob blob-2"></div>
+    <div class="marco"></div>
+    <span class="chispa" style="top:32px; right:140px; font-size:17px">✦</span>
+    <div class="fila">
+      <div class="marca">INFLUENCE<span class="cl"> CHILE</span></div>
+      <span class="pill">AGENCIA DE CONTENIDO</span>
+    </div>
+    <div class="hook">Publicar todos los días</div>
+    <div class="sub">no debería ser otra pega.</div>
+    <p class="linea"><b>24 piezas al mes</b>, estrategia y community manager. Tú apruebas, nosotros publicamos.</p>
+    <span class="cta">DELÉGALAS →</span>
+    <span class="nota">Diagnóstico sin costo · cupos limitados</span>
+  </div>
+</div>
+
+</body>
+</html>
