@@ -1,0 +1,66 @@
+name: TikTok a Reels de Instagram
+
+# Revisa tu cuenta de TikTok (variable TIKTOK_USUARIO) cada 2 horas y publica
+# como reel cada video nuevo, sin marca de agua. Si falta la configuración,
+# termina sin error. Detalles en INTEGRACIONES.md, sección 3.
+on:
+  schedule:
+    - cron: '17 */2 * * *'
+  workflow_dispatch:
+    inputs:
+      urls:
+        description: 'Videos concretos de tu TikTok, separados por comas (vacío = revisar el perfil)'
+        required: false
+        default: ''
+        type: string
+      simulacion:
+        description: 'Simulación (descarga y muestra qué publicaría, sin publicar)'
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: tiktok-a-instagram
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Instalar yt-dlp y ffmpeg
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          pipx install "yt-dlp[default,curl-cffi]"
+      - name: Descargar y publicar
+        env:
+          TIKTOK_USUARIO: ${{ vars.TIKTOK_USUARIO }}
+          CAPTION_EXTRA: ${{ vars.CAPTION_EXTRA }}
+          MAX_POR_EJECUCION: ${{ vars.MAX_POR_EJECUCION }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          GRAPH_HOST: ${{ vars.GRAPH_HOST }}
+          TIKTOK_COOKIES: ${{ secrets.TIKTOK_COOKIES }}
+          URLS: ${{ inputs.urls }}
+          DRY_RUN: ${{ inputs.simulacion && '1' || '' }}
+        run: |
+          if [ -n "$TIKTOK_COOKIES" ]; then
+            printf '%s\n' "$TIKTOK_COOKIES" > "$RUNNER_TEMP/cookies.txt"
+            export TIKTOK_COOKIES_FILE="$RUNNER_TEMP/cookies.txt"
+          fi
+          node scripts/tiktok-a-reels.mjs
+      - name: Guardar registro de publicados
+        if: always()
+        run: |
+          git add tiktok/publicados.json 2>/dev/null || exit 0
+          git diff --cached --quiet && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Registrar reels publicados desde TikTok"
+          git pull --rebase -q && git push

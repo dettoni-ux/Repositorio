@@ -90,3 +90,38 @@ un clip de 10 s ≈ USD 2–3). BytePlus no está disponible en todos los paíse
 
 Flujo completo: **Estudio (guion + prompt) → Generar video → revisar → Publicar en Instagram**.
 Tú apruebas dos veces: al generar y al publicar.
+
+---
+
+## 3) Republicar tus TikToks como reels (automático, sin marca de agua)
+
+El workflow **TikTok a Reels de Instagram** revisa tu perfil de TikTok cada 2 horas, descarga
+cada video nuevo **sin la marca de agua** (la versión original que TikTok sirve, no la de
+«Guardar video») y lo publica como reel con la API oficial, usando la descripción de TikTok
+como caption. Script: `scripts/tiktok-a-reels.mjs`.
+
+> Solo publica videos cuyo autor sea la cuenta configurada en `TIKTOK_USUARIO`: está pensado
+> para tu propio contenido. Resubir videos de otros sin permiso infringe sus derechos de autor
+> y puede hacer que Instagram elimine los reels o sancione la cuenta.
+
+### Configuración
+Usa los mismos `IG_USER_ID` e `IG_ACCESS_TOKEN` de la sección 1. Además, en
+**Settings → Secrets and variables → Actions → pestaña Variables**:
+
+| Nombre | Tipo | Contenido |
+|---|---|---|
+| `TIKTOK_USUARIO` | Variable | Tu usuario de TikTok, sin @ (activa la automatización) |
+| `CAPTION_EXTRA` | Variable *(opcional)* | Texto que se agrega al final de cada caption |
+| `MAX_POR_EJECUCION` | Variable *(opcional)* | Reels máximos por corrida (por defecto 3) |
+| `TIKTOK_COOKIES` | Secret *(opcional)* | Cookies de tiktok.com en formato Netscape, solo si TikTok bloquea la descarga |
+
+### Cómo funciona
+- **Primera corrida:** marca como vistos los videos que ya tienes y no publica nada. Desde ahí,
+  cada video nuevo que subas a TikTok aparece como reel en ≤ 2 horas.
+- El registro de lo publicado queda en `tiktok/publicados.json` (el workflow lo guarda solo).
+  Para publicar un video antiguo, bórralo de ese archivo o usa el modo manual.
+- **Modo manual:** Actions → TikTok a Reels de Instagram → Run workflow → `urls` con los
+  enlaces de tus videos. Marca `simulacion` para probar sin publicar.
+- Para pausarlo: borra la variable `TIKTOK_USUARIO` o desactiva el workflow en Actions.
+- Si TikTok cambia su sitio y la descarga falla, el log lo dirá; el workflow instala la última
+  versión de yt-dlp en cada corrida, que suele corregirlo en pocos días.
